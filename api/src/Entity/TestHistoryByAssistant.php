@@ -26,4 +26,41 @@ class TestHistoryByAssistant
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getCreationDt(): ?\DateTimeInterface
+    {
+        return $this->creationDt;
+    }
+
+    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    {
+        $this->creationDt = $creationDt;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
 }

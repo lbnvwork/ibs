@@ -32,4 +32,63 @@ class MedicalPersonnel
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getPost(): ?string
+    {
+        return $this->post;
+    }
+
+    public function setPost(?string $post): self
+    {
+        $this->post = $post;
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
 }

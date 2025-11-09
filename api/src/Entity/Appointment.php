@@ -32,4 +32,63 @@ class Appointment
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $doctorName = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getCreationDt(): ?\DateTimeInterface
+    {
+        return $this->creationDt;
+    }
+
+    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    {
+        $this->creationDt = $creationDt;
+        return $this;
+    }
+
+    public function getAppointmentDt(): ?\DateTimeInterface
+    {
+        return $this->appointmentDt;
+    }
+
+    public function setAppointmentDt(?\DateTimeInterface $appointmentDt): self
+    {
+        $this->appointmentDt = $appointmentDt;
+        return $this;
+    }
+
+    public function getDoze(): ?float
+    {
+        return $this->doze;
+    }
+
+    public function setDoze(?float $doze): self
+    {
+        $this->doze = $doze;
+        return $this;
+    }
+
+    public function getDoctorName(): ?string
+    {
+        return $this->doctorName;
+    }
+
+    public function setDoctorName(?string $doctorName): self
+    {
+        $this->doctorName = $doctorName;
+        return $this;
+    }
 }

@@ -20,4 +20,19 @@ class Supervisor
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
 }

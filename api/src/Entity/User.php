@@ -32,4 +32,63 @@ class User
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): self
+    {
+        $this->login = $login;
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    public function getUserName(): ?string
+    {
+        return $this->userName;
+    }
+
+    public function setUserName(?string $userName): self
+    {
+        $this->userName = $userName;
+        return $this;
+    }
+
+    public function getRoles(): ?int
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(?int $roles): self
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
 }

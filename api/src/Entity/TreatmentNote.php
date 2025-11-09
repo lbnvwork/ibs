@@ -26,4 +26,41 @@ class TreatmentNote
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $note = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getCreationDt(): ?\DateTimeInterface
+    {
+        return $this->creationDt;
+    }
+
+    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    {
+        $this->creationDt = $creationDt;
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): self
+    {
+        $this->note = $note;
+        return $this;
+    }
 }

@@ -29,4 +29,52 @@ class Holiday
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getHMonth(): ?int
+    {
+        return $this->hMonth;
+    }
+
+    public function setHMonth(?int $hMonth): self
+    {
+        $this->hMonth = $hMonth;
+        return $this;
+    }
+
+    public function getHDay(): ?int
+    {
+        return $this->hDay;
+    }
+
+    public function setHDay(?int $hDay): self
+    {
+        $this->hDay = $hDay;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
 }

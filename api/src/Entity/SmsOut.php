@@ -32,4 +32,63 @@ class SmsOut
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $creationDt = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getTreatmentId(): ?int
+    {
+        return $this->treatmentId;
+    }
+
+    public function setTreatmentId(?int $treatmentId): self
+    {
+        $this->treatmentId = $treatmentId;
+        return $this;
+    }
+
+    public function getSmsSource(): ?string
+    {
+        return $this->smsSource;
+    }
+
+    public function setSmsSource(?string $smsSource): self
+    {
+        $this->smsSource = $smsSource;
+        return $this;
+    }
+
+    public function getSmsTarget(): int
+    {
+        return $this->smsTarget;
+    }
+
+    public function setSmsTarget(int $smsTarget): self
+    {
+        $this->smsTarget = $smsTarget;
+        return $this;
+    }
+
+    public function getCreationDt(): ?\DateTimeInterface
+    {
+        return $this->creationDt;
+    }
+
+    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    {
+        $this->creationDt = $creationDt;
+        return $this;
+    }
 }

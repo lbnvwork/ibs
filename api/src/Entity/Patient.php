@@ -50,4 +50,129 @@ class Patient
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(?string $firstname): self
+    {
+        $this->firstname = $firstname;
+        return $this;
+    }
+
+    public function getSecondName(): ?string
+    {
+        return $this->secondName;
+    }
+
+    public function setSecondName(?string $secondName): self
+    {
+        $this->secondName = $secondName;
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(?string $lastname): self
+    {
+        $this->lastname = $lastname;
+        return $this;
+    }
+
+    public function getBirthday(): ?\DateTimeInterface
+    {
+        return $this->birthday;
+    }
+
+    public function setBirthday(?\DateTimeInterface $birthday): self
+    {
+        $this->birthday = $birthday;
+        return $this;
+    }
+
+    public function getSex(): ?int
+    {
+        return $this->sex;
+    }
+
+    public function setSex(?int $sex): self
+    {
+        $this->sex = $sex;
+        return $this;
+    }
+
+    public function getSmsPhone(): ?string
+    {
+        return $this->smsPhone;
+    }
+
+    public function setSmsPhone(?string $smsPhone): self
+    {
+        $this->smsPhone = $smsPhone;
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getPassport(): ?string
+    {
+        return $this->passport;
+    }
+
+    public function setPassport(?string $passport): self
+    {
+        $this->passport = $passport;
+        return $this;
+    }
+
+    public function getHealthInsurance(): ?string
+    {
+        return $this->healthInsurance;
+    }
+
+    public function setHealthInsurance(?string $healthInsurance): self
+    {
+        $this->healthInsurance = $healthInsurance;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
 }

@@ -20,4 +20,19 @@ class UserForHospital
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $permissions = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getPermissions(): ?int
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(?int $permissions): self
+    {
+        $this->permissions = $permissions;
+        return $this;
+    }
 }
