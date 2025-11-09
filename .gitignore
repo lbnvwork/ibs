@@ -1,0 +1,23 @@
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Symfony
+api/var/
+api/vendor/
+api/.env
+api/composer.lock
+
+# Vue.js
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Docker
+db_data/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
