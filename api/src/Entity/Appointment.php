@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -30,71 +31,5 @@ class Appointment
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $doctorName = null;
-
-    public function getid(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setid(?int $id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function getmodDt(): ?\DateTimeInterface
-    {
-        return $this->modDt;
-    }
-
-    public function setmodDt(?\DateTimeInterface $modDt): self
-    {
-        $this->modDt = $modDt;
-        return $this;
-    }
-
-    public function getcreationDt(): ?\DateTimeInterface
-    {
-        return $this->creationDt;
-    }
-
-    public function setcreationDt(?\DateTimeInterface $creationDt): self
-    {
-        $this->creationDt = $creationDt;
-        return $this;
-    }
-
-    public function getappointmentDt(): ?\DateTimeInterface
-    {
-        return $this->appointmentDt;
-    }
-
-    public function setappointmentDt(?\DateTimeInterface $appointmentDt): self
-    {
-        $this->appointmentDt = $appointmentDt;
-        return $this;
-    }
-
-    public function getdoze(): ?float
-    {
-        return $this->doze;
-    }
-
-    public function setdoze(?float $doze): self
-    {
-        $this->doze = $doze;
-        return $this;
-    }
-
-    public function getdoctorName(): ?string
-    {
-        return $this->doctorName;
-    }
-
-    public function setdoctorName(?string $doctorName): self
-    {
-        $this->doctorName = $doctorName;
-        return $this;
-    }
 
 }
