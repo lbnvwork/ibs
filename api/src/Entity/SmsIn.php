@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'smsin')]
-class Smsin
+#[ORM\Table(name: 'sms_in')]
+class SmsIn
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -39,100 +40,100 @@ class Smsin
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $status = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getTreatmentId(): ?int
+    public function gettreatmentId(): ?int
     {
         return $this->treatmentId;
     }
 
-    public function setTreatmentId(?int $treatmentId): self
+    public function settreatmentId(?int $treatmentId): self
     {
         $this->treatmentId = $treatmentId;
         return $this;
     }
 
-    public function getServerId(): ?int
+    public function getserverId(): ?int
     {
         return $this->serverId;
     }
 
-    public function setServerId(?int $serverId): self
+    public function setserverId(?int $serverId): self
     {
         $this->serverId = $serverId;
         return $this;
     }
 
-    public function getSmsSource(): ?int
+    public function getsmsSource(): ?int
     {
         return $this->smsSource;
     }
 
-    public function setSmsSource(?int $smsSource): self
+    public function setsmsSource(?int $smsSource): self
     {
         $this->smsSource = $smsSource;
         return $this;
     }
 
-    public function getNum(): ?int
+    public function getnum(): ?int
     {
         return $this->num;
     }
 
-    public function setNum(?int $num): self
+    public function setnum(?int $num): self
     {
         $this->num = $num;
         return $this;
     }
 
-    public function getText(): ?int
+    public function gettext(): ?int
     {
         return $this->text;
     }
 
-    public function setText(?int $text): self
+    public function settext(?int $text): self
     {
         $this->text = $text;
         return $this;
     }
 
-    public function getCreationDt(): ?\DateTimeInterface
+    public function getcreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
     }
 
-    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    public function setcreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getstatus(): ?int
     {
         return $this->status;
     }
 
-    public function setStatus(?int $status): self
+    public function setstatus(?int $status): self
     {
         $this->status = $status;
         return $this;

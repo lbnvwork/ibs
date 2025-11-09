@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -8,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'appointments')]
-class Appointments
+class Appointment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -30,67 +31,67 @@ class Appointments
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $doctorName = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getCreationDt(): ?\DateTimeInterface
+    public function getcreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
     }
 
-    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    public function setcreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
         return $this;
     }
 
-    public function getAppointmentDt(): ?\DateTimeInterface
+    public function getappointmentDt(): ?\DateTimeInterface
     {
         return $this->appointmentDt;
     }
 
-    public function setAppointmentDt(?\DateTimeInterface $appointmentDt): self
+    public function setappointmentDt(?\DateTimeInterface $appointmentDt): self
     {
         $this->appointmentDt = $appointmentDt;
         return $this;
     }
 
-    public function getDoze(): ?float
+    public function getdoze(): ?float
     {
         return $this->doze;
     }
 
-    public function setDoze(?float $doze): self
+    public function setdoze(?float $doze): self
     {
         $this->doze = $doze;
         return $this;
     }
 
-    public function getDoctorName(): ?string
+    public function getdoctorName(): ?string
     {
         return $this->doctorName;
     }
 
-    public function setDoctorName(?string $doctorName): self
+    public function setdoctorName(?string $doctorName): self
     {
         $this->doctorName = $doctorName;
         return $this;

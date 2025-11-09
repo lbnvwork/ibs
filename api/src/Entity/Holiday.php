@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'phonestypes')]
-class Phonestypes
+#[ORM\Table(name: 'holidays')]
+class Holiday
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,65 +19,65 @@ class Phonestypes
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $name = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $hMonth = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $mask = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $hDay = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getName(): ?string
+    public function gethmonth(): ?int
     {
-        return $this->name;
+        return $this->hmonth;
     }
 
-    public function setName(?string $name): self
+    public function sethmonth(?int $hmonth): self
     {
-        $this->name = $name;
+        $this->hmonth = $hmonth;
         return $this;
     }
 
-    public function getMask(): ?string
+    public function gethday(): ?int
     {
-        return $this->mask;
+        return $this->hday;
     }
 
-    public function setMask(?string $mask): self
+    public function sethday(?int $hday): self
     {
-        $this->mask = $mask;
+        $this->hday = $hday;
         return $this;
     }
 
-    public function getComment(): ?string
+    public function getcomment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(?string $comment): self
+    public function setcomment(?string $comment): self
     {
         $this->comment = $comment;
         return $this;

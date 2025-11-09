@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'smstemplates')]
-class Smstemplates
+#[ORM\Table(name: 'sms_templates')]
+class SmsTemplate
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,56 +28,56 @@ class Smstemplates
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getSmsType(): ?int
+    public function getsmsType(): ?int
     {
         return $this->smsType;
     }
 
-    public function setSmsType(?int $smsType): self
+    public function setsmsType(?int $smsType): self
     {
         $this->smsType = $smsType;
         return $this;
     }
 
-    public function getSmsSource(): ?string
+    public function getsmsSource(): ?string
     {
         return $this->smsSource;
     }
 
-    public function setSmsSource(?string $smsSource): self
+    public function setsmsSource(?string $smsSource): self
     {
         $this->smsSource = $smsSource;
         return $this;
     }
 
-    public function getSmsTemplate(): ?string
+    public function getsmsTemplate(): ?string
     {
         return $this->smsTemplate;
     }
 
-    public function setSmsTemplate(?string $smsTemplate): self
+    public function setsmsTemplate(?string $smsTemplate): self
     {
         $this->smsTemplate = $smsTemplate;
         return $this;
     }
 
-    public function getComment(): ?string
+    public function getcomment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(?string $comment): self
+    public function setcomment(?string $comment): self
     {
         $this->comment = $comment;
         return $this;

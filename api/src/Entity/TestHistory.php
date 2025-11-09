@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'testhistory')]
-class Testhistory
+#[ORM\Table(name: 'test_history')]
+class TestHistory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,56 +28,56 @@ class Testhistory
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $mno = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getSmsId(): ?int
+    public function getsmsId(): ?int
     {
         return $this->smsId;
     }
 
-    public function setSmsId(?int $smsId): self
+    public function setsmsId(?int $smsId): self
     {
         $this->smsId = $smsId;
         return $this;
     }
 
-    public function getCreationDt(): ?\DateTimeInterface
+    public function getcreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
     }
 
-    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    public function setcreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
         return $this;
     }
 
-    public function getMno(): ?float
+    public function getmno(): ?float
     {
         return $this->mno;
     }
 
-    public function setMno(?float $mno): self
+    public function setmno(?float $mno): self
     {
         $this->mno = $mno;
         return $this;

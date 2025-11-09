@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -8,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'drugs')]
-class Drugs
+class Drug
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,45 +25,45 @@ class Drugs
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $genitive = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getNominative(): ?string
+    public function getnominative(): ?string
     {
         return $this->nominative;
     }
 
-    public function setNominative(?string $nominative): self
+    public function setnominative(?string $nominative): self
     {
         $this->nominative = $nominative;
         return $this;
     }
 
-    public function getGenitive(): ?string
+    public function getgenitive(): ?string
     {
         return $this->genitive;
     }
 
-    public function setGenitive(?string $genitive): self
+    public function setgenitive(?string $genitive): self
     {
         $this->genitive = $genitive;
         return $this;

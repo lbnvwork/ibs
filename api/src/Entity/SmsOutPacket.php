@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'smsoutpackets')]
-class Smsoutpackets
+#[ORM\Table(name: 'sms_out_packets')]
+class SmsOutPacket
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,45 +25,45 @@ class Smsoutpackets
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $balance = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getServerPacketId(): ?int
+    public function getserverPacketId(): ?int
     {
         return $this->serverPacketId;
     }
 
-    public function setServerPacketId(?int $serverPacketId): self
+    public function setserverPacketId(?int $serverPacketId): self
     {
         $this->serverPacketId = $serverPacketId;
         return $this;
     }
 
-    public function getBalance(): ?string
+    public function getbalance(): ?string
     {
         return $this->balance;
     }
 
-    public function setBalance(?string $balance): self
+    public function setbalance(?string $balance): self
     {
         $this->balance = $balance;
         return $this;

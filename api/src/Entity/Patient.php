@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -8,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'patients')]
-class Patients
+class Patient
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,7 +23,7 @@ class Patients
     private ?string $firstname = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $secondname = null;
+    private ?string $secondName = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $lastname = null;
@@ -48,133 +49,133 @@ class Patients
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getFirstname(): ?string
+    public function getfirstname(): ?string
     {
         return $this->firstname;
     }
 
-    public function setFirstname(?string $firstname): self
+    public function setfirstname(?string $firstname): self
     {
         $this->firstname = $firstname;
         return $this;
     }
 
-    public function getSecondname(): ?string
+    public function getsecondname(): ?string
     {
         return $this->secondname;
     }
 
-    public function setSecondname(?string $secondname): self
+    public function setsecondname(?string $secondname): self
     {
         $this->secondname = $secondname;
         return $this;
     }
 
-    public function getLastname(): ?string
+    public function getlastname(): ?string
     {
         return $this->lastname;
     }
 
-    public function setLastname(?string $lastname): self
+    public function setlastname(?string $lastname): self
     {
         $this->lastname = $lastname;
         return $this;
     }
 
-    public function getBirthday(): ?\DateTimeInterface
+    public function getbirthday(): ?\DateTimeInterface
     {
         return $this->birthday;
     }
 
-    public function setBirthday(?\DateTimeInterface $birthday): self
+    public function setbirthday(?\DateTimeInterface $birthday): self
     {
         $this->birthday = $birthday;
         return $this;
     }
 
-    public function getSex(): ?int
+    public function getsex(): ?int
     {
         return $this->sex;
     }
 
-    public function setSex(?int $sex): self
+    public function setsex(?int $sex): self
     {
         $this->sex = $sex;
         return $this;
     }
 
-    public function getSmsPhone(): ?string
+    public function getsmsPhone(): ?string
     {
         return $this->smsPhone;
     }
 
-    public function setSmsPhone(?string $smsPhone): self
+    public function setsmsPhone(?string $smsPhone): self
     {
         $this->smsPhone = $smsPhone;
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getaddress(): ?string
     {
         return $this->address;
     }
 
-    public function setAddress(?string $address): self
+    public function setaddress(?string $address): self
     {
         $this->address = $address;
         return $this;
     }
 
-    public function getPassport(): ?string
+    public function getpassport(): ?string
     {
         return $this->passport;
     }
 
-    public function setPassport(?string $passport): self
+    public function setpassport(?string $passport): self
     {
         $this->passport = $passport;
         return $this;
     }
 
-    public function getHealthInsurance(): ?string
+    public function gethealthInsurance(): ?string
     {
         return $this->healthInsurance;
     }
 
-    public function setHealthInsurance(?string $healthInsurance): self
+    public function sethealthInsurance(?string $healthInsurance): self
     {
         $this->healthInsurance = $healthInsurance;
         return $this;
     }
 
-    public function getComment(): ?string
+    public function getcomment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(?string $comment): self
+    public function setcomment(?string $comment): self
     {
         $this->comment = $comment;
         return $this;

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'smsout')]
-class Smsout
+#[ORM\Table(name: 'sms_out')]
+class SmsOut
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -30,67 +31,67 @@ class Smsout
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $creationDt = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getTreatmentId(): ?int
+    public function gettreatmentId(): ?int
     {
         return $this->treatmentId;
     }
 
-    public function setTreatmentId(?int $treatmentId): self
+    public function settreatmentId(?int $treatmentId): self
     {
         $this->treatmentId = $treatmentId;
         return $this;
     }
 
-    public function getSmsSource(): ?string
+    public function getsmsSource(): ?string
     {
         return $this->smsSource;
     }
 
-    public function setSmsSource(?string $smsSource): self
+    public function setsmsSource(?string $smsSource): self
     {
         $this->smsSource = $smsSource;
         return $this;
     }
 
-    public function getSmsTarget(): int
+    public function getsmsTarget(): int
     {
         return $this->smsTarget;
     }
 
-    public function setSmsTarget(int $smsTarget): self
+    public function setsmsTarget(int $smsTarget): self
     {
         $this->smsTarget = $smsTarget;
         return $this;
     }
 
-    public function getCreationDt(): ?\DateTimeInterface
+    public function getcreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
     }
 
-    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    public function setcreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
         return $this;

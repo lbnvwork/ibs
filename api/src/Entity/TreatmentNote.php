@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'testhistorybylaborant')]
-class Testhistorybylaborant
+#[ORM\Table(name: 'treatment_notes')]
+class TreatmentNote
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,49 +23,49 @@ class Testhistorybylaborant
     private ?\DateTimeInterface $creationDt = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $comment = null;
+    private ?string $note = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getCreationDt(): ?\DateTimeInterface
+    public function getcreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
     }
 
-    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    public function setcreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
         return $this;
     }
 
-    public function getComment(): ?string
+    public function getnote(): ?string
     {
-        return $this->comment;
+        return $this->note;
     }
 
-    public function setComment(?string $comment): self
+    public function setnote(?string $note): self
     {
-        $this->comment = $comment;
+        $this->note = $note;
         return $this;
     }
 

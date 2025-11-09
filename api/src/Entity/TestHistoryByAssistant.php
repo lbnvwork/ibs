@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'patientRequests')]
-class PatientRequests
+#[ORM\Table(name: 'test_histories_by_assistant')]
+class TestHistoryByAssistant
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,49 +23,49 @@ class PatientRequests
     private ?\DateTimeInterface $creationDt = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $reason = null;
+    private ?string $comment = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getCreationDt(): ?\DateTimeInterface
+    public function getcreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
     }
 
-    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    public function setcreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
         return $this;
     }
 
-    public function getReason(): ?string
+    public function getcomment(): ?string
     {
-        return $this->reason;
+        return $this->comment;
     }
 
-    public function setReason(?string $reason): self
+    public function setcomment(?string $comment): self
     {
-        $this->reason = $reason;
+        $this->comment = $comment;
         return $this;
     }
 
