@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -27,60 +28,5 @@ class TestHistory
 
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $mno = null;
-
-    public function getid(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setid(?int $id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function getmodDt(): ?\DateTimeInterface
-    {
-        return $this->modDt;
-    }
-
-    public function setmodDt(?\DateTimeInterface $modDt): self
-    {
-        $this->modDt = $modDt;
-        return $this;
-    }
-
-    public function getsmsId(): ?int
-    {
-        return $this->smsId;
-    }
-
-    public function setsmsId(?int $smsId): self
-    {
-        $this->smsId = $smsId;
-        return $this;
-    }
-
-    public function getcreationDt(): ?\DateTimeInterface
-    {
-        return $this->creationDt;
-    }
-
-    public function setcreationDt(?\DateTimeInterface $creationDt): self
-    {
-        $this->creationDt = $creationDt;
-        return $this;
-    }
-
-    public function getmno(): ?float
-    {
-        return $this->mno;
-    }
-
-    public function setmno(?float $mno): self
-    {
-        $this->mno = $mno;
-        return $this;
-    }
 
 }
