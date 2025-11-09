@@ -26,4 +26,41 @@ class SmsOutPacket
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $balance = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getServerPacketId(): ?int
+    {
+        return $this->serverPacketId;
+    }
+
+    public function setServerPacketId(?int $serverPacketId): self
+    {
+        $this->serverPacketId = $serverPacketId;
+        return $this;
+    }
+
+    public function getBalance(): ?string
+    {
+        return $this->balance;
+    }
+
+    public function setBalance(?string $balance): self
+    {
+        $this->balance = $balance;
+        return $this;
+    }
 }

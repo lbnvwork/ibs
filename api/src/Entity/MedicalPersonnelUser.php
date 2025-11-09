@@ -29,4 +29,52 @@ class MedicalPersonnelUser
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $roles = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): self
+    {
+        $this->login = $login;
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    public function getRoles(): ?int
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(?int $roles): self
+    {
+        $this->roles = $roles;
+        return $this;
+    }
 }

@@ -29,4 +29,52 @@ class TestHistory
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $mno = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getSmsId(): ?int
+    {
+        return $this->smsId;
+    }
+
+    public function setSmsId(?int $smsId): self
+    {
+        $this->smsId = $smsId;
+        return $this;
+    }
+
+    public function getCreationDt(): ?\DateTimeInterface
+    {
+        return $this->creationDt;
+    }
+
+    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    {
+        $this->creationDt = $creationDt;
+        return $this;
+    }
+
+    public function getMno(): ?float
+    {
+        return $this->mno;
+    }
+
+    public function setMno(?float $mno): self
+    {
+        $this->mno = $mno;
+        return $this;
+    }
 }
