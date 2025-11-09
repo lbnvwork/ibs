@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'treatmentnotes')]
-class Treatmentnotes
+#[ORM\Table(name: 'patient_requests')]
+class PatientRequest
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,49 +23,49 @@ class Treatmentnotes
     private ?\DateTimeInterface $creationDt = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $note = null;
+    private ?string $reason = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getCreationDt(): ?\DateTimeInterface
+    public function getcreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
     }
 
-    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    public function setcreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
         return $this;
     }
 
-    public function getNote(): ?string
+    public function getreason(): ?string
     {
-        return $this->note;
+        return $this->reason;
     }
 
-    public function setNote(?string $note): self
+    public function setreason(?string $reason): self
     {
-        $this->note = $note;
+        $this->reason = $reason;
         return $this;
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -7,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'smsoutstatus')]
-class Smsoutstatus
+#[ORM\Table(name: 'sms_out_statuses')]
+class SmsOutStatus
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -45,122 +46,122 @@ class Smsoutstatus
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $error = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getSmsId(): ?int
+    public function getsmsId(): ?int
     {
         return $this->smsId;
     }
 
-    public function setSmsId(?int $smsId): self
+    public function setsmsId(?int $smsId): self
     {
         $this->smsId = $smsId;
         return $this;
     }
 
-    public function getServerCode(): ?string
+    public function getserverCode(): ?string
     {
         return $this->serverCode;
     }
 
-    public function setServerCode(?string $serverCode): self
+    public function setserverCode(?string $serverCode): self
     {
         $this->serverCode = $serverCode;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getPacketId(): ?int
+    public function getpacketId(): ?int
     {
         return $this->packetId;
     }
 
-    public function setPacketId(?int $packetId): self
+    public function setpacketId(?int $packetId): self
     {
         $this->packetId = $packetId;
         return $this;
     }
 
-    public function getServerId(): ?int
+    public function getserverId(): ?int
     {
         return $this->serverId;
     }
 
-    public function setServerId(?int $serverId): self
+    public function setserverId(?int $serverId): self
     {
         $this->serverId = $serverId;
         return $this;
     }
 
-    public function getPhoneZone(): ?int
+    public function getphoneZone(): ?int
     {
         return $this->phoneZone;
     }
 
-    public function setPhoneZone(?int $phoneZone): self
+    public function setphoneZone(?int $phoneZone): self
     {
         $this->phoneZone = $phoneZone;
         return $this;
     }
 
-    public function getParts(): ?int
+    public function getparts(): ?int
     {
         return $this->parts;
     }
 
-    public function setParts(?int $parts): self
+    public function setparts(?int $parts): self
     {
         $this->parts = $parts;
         return $this;
     }
 
-    public function getCredits(): ?int
+    public function getcredits(): ?int
     {
         return $this->credits;
     }
 
-    public function setCredits(?int $credits): self
+    public function setcredits(?int $credits): self
     {
         $this->credits = $credits;
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getstatus(): ?int
     {
         return $this->status;
     }
 
-    public function setStatus(?int $status): self
+    public function setstatus(?int $status): self
     {
         $this->status = $status;
         return $this;
     }
 
-    public function getError(): ?string
+    public function geterror(): ?string
     {
         return $this->error;
     }
 
-    public function setError(?string $error): self
+    public function seterror(?string $error): self
     {
         $this->error = $error;
         return $this;

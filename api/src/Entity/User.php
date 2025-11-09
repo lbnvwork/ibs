@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -8,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
-class Users
+class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -30,67 +31,67 @@ class Users
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getLogin(): ?string
+    public function getlogin(): ?string
     {
         return $this->login;
     }
 
-    public function setLogin(?string $login): self
+    public function setlogin(?string $login): self
     {
         $this->login = $login;
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getpassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(?string $password): self
+    public function setpassword(?string $password): self
     {
         $this->password = $password;
         return $this;
     }
 
-    public function getUserName(): ?string
+    public function getuserName(): ?string
     {
         return $this->userName;
     }
 
-    public function setUserName(?string $userName): self
+    public function setuserName(?string $userName): self
     {
         $this->userName = $userName;
         return $this;
     }
 
-    public function getRoles(): ?int
+    public function getroles(): ?int
     {
         return $this->roles;
     }
 
-    public function setRoles(?int $roles): self
+    public function setroles(?int $roles): self
     {
         $this->roles = $roles;
         return $this;
     }
 
-    public function getComment(): ?string
+    public function getcomment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(?string $comment): self
+    public function setcomment(?string $comment): self
     {
         $this->comment = $comment;
         return $this;

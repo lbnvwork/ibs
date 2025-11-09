@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -8,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'treatments')]
-class Treatments
+class Treatment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -45,122 +46,122 @@ class Treatments
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $stoppingReason = null;
 
-    public function getId(): ?int
+    public function getid(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setid(?int $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function getModDt(): ?\DateTimeInterface
+    public function getmodDt(): ?\DateTimeInterface
     {
         return $this->modDt;
     }
 
-    public function setModDt(?\DateTimeInterface $modDt): self
+    public function setmodDt(?\DateTimeInterface $modDt): self
     {
         $this->modDt = $modDt;
         return $this;
     }
 
-    public function getCode(): ?int
+    public function getcode(): ?int
     {
         return $this->code;
     }
 
-    public function setCode(?int $code): self
+    public function setcode(?int $code): self
     {
         $this->code = $code;
         return $this;
     }
 
-    public function getDiagnosis(): ?string
+    public function getdiagnosis(): ?string
     {
         return $this->diagnosis;
     }
 
-    public function setDiagnosis(?string $diagnosis): self
+    public function setdiagnosis(?string $diagnosis): self
     {
         $this->diagnosis = $diagnosis;
         return $this;
     }
 
-    public function getComorbidities(): ?string
+    public function getcomorbidities(): ?string
     {
         return $this->comorbidities;
     }
 
-    public function setComorbidities(?string $comorbidities): self
+    public function setcomorbidities(?string $comorbidities): self
     {
         $this->comorbidities = $comorbidities;
         return $this;
     }
 
-    public function getMnoFrom(): ?float
+    public function getmnoFrom(): ?float
     {
         return $this->mnoFrom;
     }
 
-    public function setMnoFrom(?float $mnoFrom): self
+    public function setmnoFrom(?float $mnoFrom): self
     {
         $this->mnoFrom = $mnoFrom;
         return $this;
     }
 
-    public function getMnoTo(): ?float
+    public function getmnoTo(): ?float
     {
         return $this->mnoTo;
     }
 
-    public function setMnoTo(?float $mnoTo): self
+    public function setmnoTo(?float $mnoTo): self
     {
         $this->mnoTo = $mnoTo;
         return $this;
     }
 
-    public function getBegDt(): ?\DateTimeInterface
+    public function getbegDt(): ?\DateTimeInterface
     {
         return $this->begDt;
     }
 
-    public function setBegDt(?\DateTimeInterface $begDt): self
+    public function setbegDt(?\DateTimeInterface $begDt): self
     {
         $this->begDt = $begDt;
         return $this;
     }
 
-    public function getPlanEndDt(): ?\DateTimeInterface
+    public function getplanEndDt(): ?\DateTimeInterface
     {
         return $this->planEndDt;
     }
 
-    public function setPlanEndDt(?\DateTimeInterface $planEndDt): self
+    public function setplanEndDt(?\DateTimeInterface $planEndDt): self
     {
         $this->planEndDt = $planEndDt;
         return $this;
     }
 
-    public function getRealEndDt(): ?\DateTimeInterface
+    public function getrealEndDt(): ?\DateTimeInterface
     {
         return $this->realEndDt;
     }
 
-    public function setRealEndDt(?\DateTimeInterface $realEndDt): self
+    public function setrealEndDt(?\DateTimeInterface $realEndDt): self
     {
         $this->realEndDt = $realEndDt;
         return $this;
     }
 
-    public function getStoppingReason(): ?string
+    public function getstoppingReason(): ?string
     {
         return $this->stoppingReason;
     }
 
-    public function setStoppingReason(?string $stoppingReason): self
+    public function setstoppingReason(?string $stoppingReason): self
     {
         $this->stoppingReason = $stoppingReason;
         return $this;
