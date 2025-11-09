@@ -1,0 +1,183 @@
+<?php
+
+namespace App\Entity;
+
+use ApiPlatform\Metadata\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ApiResource]
+#[ORM\Entity]
+#[ORM\Table(name: 'patients')]
+class Patients
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $id = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $modDt = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $firstname = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $secondname = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $lastname = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $birthday = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $sex = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $smsPhone = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $address = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $passport = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $healthInsurance = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $comment = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(?string $firstname): self
+    {
+        $this->firstname = $firstname;
+        return $this;
+    }
+
+    public function getSecondname(): ?string
+    {
+        return $this->secondname;
+    }
+
+    public function setSecondname(?string $secondname): self
+    {
+        $this->secondname = $secondname;
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(?string $lastname): self
+    {
+        $this->lastname = $lastname;
+        return $this;
+    }
+
+    public function getBirthday(): ?\DateTimeInterface
+    {
+        return $this->birthday;
+    }
+
+    public function setBirthday(?\DateTimeInterface $birthday): self
+    {
+        $this->birthday = $birthday;
+        return $this;
+    }
+
+    public function getSex(): ?int
+    {
+        return $this->sex;
+    }
+
+    public function setSex(?int $sex): self
+    {
+        $this->sex = $sex;
+        return $this;
+    }
+
+    public function getSmsPhone(): ?string
+    {
+        return $this->smsPhone;
+    }
+
+    public function setSmsPhone(?string $smsPhone): self
+    {
+        $this->smsPhone = $smsPhone;
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getPassport(): ?string
+    {
+        return $this->passport;
+    }
+
+    public function setPassport(?string $passport): self
+    {
+        $this->passport = $passport;
+        return $this;
+    }
+
+    public function getHealthInsurance(): ?string
+    {
+        return $this->healthInsurance;
+    }
+
+    public function setHealthInsurance(?string $healthInsurance): self
+    {
+        $this->healthInsurance = $healthInsurance;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+
+}
