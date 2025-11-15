@@ -47,6 +47,10 @@ class SmsOutStatus
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $error = null;
 
+    #[ORM\ManyToOne(targetEntity: SmsOut::class)]
+    #[ORM\JoinColumn(name: 'sms_id', referencedColumnName: 'id')]
+    private ?SmsOut $smsOut = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -161,4 +165,14 @@ class SmsOutStatus
         $this->error = $error;
         return $this;
     }
-}
+
+    public function getSmsOut(): ?SmsOut
+    {
+        return $this->smsOut;
+    }
+
+    public function setSmsOut(?SmsOut $smsOut): self
+    {
+        $this->smsOut = $smsOut;
+        return $this;
+    }}

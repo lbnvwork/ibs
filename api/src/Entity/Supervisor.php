@@ -20,6 +20,14 @@ class Supervisor
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(targetEntity: HospitalTestPlan::class)]
+    #[ORM\JoinColumn(name: 'plan_id', referencedColumnName: 'id')]
+    private ?HospitalTestPlan $hospitalTestPlan = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,4 +43,25 @@ class Supervisor
         $this->modDt = $modDt;
         return $this;
     }
-}
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function getHospitalTestPlan(): ?HospitalTestPlan
+    {
+        return $this->hospitalTestPlan;
+    }
+
+    public function setHospitalTestPlan(?HospitalTestPlan $hospitalTestPlan): self
+    {
+        $this->hospitalTestPlan = $hospitalTestPlan;
+        return $this;
+    }}

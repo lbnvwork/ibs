@@ -32,6 +32,18 @@ class Appointment
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $doctorName = null;
 
+    #[ORM\ManyToOne(targetEntity: Treatment::class)]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id')]
+    private ?Treatment $treatment = null;
+
+    #[ORM\ManyToOne(targetEntity: SmsOut::class)]
+    #[ORM\JoinColumn(name: 'sms_id', referencedColumnName: 'id')]
+    private ?SmsOut $sms = null;
+
+    #[ORM\ManyToOne(targetEntity: Drug::class)]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id')]
+    private ?Drug $drug = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,4 +103,36 @@ class Appointment
         $this->doctorName = $doctorName;
         return $this;
     }
-}
+
+    public function getTreatment(): ?Treatment
+    {
+        return $this->treatment;
+    }
+
+    public function setTreatment(?Treatment $treatment): self
+    {
+        $this->treatment = $treatment;
+        return $this;
+    }
+
+    public function getSms(): ?SmsOut
+    {
+        return $this->sms;
+    }
+
+    public function setSms(?SmsOut $sms): self
+    {
+        $this->sms = $sms;
+        return $this;
+    }
+
+    public function getDrug(): ?Drug
+    {
+        return $this->drug;
+    }
+
+    public function setDrug(?Drug $drug): self
+    {
+        $this->drug = $drug;
+        return $this;
+    }}

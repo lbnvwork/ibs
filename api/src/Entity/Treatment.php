@@ -47,6 +47,14 @@ class Treatment
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $stoppingReason = null;
 
+    #[ORM\ManyToOne(targetEntity: Patient::class)]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id')]
+    private ?Patient $patient = null;
+
+    #[ORM\ManyToOne(targetEntity: Drug::class)]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id')]
+    private ?Drug $drug = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -161,4 +169,25 @@ class Treatment
         $this->stoppingReason = $stoppingReason;
         return $this;
     }
-}
+
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): self
+    {
+        $this->patient = $patient;
+        return $this;
+    }
+
+    public function getDrug(): ?Drug
+    {
+        return $this->drug;
+    }
+
+    public function setDrug(?Drug $drug): self
+    {
+        $this->drug = $drug;
+        return $this;
+    }}
