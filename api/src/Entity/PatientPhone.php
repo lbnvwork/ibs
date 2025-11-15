@@ -26,6 +26,14 @@ class PatientPhone
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    #[ORM\ManyToOne(targetEntity: PhoneType::class)]
+    #[ORM\JoinColumn(name: 'phone_type_id', referencedColumnName: 'id')]
+    private ?PhoneType $phoneType = null;
+
+    #[ORM\ManyToOne(targetEntity: Patient::class)]
+    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id')]
+    private ?Patient $person = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,4 +71,25 @@ class PatientPhone
         $this->comment = $comment;
         return $this;
     }
-}
+
+    public function getPhoneType(): ?PhoneType
+    {
+        return $this->phoneType;
+    }
+
+    public function setPhoneType(?PhoneType $phoneType): self
+    {
+        $this->phoneType = $phoneType;
+        return $this;
+    }
+
+    public function getPerson(): ?Patient
+    {
+        return $this->person;
+    }
+
+    public function setPerson(?Patient $person): self
+    {
+        $this->person = $person;
+        return $this;
+    }}

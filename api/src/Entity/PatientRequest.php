@@ -26,6 +26,10 @@ class PatientRequest
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $reason = null;
 
+    #[ORM\ManyToOne(targetEntity: Treatment::class)]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id')]
+    private ?Treatment $treatment = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,4 +67,14 @@ class PatientRequest
         $this->reason = $reason;
         return $this;
     }
-}
+
+    public function getTreatment(): ?Treatment
+    {
+        return $this->treatment;
+    }
+
+    public function setTreatment(?Treatment $treatment): self
+    {
+        $this->treatment = $treatment;
+        return $this;
+    }}

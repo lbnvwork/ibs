@@ -29,6 +29,14 @@ class TestHistory
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $mno = null;
 
+    #[ORM\ManyToOne(targetEntity: Treatment::class)]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id')]
+    private ?Treatment $treatment = null;
+
+    #[ORM\ManyToOne(targetEntity: Drug::class)]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id')]
+    private ?Drug $drug = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,4 +85,25 @@ class TestHistory
         $this->mno = $mno;
         return $this;
     }
-}
+
+    public function getTreatment(): ?Treatment
+    {
+        return $this->treatment;
+    }
+
+    public function setTreatment(?Treatment $treatment): self
+    {
+        $this->treatment = $treatment;
+        return $this;
+    }
+
+    public function getDrug(): ?Drug
+    {
+        return $this->drug;
+    }
+
+    public function setDrug(?Drug $drug): self
+    {
+        $this->drug = $drug;
+        return $this;
+    }}

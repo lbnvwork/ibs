@@ -29,6 +29,10 @@ class MedicalPersonnelUser
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $roles = null;
 
+    #[ORM\ManyToOne(targetEntity: MedicalPersonnel::class)]
+    #[ORM\JoinColumn(name: 'medidcal_personnel_id', referencedColumnName: 'id')]
+    private ?MedicalPersonnel $medicalPersonnel = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,4 +81,14 @@ class MedicalPersonnelUser
         $this->roles = $roles;
         return $this;
     }
-}
+
+    public function getMedicalPersonnel(): ?MedicalPersonnel
+    {
+        return $this->medicalPersonnel;
+    }
+
+    public function setMedicalPersonnel(?MedicalPersonnel $medicalPersonnel): self
+    {
+        $this->medicalPersonnel = $medicalPersonnel;
+        return $this;
+    }}

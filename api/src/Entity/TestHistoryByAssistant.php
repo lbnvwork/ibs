@@ -26,6 +26,14 @@ class TestHistoryByAssistant
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    #[ORM\ManyToOne(targetEntity: TestHistory::class)]
+    #[ORM\JoinColumn(name: 'test_history_id', referencedColumnName: 'id')]
+    private ?TestHistory $testHistory = null;
+
+    #[ORM\ManyToOne(targetEntity: MedicalPersonnel::class)]
+    #[ORM\JoinColumn(name: 'assistant_id', referencedColumnName: 'id')]
+    private ?MedicalPersonnel $assistant = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,4 +71,25 @@ class TestHistoryByAssistant
         $this->comment = $comment;
         return $this;
     }
-}
+
+    public function getTestHistory(): ?TestHistory
+    {
+        return $this->testHistory;
+    }
+
+    public function setTestHistory(?TestHistory $testHistory): self
+    {
+        $this->testHistory = $testHistory;
+        return $this;
+    }
+
+    public function getAssistant(): ?MedicalPersonnel
+    {
+        return $this->assistant;
+    }
+
+    public function setAssistant(?MedicalPersonnel $assistant): self
+    {
+        $this->assistant = $assistant;
+        return $this;
+    }}

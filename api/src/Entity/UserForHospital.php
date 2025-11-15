@@ -20,6 +20,14 @@ class UserForHospital
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $permissions = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(targetEntity: Hospital::class)]
+    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id')]
+    private ?Hospital $hospital = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -33,6 +41,28 @@ class UserForHospital
     public function setPermissions(?int $permissions): self
     {
         $this->permissions = $permissions;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function getHospital(): ?Hospital
+    {
+        return $this->hospital;
+    }
+
+    public function setHospital(?Hospital $hospital): self
+    {
+        $this->hospital = $hospital;
         return $this;
     }
 }
