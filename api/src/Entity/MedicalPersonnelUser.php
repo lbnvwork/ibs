@@ -30,7 +30,7 @@ class MedicalPersonnelUser
     private ?int $roles = null;
 
     #[ORM\ManyToOne(targetEntity: MedicalPersonnel::class)]
-    #[ORM\JoinColumn(name: 'medidcal_personnel_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'medical_personnel_id', referencedColumnName: 'id')]
     private ?MedicalPersonnel $medicalPersonnel = null;
 
     public function getId(): ?int
