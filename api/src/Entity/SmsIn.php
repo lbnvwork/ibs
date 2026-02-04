@@ -41,6 +41,9 @@ class SmsIn
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $status = null;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $dt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,5 +135,15 @@ class SmsIn
     {
         $this->status = $status;
         return $this;
+    }
+
+    public function getDt(): ?\DateTimeInterface
+    {
+        return $this->dt;
+    }
+
+    public function setDt(?\DateTimeInterface $dt): void
+    {
+        $this->dt = $dt;
     }
 }
