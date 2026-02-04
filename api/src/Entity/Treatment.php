@@ -20,23 +20,23 @@ class Treatment
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', unique: true, nullable: true)]
     private ?int $code = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $diagnosis = null;
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $diagnosis;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comorbidities = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $mnoFrom = null;
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $mnoFrom;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $mnoTo = null;
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $mnoTo;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $begDt = null;
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private \DateTimeInterface $begDt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $planEndDt = null;
@@ -48,12 +48,27 @@ class Treatment
     private ?string $stoppingReason = null;
 
     #[ORM\ManyToOne(targetEntity: Patient::class)]
-    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: true)]
     private ?Patient $patient = null;
 
     #[ORM\ManyToOne(targetEntity: Drug::class)]
-    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
     private ?Drug $drug = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $comment = null;
+
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
+    private int $hemorrhages = 0;
+
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
+    private int $flags = 0;
+
+    #[ORM\Column(name: 'diagnosis_code', type: 'string', length: 255, nullable: true)]
+    private ?string $diagnosisCode = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $pin = null;
 
     public function getId(): ?int
     {
@@ -82,12 +97,12 @@ class Treatment
         return $this;
     }
 
-    public function getDiagnosis(): ?string
+    public function getDiagnosis(): string
     {
         return $this->diagnosis;
     }
 
-    public function setDiagnosis(?string $diagnosis): self
+    public function setDiagnosis(string $diagnosis): self
     {
         $this->diagnosis = $diagnosis;
         return $this;
@@ -104,34 +119,34 @@ class Treatment
         return $this;
     }
 
-    public function getMnoFrom(): ?float
+    public function getMnoFrom(): float
     {
         return $this->mnoFrom;
     }
 
-    public function setMnoFrom(?float $mnoFrom): self
+    public function setMnoFrom(float $mnoFrom): self
     {
         $this->mnoFrom = $mnoFrom;
         return $this;
     }
 
-    public function getMnoTo(): ?float
+    public function getMnoTo(): float
     {
         return $this->mnoTo;
     }
 
-    public function setMnoTo(?float $mnoTo): self
+    public function setMnoTo(float $mnoTo): self
     {
         $this->mnoTo = $mnoTo;
         return $this;
     }
 
-    public function getBegDt(): ?\DateTimeInterface
+    public function getBegDt(): \DateTimeInterface
     {
         return $this->begDt;
     }
 
-    public function setBegDt(?\DateTimeInterface $begDt): self
+    public function setBegDt(\DateTimeInterface $begDt): self
     {
         $this->begDt = $begDt;
         return $this;
@@ -190,4 +205,60 @@ class Treatment
     {
         $this->drug = $drug;
         return $this;
-    }}
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+
+    public function getHemorrhages(): int
+    {
+        return $this->hemorrhages;
+    }
+
+    public function setHemorrhages(int $hemorrhages): self
+    {
+        $this->hemorrhages = $hemorrhages;
+        return $this;
+    }
+
+    public function getFlags(): int
+    {
+        return $this->flags;
+    }
+
+    public function setFlags(int $flags): self
+    {
+        $this->flags = $flags;
+        return $this;
+    }
+
+    public function getDiagnosisCode(): ?string
+    {
+        return $this->diagnosisCode;
+    }
+
+    public function setDiagnosisCode(?string $diagnosisCode): self
+    {
+        $this->diagnosisCode = $diagnosisCode;
+        return $this;
+    }
+
+    public function getPin(): ?int
+    {
+        return $this->pin;
+    }
+
+    public function setPin(?int $pin): self
+    {
+        $this->pin = $pin;
+        return $this;
+    }
+}
