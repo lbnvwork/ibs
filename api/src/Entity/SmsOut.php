@@ -26,8 +26,8 @@ class SmsOut
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $smsSource = null;
 
-    #[ORM\Column(type: 'integer')]
-    private int $smsTarget;
+    #[ORM\Column(type: 'text')]
+    private string $smsTarget;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $creationDt = null;
@@ -70,12 +70,12 @@ class SmsOut
         return $this;
     }
 
-    public function getSmsTarget(): int
+    public function getSmsTarget(): string
     {
         return $this->smsTarget;
     }
 
-    public function setSmsTarget(int $smsTarget): self
+    public function setSmsTarget(string $smsTarget): self
     {
         $this->smsTarget = $smsTarget;
         return $this;
