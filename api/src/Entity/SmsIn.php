@@ -26,14 +26,14 @@ class SmsIn
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $serverId = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $smsSource = null;
+    #[ORM\Column(type: 'string', length: 11, nullable: true)]
+    private ?string $smsSource = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $num = null;
+    #[ORM\Column(type: 'string', length: 11, nullable: true)]
+    private ?string $num = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $text = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $text = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $creationDt = null;
@@ -82,34 +82,34 @@ class SmsIn
         return $this;
     }
 
-    public function getSmsSource(): ?int
+    public function getSmsSource(): ?string
     {
         return $this->smsSource;
     }
 
-    public function setSmsSource(?int $smsSource): self
+    public function setSmsSource(?string $smsSource): self
     {
         $this->smsSource = $smsSource;
         return $this;
     }
 
-    public function getNum(): ?int
+    public function getNum(): ?string
     {
         return $this->num;
     }
 
-    public function setNum(?int $num): self
+    public function setNum(?string $num): self
     {
         $this->num = $num;
         return $this;
     }
 
-    public function getText(): ?int
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    public function setText(?int $text): self
+    public function setText(?string $text): self
     {
         $this->text = $text;
         return $this;
@@ -142,8 +142,9 @@ class SmsIn
         return $this->dt;
     }
 
-    public function setDt(?\DateTimeInterface $dt): void
+    public function setDt(?\DateTimeInterface $dt): self
     {
         $this->dt = $dt;
+        return $this;
     }
 }

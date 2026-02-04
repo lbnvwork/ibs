@@ -23,10 +23,10 @@ class SmsOut
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $treatmentId = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'string', length: 11, nullable: true)]
     private ?string $smsSource = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'string', length: 11)]
     private string $smsTarget;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
