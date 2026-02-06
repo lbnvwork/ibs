@@ -20,11 +20,14 @@ class SmsOutPacket
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $serverPacketId = null;
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private int $serverPacketId;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $balance = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $serverCode = null;
 
     public function getId(): ?int
     {
@@ -42,12 +45,12 @@ class SmsOutPacket
         return $this;
     }
 
-    public function getServerPacketId(): ?int
+    public function getServerPacketId(): int
     {
         return $this->serverPacketId;
     }
 
-    public function setServerPacketId(?int $serverPacketId): self
+    public function setServerPacketId(int $serverPacketId): self
     {
         $this->serverPacketId = $serverPacketId;
         return $this;
@@ -61,6 +64,17 @@ class SmsOutPacket
     public function setBalance(?string $balance): self
     {
         $this->balance = $balance;
+        return $this;
+    }
+
+    public function getServerCode(): ?string
+    {
+        return $this->serverCode;
+    }
+
+    public function setServerCode(?string $serverCode): self
+    {
+        $this->serverCode = $serverCode;
         return $this;
     }
 }
