@@ -20,14 +20,17 @@ class Holiday
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $hMonth = null;
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private int $hMonth;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $hDay = null;
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private int $hDay;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
+
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 2015])]
+    private int $hYear = 2015;
 
     public function getId(): ?int
     {
@@ -45,23 +48,23 @@ class Holiday
         return $this;
     }
 
-    public function getHMonth(): ?int
+    public function getHMonth(): int
     {
         return $this->hMonth;
     }
 
-    public function setHMonth(?int $hMonth): self
+    public function setHMonth(int $hMonth): self
     {
         $this->hMonth = $hMonth;
         return $this;
     }
 
-    public function getHDay(): ?int
+    public function getHDay(): int
     {
         return $this->hDay;
     }
 
-    public function setHDay(?int $hDay): self
+    public function setHDay(int $hDay): self
     {
         $this->hDay = $hDay;
         return $this;
@@ -75,6 +78,17 @@ class Holiday
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
+        return $this;
+    }
+
+    public function getHYear(): int
+    {
+        return $this->hYear;
+    }
+
+    public function setHYear(int $hYear): self
+    {
+        $this->hYear = $hYear;
         return $this;
     }
 }
