@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'treatmentCodeGenerator')]
+#[ORM\Table(name: 'treatment_code_generator')]
 class TreatmentCodeGenerator
 {
     #[ORM\Id]
