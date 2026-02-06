@@ -20,28 +20,34 @@ class Appointment
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private \DateTimeInterface $appointmentDt;
+
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $appointmentDt = null;
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $doze;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $doze = null;
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $doctorName;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $doctorName = null;
+    private ?string $comment = null;
+
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1])]
+    private int $doze2 = -1;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class)]
-    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true)]
     private ?Treatment $treatment = null;
 
     #[ORM\ManyToOne(targetEntity: SmsOut::class)]
-    #[ORM\JoinColumn(name: 'sms_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'sms_id', referencedColumnName: 'id', nullable: true)]
     private ?SmsOut $sms = null;
 
     #[ORM\ManyToOne(targetEntity: Drug::class)]
-    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
     private ?Drug $drug = null;
 
     public function getId(): ?int
@@ -60,6 +66,17 @@ class Appointment
         return $this;
     }
 
+    public function getAppointmentDt(): \DateTimeInterface
+    {
+        return $this->appointmentDt;
+    }
+
+    public function setAppointmentDt(\DateTimeInterface $appointmentDt): self
+    {
+        $this->appointmentDt = $appointmentDt;
+        return $this;
+    }
+
     public function getCreationDt(): ?\DateTimeInterface
     {
         return $this->creationDt;
@@ -71,36 +88,47 @@ class Appointment
         return $this;
     }
 
-    public function getAppointmentDt(): ?\DateTimeInterface
-    {
-        return $this->appointmentDt;
-    }
-
-    public function setAppointmentDt(?\DateTimeInterface $appointmentDt): self
-    {
-        $this->appointmentDt = $appointmentDt;
-        return $this;
-    }
-
-    public function getDoze(): ?float
+    public function getDoze(): float
     {
         return $this->doze;
     }
 
-    public function setDoze(?float $doze): self
+    public function setDoze(float $doze): self
     {
         $this->doze = $doze;
         return $this;
     }
 
-    public function getDoctorName(): ?string
+    public function getDoctorName(): string
     {
         return $this->doctorName;
     }
 
-    public function setDoctorName(?string $doctorName): self
+    public function setDoctorName(string $doctorName): self
     {
         $this->doctorName = $doctorName;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+
+    public function getDoze2(): int
+    {
+        return $this->doze2;
+    }
+
+    public function setDoze2(int $doze2): self
+    {
+        $this->doze2 = $doze2;
         return $this;
     }
 
@@ -135,4 +163,5 @@ class Appointment
     {
         $this->drug = $drug;
         return $this;
-    }}
+    }
+}
