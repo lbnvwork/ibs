@@ -26,16 +26,25 @@ class TestHistory
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $mno = null;
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $mno = 0.0;
 
-    #[ORM\ManyToOne(targetEntity: Treatment::class)]
-    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Treatment::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true)]
     private ?Treatment $treatment = null;
 
-    #[ORM\ManyToOne(targetEntity: Drug::class)]
-    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Drug::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
     private ?Drug $drug = null;
+
+    #[ORM\Column(type: 'float', nullable: false)]
+    private float $doze = 0.0;
+
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1])]
+    private int $doze2 = -1;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $comment = null;
 
     public function getId(): ?int
     {
@@ -75,12 +84,12 @@ class TestHistory
         return $this;
     }
 
-    public function getMno(): ?float
+    public function getMno(): float
     {
         return $this->mno;
     }
 
-    public function setMno(?float $mno): self
+    public function setMno(float $mno): self
     {
         $this->mno = $mno;
         return $this;
@@ -106,4 +115,38 @@ class TestHistory
     {
         $this->drug = $drug;
         return $this;
-    }}
+    }
+
+    public function getDoze(): float
+    {
+        return $this->doze;
+    }
+
+    public function setDoze(float $doze): self
+    {
+        $this->doze = $doze;
+        return $this;
+    }
+
+    public function getDoze2(): int
+    {
+        return $this->doze2;
+    }
+
+    public function setDoze2(int $doze2): self
+    {
+        $this->doze2 = $doze2;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+}
