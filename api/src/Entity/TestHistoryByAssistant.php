@@ -34,6 +34,10 @@ class TestHistoryByAssistant
     #[ORM\JoinColumn(name: 'assistant_id', referencedColumnName: 'id')]
     private ?MedicalPersonnel $assistant = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,4 +96,16 @@ class TestHistoryByAssistant
     {
         $this->assistant = $assistant;
         return $this;
-    }}
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+}
