@@ -20,23 +20,23 @@ class Patient
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $firstname = null;
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $firstname;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $secondName = null;
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $secondName;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $lastname = null;
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $lastname;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $birthday = null;
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private \DateTimeInterface $birthday;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $sex = null;
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
+    private int $sex = 0;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $smsPhone = null;
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $smsPhone;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $address = null;
@@ -50,8 +50,11 @@ class Patient
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $snils = null;
+
     #[ORM\ManyToOne(targetEntity: Hospital::class)]
-    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', nullable: true)]
     private ?Hospital $hospital = null;
 
     public function getId(): ?int
@@ -70,67 +73,67 @@ class Patient
         return $this;
     }
 
-    public function getFirstname(): ?string
+    public function getFirstname(): string
     {
         return $this->firstname;
     }
 
-    public function setFirstname(?string $firstname): self
+    public function setFirstname(string $firstname): self
     {
         $this->firstname = $firstname;
         return $this;
     }
 
-    public function getSecondName(): ?string
+    public function getSecondName(): string
     {
         return $this->secondName;
     }
 
-    public function setSecondName(?string $secondName): self
+    public function setSecondName(string $secondName): self
     {
         $this->secondName = $secondName;
         return $this;
     }
 
-    public function getLastname(): ?string
+    public function getLastname(): string
     {
         return $this->lastname;
     }
 
-    public function setLastname(?string $lastname): self
+    public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
         return $this;
     }
 
-    public function getBirthday(): ?\DateTimeInterface
+    public function getBirthday(): \DateTimeInterface
     {
         return $this->birthday;
     }
 
-    public function setBirthday(?\DateTimeInterface $birthday): self
+    public function setBirthday(\DateTimeInterface $birthday): self
     {
         $this->birthday = $birthday;
         return $this;
     }
 
-    public function getSex(): ?int
+    public function getSex(): int
     {
         return $this->sex;
     }
 
-    public function setSex(?int $sex): self
+    public function setSex(int $sex): self
     {
         $this->sex = $sex;
         return $this;
     }
 
-    public function getSmsPhone(): ?string
+    public function getSmsPhone(): string
     {
         return $this->smsPhone;
     }
 
-    public function setSmsPhone(?string $smsPhone): self
+    public function setSmsPhone(string $smsPhone): self
     {
         $this->smsPhone = $smsPhone;
         return $this;
@@ -177,6 +180,17 @@ class Patient
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
+        return $this;
+    }
+
+    public function getSnils(): ?string
+    {
+        return $this->snils;
+    }
+
+    public function setSnils(?string $snils): self
+    {
+        $this->snils = $snils;
         return $this;
     }
 
