@@ -32,6 +32,9 @@ class SmsOut
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $creationDt = null;
 
+    #[ORM\Column(type: 'text', nullable: false)]
+    private string $text;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +92,17 @@ class SmsOut
     public function setCreationDt(?\DateTimeInterface $creationDt): self
     {
         $this->creationDt = $creationDt;
+        return $this;
+    }
+
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): self
+    {
+        $this->text = $text;
         return $this;
     }
 }
