@@ -1,0 +1,108 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use ApiPlatform\Metadata\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ApiResource]
+#[ORM\Entity]
+#[ORM\Table(name: 'hospital_test_plans')]
+class HospitalTestPlan
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $id = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $modDt = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $creationDt = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $testDt = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $status = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $comment = null;
+
+    #[ORM\ManyToOne(targetEntity: Hospital::class)]
+    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id')]
+    private ?Hospital $hospital = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getModDt(): ?\DateTimeInterface
+    {
+        return $this->modDt;
+    }
+
+    public function setModDt(?\DateTimeInterface $modDt): self
+    {
+        $this->modDt = $modDt;
+        return $this;
+    }
+
+    public function getCreationDt(): ?\DateTimeInterface
+    {
+        return $this->creationDt;
+    }
+
+    public function setCreationDt(?\DateTimeInterface $creationDt): self
+    {
+        $this->creationDt = $creationDt;
+        return $this;
+    }
+
+    public function getTestDt(): ?\DateTimeInterface
+    {
+        return $this->testDt;
+    }
+
+    public function setTestDt(?\DateTimeInterface $testDt): self
+    {
+        $this->testDt = $testDt;
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?int $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+
+    public function getHospital(): ?Hospital
+    {
+        return $this->hospital;
+    }
+
+    public function setHospital(?Hospital $hospital): self
+    {
+        $this->hospital = $hospital;
+        return $this;
+    }}
