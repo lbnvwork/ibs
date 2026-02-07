@@ -1,8 +1,8 @@
-version: "3.9"
-
 services:
   php:
-    image: php:8.3-fpm
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
     container_name: ibs-php
     working_dir: /var/www/html
     volumes:
@@ -10,8 +10,10 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
       DATABASE_URL: ${DATABASE_URL}
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - ibs-network
 
@@ -26,6 +28,11 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - ibs-network
 
@@ -38,7 +45,8 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./api/public:/var/www/html/public:ro
     depends_on:
-      - php
+      php:
+        condition: service_started
     networks:
       - ibs-network
 
@@ -58,4 +66,5 @@ volumes:
   db_data:
 
 networks:
-  ibs-network: {}
+  ibs-network:
+    driver: bridge

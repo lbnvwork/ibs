@@ -21,3 +21,6 @@ db_data/
 # OS
 .DS_Store
 Thumbs.db
+
+# Migration temporary files
+/tmp/
