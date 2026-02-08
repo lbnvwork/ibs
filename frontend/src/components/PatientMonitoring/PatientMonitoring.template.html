@@ -1,0 +1,81 @@
+<div class="patient-monitoring">
+    <div class="filter-tabs">
+      <button 
+        :class="{ active: activeFilter === 'monitoring' }" 
+        @click="activeFilter = 'monitoring'"
+      >
+        Мониторинг
+      </button>
+      <button 
+        :class="{ active: activeFilter === 'patientList' }"
+        @click="activeFilter = 'patientList'"
+      >
+        Работа со списком пациентов
+      </button>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Выбор препарата">
+      <button 
+        v-for="tab in tabs" 
+        :key="tab.id"
+        :class="{ active: activeTab === tab.id }" 
+        @click="activeTab = tab.id"
+        :style="tab.style"
+      >
+        {{ tab.name }}
+      </button>
+    </nav>
+
+    <div class="monitoring-content">
+        <div class="monitoring-header">
+            <h3>Пациенты, требующие контроля</h3>
+            <div class="filter-controls">
+                <label for="diagnosis-select">Выборка пациентов по нозологиям*</label>
+                <select id="diagnosis-select" v-model="selectedDiagnosis">
+                <option value="all">Все</option>
+                <option value="ibs">ИБС, Фибрилляция предсердий</option>
+                <option value="other">Другое</option>
+                </select>
+            </div>
+        </div>
+
+        <div v-if="activeTab === 'warfarin'" class="tab-content active">
+            <div class="table-container">
+                <table aria-label="Таблица пациентов">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Статус SMS</th>
+                        <th>ФИО</th>
+                        <th>Возраст</th>
+                        <th>Диагноз</th>
+                        <th>MHO / Hb / Дополнительно</th>
+                        <th>Комментарий</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr 
+                        v-for="(patient, index) in warfarinPatients" 
+                        :key="index"
+                        :class="{
+                        'highlight-red': patient.highlightRed,
+                        'highlight-blue': patient.highlightBlue
+                        }"
+                    >
+                        <td>{{ index + 1 }}</td>
+                        <td class="icon-cell">{{ patient.smsStatus }}</td>
+                        <td>
+                        <router-link :to="`/patient/${patient.id}`">
+                            {{ patient.name }}
+                        </router-link>
+                        </td>
+                        <td>{{ patient.age }}</td>
+                        <td>{{ patient.diagnosis }}</td>
+                        <td v-html="patient.indicators"></td>
+                        <td class="comment">{{ patient.comment }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>

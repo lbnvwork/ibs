@@ -1,0 +1,210 @@
+.patient-history {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.patient-header h1 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.patient-info {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.diagnosis-section,
+.additional-conditions,
+.medical-data {
+  margin-bottom: 30px;
+}
+
+.diagnosis-section h3,
+.additional-conditions h3,
+.medical-data h3 {
+  color: #10345c;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.diagnosis-section ul,
+.additional-conditions ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.diagnosis-section li,
+.additional-conditions li {
+  padding: 5px 0;
+}
+
+.medical-data {
+  overflow-x: auto;
+  width: 100%;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.medical-data table {
+  width: 100%; /* На больших экранах таблица растянется на всю ширину */
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+/* Узкие столбцы */
+.medical-data th:nth-child(1),  /* Дата */
+.medical-data td:nth-child(1),
+.medical-data th:nth-child(2),  /* МНО */
+.medical-data td:nth-child(2),
+.medical-data th:nth-child(3),  /* Анализ №1 */
+.medical-data td:nth-child(3),
+.medical-data th:nth-child(4),  /* Анализ №2 */
+.medical-data td:nth-child(4),
+.medical-data th:nth-child(5),  /* ЧСС */
+.medical-data td:nth-child(5),
+.medical-data th:nth-child(6),  /* АД */
+.medical-data td:nth-child(6),
+.medical-data th:nth-child(7),  /* Принимаемая доза */
+.medical-data td:nth-child(7),
+.medical-data th:nth-child(8) { /* Назначенная доза */
+  width: 8%; /* Узкие столбцы */
+  max-width: 100px;
+}
+
+/* Широкие столбцы */
+.medical-data th:nth-child(9),  /* Рекомендации */
+.medical-data td:nth-child(9) {
+  width: 30%;
+  max-width: 350px;
+}
+
+.medical-data th:nth-child(10), /* Комментарий */
+.medical-data td:nth-child(10) {
+  width: 14%;
+  max-width: 300px;
+}
+
+/* Для планшетов и мобильных устройств */
+@media (max-width: 1366px) {
+  .medical-data table {
+    min-width: 1100px;
+    table-layout: auto;
+  }
+  
+  .medical-data th,
+  .medical-data td {
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+.medical-data th, 
+.medical-data td {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.medical-data th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.medical-data tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.medical-data td:hover {
+  overflow: visible;
+  white-space: normal;
+  word-break: break-word;
+  z-index: 20;
+  position: relative;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.scroll-hint {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  padding: 5px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Стили для полосы прокрутки */
+.medical-data::-webkit-scrollbar {
+  height: 12px;
+}
+
+.medical-data::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+.medical-data::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+.medical-data::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Улучшения для планшетов */
+@media (max-width: 1366px) {
+  .medical-data {
+    overflow-x: scroll;
+  }
+}
+
+/* Для планшетов и мобильных устройств устанавливаем минимальную ширину */
+@media (max-width: 1366px) {
+  .medical-data {
+    overflow-x: scroll;
+  }
+  
+  .medical-data table {
+    min-width: 1300px; /* Минимальная ширина только для маленьких экранов */
+    width: auto; /* На маленьких экранах используем auto ширину */
+  }
+}
+
+/* Для очень больших экранов позволяем таблице растягиваться */
+@media (min-width: 1920px) {
+  .medical-data table {
+    width: 100%;
+    min-width: 0;
+  }
+}

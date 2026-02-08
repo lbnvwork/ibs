@@ -1,0 +1,62 @@
+<div class="patient-history" ref="patientHistoryRef">
+  <!-- Остальной код шаблона без изменений -->
+  <div class="patient-header">
+    <h1>Электронная история болезни пациента</h1>
+  </div>
+  
+  <div v-if="patient" class="patient-info">
+    <p><strong>ФИО: {{ patient.name }}</strong>, {{ patient.age }} ({{ patient.birthDate }})</p>
+    <p><strong>Проживает:</strong> {{ patient.address }}</p>
+    <p><strong>Мобильный телефон:</strong> {{ patient.phone }}</p>
+    <p><strong>Email:</strong> {{ patient.email }}</p>
+    <p><strong>Паспорт:</strong> {{ patient.passport }}</p>
+    <p><strong>Полис:</strong> {{ patient.insurance }}</p>
+    <p><strong>СНИЛС:</strong> {{ patient.snils }}</p>
+    <p><strong>ЛПУ:</strong> {{ patient.hospital }}</p>
+    <p><em>{{ patient.additionalInfo }}</em></p>
+  </div>
+
+  <div class="diagnosis-section">
+    <h3>Диагностика</h3>
+    <ul>
+      <li v-if="patient">{{ patient.diagnosis }}</li>
+    </ul>
+  </div>
+
+  <div class="medical-data" ref="medicalDataContainer">
+    <h3>Медицинские данные</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>МНО</th>
+          <th>Анализ №1</th>
+          <th>Анализ №2</th>
+          <th>ЧСС</th>
+          <th>АД</th>
+          <th>Принимаемая<br>доза</th>
+          <th>Назначенная<br>доза</th>
+          <th>Рекомендации</th>
+          <th>Комментарий</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(data, index) in medicalData" :key="index">
+          <td data-label="Дата">{{ data.date }}</td>
+          <td data-label="МНО">{{ data.inr }}</td>
+          <td data-label="Анализ №1">{{ data.analysis1 }}</td>
+          <td data-label="Анализ №2">{{ data.analysis2 }}</td>
+          <td data-label="ЧСС">{{ data.heartRate }}</td>
+          <td data-label="АД">{{ data.bloodPressure }}</td>
+          <td data-label="Принимаемая доза препаратов">{{ data.currentDose }}</td>
+          <td data-label="Назначенная доза препарата">{{ data.prescribedDose }}</td>
+          <td data-label="Рекомендации">{{ data.recommendations }}</td>
+          <td data-label="Комментарий">{{ data.comment }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div v-if="isScrollable" class="scroll-hint">
+  ← Прокрутите вправо для просмотра полной таблицы →
+</div>
