@@ -1,31 +1,19 @@
 {
-  "name": "ibs-frontend",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
+  "name": "warfarin-manager",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "pinia": "^3.0.3",
-    "vue": "^3.5.18",
-    "vue-router": "^4.5.1"
+    "axios": "^1.13.4",
+    "pinia": "^3.0.4",
+    "vue": "^3.3.4",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@eslint/json": "^0.13.2",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "eslint": "^9.34.0",
-    "eslint-plugin-vue": "^10.4.0",
-    "globals": "^16.3.0",
-    "prettier": "^3.6.2",
-    "vite": "^7.0.6",
-    "vite-plugin-vue-devtools": "^8.0.0",
-    "vitest": "^3.2.4"
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vite": "^4.4.5"
   }
 }

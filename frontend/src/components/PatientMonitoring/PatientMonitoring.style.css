@@ -1,0 +1,166 @@
+.patient-monitoring {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.monitoring-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px 15px;
+}
+
+.monitoring-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #10345c;
+  font-weight: 600;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.filter-controls label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #a33;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.filter-controls select {
+  padding: 6px 10px;
+  font-size: 14px;
+  width: 220px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.filter-tabs {
+  display: flex;
+  background: #fed9c6;
+  border-bottom: 1px solid #df7c55;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.filter-tabs button {
+  flex: 1;
+  padding: 12px 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  text-align: center;
+}
+
+.filter-tabs button.active {
+  background: #fff;
+  border-bottom-color: #f5a623;
+  color: #b44;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  background: #f0f0f0;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.tabs button {
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+}
+
+.tabs button.active {
+  background: #fff;
+  border-bottom-color: #f5a623;
+  color: #b44;
+  font-weight: 700;
+}
+
+.monitoring-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.table-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.monitoring-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.monitoring-content th, 
+.monitoring-content td {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+}
+
+.monitoring-content th {
+  background: #eaeaea;
+  font-weight: 600;
+  text-align: left;
+}
+
+.monitoring-content tr.highlight-red {
+  background: #ffd9d9;
+}
+
+.monitoring-content tr.highlight-blue {
+  background: #cddfff;
+}
+
+.monitoring-content .icon-cell {
+  width: 25px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.monitoring-content .value-up {
+  color: #ab2c2c;
+  font-weight: 700;
+}
+
+.monitoring-content .value-down {
+  color: #2a5c98;
+  font-weight: 700;
+}
+
+.monitoring-content .comment {
+  color: #666;
+  font-size: 13px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}

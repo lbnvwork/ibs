@@ -1,15 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import PatientMonitoring from '../components/PatientMonitoring/PatientMonitoring.vue'
+import PatientHistory from '../components/PatientHistory/PatientHistory.vue'
 
 const routes = [
-    { path: '/', component: () => import('../views/HomeView.vue') },
-    { path: '/patient', component: () => import('../views/PatientView.vue') },
-    // { path: '/doctor', component: () => import('../views/DoctorView.vue') },
-    // { path: '/admin', component: () => import('../views/AdminView.vue') },
+  { 
+    path: '/', 
+    name: 'Home',
+    component: PatientMonitoring 
+  },
+  { 
+    path: '/patient/:id',
+    name: 'PatientHistory', 
+    component: PatientHistory,
+    props: true
+  }
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes
 })
 
 export default router
