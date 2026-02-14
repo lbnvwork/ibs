@@ -5,12 +5,23 @@ import { calculateAge, formatPhone } from '@/utils/formatters'
  */
 export function transformForListPanel(patient) {
     if (!patient) return null
-    const fullName = [patient.lastname, patient.firstname, patient.secondName]
-        .filter(Boolean).join(' ').trim() || 'Без имени'
+
+    const { lastname, firstname, secondName } = patient
+
+    // Формируем фамилию + инициалы
+    let name = lastname || ''
+    if (firstname) {
+        name += ' ' + firstname.charAt(0).toUpperCase() + '.'
+    }
+    if (secondName) {
+        name += ' ' + secondName.charAt(0).toUpperCase() + '.'
+    }
+    if (!name.trim()) name = 'Без имени'
+
     return {
         id: patient.id,
-        name: fullName,
-        status: patient.status || 'активный'
+        name: name,
+        status: patient.status || 'активный' // если нужно
     }
 }
 
