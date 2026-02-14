@@ -1,56 +1,92 @@
-  <div class="left-panel" aria-label="Left panel with filters and search">
+<div class="left-panel" aria-label="Left panel with filters and search">
+    <!-- Фильтры (пока заглушки) -->
     <select aria-label="Выбор лечебных учреждений / пациентов">
-      <option>Лечебные учреждения/пациенты</option>
-      <option>Поликлиника № 4</option>
-      <option>Поликлиника № 6</option>
+        <option>Лечебные учреждения/пациенты</option>
+        <option>Поликлиника № 4</option>
+        <option>Поликлиника № 6</option>
     </select>
 
     <select aria-label="Выбор по категориям пациентов">
-      <option>Выборка по категориям пациентов</option>
-      <option>Категория 1</option>
-      <option>Категория 2</option>
+        <option>Выборка по категориям пациентов</option>
+        <option>Категория 1</option>
+        <option>Категория 2</option>
     </select>
 
     <div class="list-container">
-    <div class="list" aria-label="Список пациентов">
-      <div 
-        v-for="patient in filteredPatients" 
-        :key="patient.id"
-        class="patient-item"
-        :class="{ active: selectedPatient.id === patient.id }"
-        @mouseover="selectPatient(patient)"
-        @click="viewPatientHistory(patient)"
-      >
-        <span class="patient-icon">👤</span>
-        <span class="patient-name">{{ patient.name }}</span>
-        <span class="patient-status" :class="patient.status">{{ patient.status }}</span>
-      </div>
-    </div>
-    <div class="info-panel">
-      <div class="info-title">Информация о пациенте:</div>
-      <div class="info-content">
-        {{ selectedPatient.name }}, {{ selectedPatient.info }}
-      </div>
-    </div>
-  </div>
+        <!-- Индикатор загрузки -->
+        <div v-if="loading" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p>Загрузка пациентов...</p>
+        </div>
 
-  <div class="search-wrapper">
-    <input 
-      type="search" 
-      placeholder="Поиск пациентов..." 
-      aria-label="Поиск по пациентам"
-      v-model="searchQuery"
-    />
-  </div>
-  <div class="indicator-container">
-    <div class="indicator">
-      <div class="indicator-progress"></div>
+        <!-- Ошибка -->
+        <div v-else-if="error" class="error-message">
+            <p>⚠️ {{ error }}</p>
+            <button @click="loadPatients(1)">Повторить</button>
+        </div>
+
+        <!-- Список пациентов -->
+        <div v-else class="list" aria-label="Список пациентов">
+            <div
+                    v-for="patient in filteredPatients"
+                    :key="patient.id"
+                    class="patient-item"
+                    :class="{ active: selectedPatientInfo.name === patient.name }"
+                    @mouseover="handlePatientHover(patient)"
+                    @click="handlePatientClick(patient)"
+            >
+                <span class="patient-icon">👤</span>
+                <span class="patient-name">{{ patient.name }}</span>
+                <span class="patient-status" :class="patient.status" v-if="patient.status">{{ patient.status }}</span>
+            </div>
+
+            <div v-if="filteredPatients.length === 0" class="no-patients">
+                Пациенты не найдены
+            </div>
+        </div>
+
+        <!-- Информация о пациенте -->
+        <div class="info-panel">
+            <div class="info-title">Информация о пациенте:</div>
+            <div class="info-content">
+                <strong>{{ selectedPatientInfo.name }}</strong><br>
+                {{ selectedPatientInfo.info }}
+            </div>
+        </div>
     </div>
-    <div class="indicator-labels">
-      <span>0%</span>
-      <span>Обработано: {{ filteredPatients.length }}/{{ patients.length }}</span>
-      <span>100%</span>
+
+    <!-- Поиск -->
+    <div class="search-wrapper">
+        <input
+                type="search"
+                placeholder="Поиск пациентов..."
+                aria-label="Поиск по пациентам"
+                v-model="searchQuery"
+                @input="onSearchInput"
+        />
+        <button
+                v-if="searchQuery"
+                @click="clearSearch"
+                class="clear-search"
+                title="Очистить поиск"
+        >
+            ✕
+        </button>
     </div>
-    <div class="indicator-text">Прогресс обработки пациентов</div>
-  </div>
+
+    <!-- Индикатор прогресса (если нужен) -->
+    <div class="indicator-container">
+        <div class="indicator">
+            <div
+                    class="indicator-progress"
+                    :style="{ width: progressPercentage + '%' }"
+            ></div>
+        </div>
+        <div class="indicator-labels">
+            <span>0%</span>
+            <span>Обработано: {{ filteredPatients.length }}/{{ displayedPatients.length }}</span>
+            <span>100%</span>
+        </div>
+        <div class="indicator-text">Прогресс обработки пациентов</div>
+    </div>
 </div>
