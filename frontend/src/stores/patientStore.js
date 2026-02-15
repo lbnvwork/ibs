@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { patientApi } from '@/api/patients'
+import { PATIENTS_PER_PAGE } from '@/utils/constants'
 
 export const usePatientStore = defineStore('patient', {
     state: () => ({
@@ -11,21 +12,47 @@ export const usePatientStore = defineStore('patient', {
         pagination: {
             currentPage: 1,
             totalItems: 0,
-            itemsPerPage: 30,
+            itemsPerPage: PATIENTS_PER_PAGE,
             totalPages: 0
         },
-        searchQuery: ''
+        searchQuery: '',
+        hospitalFilter: null,
     }),
 
     actions: {
-        async loadPatients(page = 1, itemsPerPage = 30) {
-            this.loading = true
-            this.error = null
-            this.pagination.currentPage = page
-            this.pagination.itemsPerPage = itemsPerPage
+        setHospitalFilter(hospitalId) {
+            this.hospitalFilter = hospitalId;
+            this.selectedPatient = null;
+        },
+
+        async selectPatient(id) {
+            if (this.rawPatients.has(id)) {
+                this.selectedPatient = this.rawPatients.get(id)
+                return
+            }
+            try {
+                const patient = await patientApi.getOne(id)
+                this.rawPatients.set(patient.id, patient)
+                this.selectedPatient = patient
+            } catch (err) {
+                console.error(`[PatientStore] Ошибка загрузки пациента ${id}:`, err)
+                this.error = `Не удалось загрузить данные пациента`
+            }
+        },
+
+        async loadPatients(page = 1, itemsPerPage = PATIENTS_PER_PAGE) {
+            this.loading = true;
+            this.error = null;
+            this.pagination.currentPage = page;
+            this.pagination.itemsPerPage = itemsPerPage;
 
             try {
-                const result = await patientApi.getAll(page, itemsPerPage)
+                const filters = {}
+                if (this.hospitalFilter) {
+                    filters.hospital = `/api/hospitals/${this.hospitalFilter}`
+                }
+                const order = { lastname: 'asc' }
+                const result = await patientApi.getAll(page, itemsPerPage, filters, order)
                 this.pagination.totalItems = result.totalItems
                 this.pagination.totalPages = Math.ceil(result.totalItems / itemsPerPage)
 
@@ -48,21 +75,6 @@ export const usePatientStore = defineStore('patient', {
             }
         },
 
-        async selectPatient(id) {
-            if (this.rawPatients.has(id)) {
-                this.selectedPatient = this.rawPatients.get(id)
-                return
-            }
-            try {
-                const patient = await patientApi.getOne(id)
-                this.rawPatients.set(patient.id, patient)
-                this.selectedPatient = patient
-            } catch (err) {
-                console.error(`[PatientStore] Ошибка загрузки пациента ${id}:`, err)
-                this.error = `Не удалось загрузить данные пациента`
-            }
-        },
-
         async searchPatients(query, page = 1) {
             if (!query.trim()) {
                 return this.loadPatients(1)
@@ -71,7 +83,12 @@ export const usePatientStore = defineStore('patient', {
             this.error = null
             this.searchQuery = query
             try {
-                const result = await patientApi.search(query, page, 30)
+                const filters = { lastname: query }
+                if (this.hospitalFilter) {
+                    filters.hospital = `/api/hospitals/${this.hospitalFilter}`
+                }
+                const order = { lastname: 'asc' }
+                const result = await patientApi.getAll(page, PATIENTS_PER_PAGE, filters, order)
                 const cacheKey = `search-${query}-${page}`
                 const ids = []
                 result.items.forEach(patient => {
@@ -81,7 +98,7 @@ export const usePatientStore = defineStore('patient', {
                 this.pageCache.set(cacheKey, ids)
                 this.pagination.currentPage = cacheKey
                 this.pagination.totalItems = result.totalItems
-                this.pagination.totalPages = Math.ceil(result.totalItems / 30)
+                this.pagination.totalPages = Math.ceil(result.totalItems / PATIENTS_PER_PAGE)
             } catch (err) {
                 this.error = err.message || 'Ошибка поиска'
             } finally {
@@ -94,7 +111,6 @@ export const usePatientStore = defineStore('patient', {
             this.loadPatients(1)
         },
 
-        // fallback на моковые данные (если API недоступно)
         async _loadMockPatients() {
             try {
                 const { panelPatients } = await import('@/data/patients')
