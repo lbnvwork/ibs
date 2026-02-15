@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'hospitals')]
+#[ApiFilter(OrderFilter::class, properties: ['name'])]
 class Hospital
 {
     #[ORM\Id]

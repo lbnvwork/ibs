@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
+#[ApiFilter(SearchFilter::class, properties: [
+    'lastname' => 'partial',
+    'hospital' => 'exact'
+])]
+#[ApiFilter(OrderFilter::class, properties: ['lastname'])]
 #[ORM\Entity]
 #[ORM\Table(name: 'patients')]
 class Patient
