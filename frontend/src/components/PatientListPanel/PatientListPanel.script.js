@@ -1,25 +1,27 @@
 import { mapState, mapActions } from 'pinia'
 import { usePatientStore } from '@/stores/patientStore'
 import { useHospitalStore } from '@/stores/hospitalStore'
-import { transformForListPanel } from '@/transformers/patientTransformers'
 import { calculateAge } from '@/utils/formatters'
 import debounce from 'lodash/debounce'
 
 export default {
   name: 'PatientListPanel',
-  data: () => ({ searchQuery: '' }),
+  data: () => ({
+    searchQuery: '',
+    observer: null,
+  }),
   computed: {
     ...mapState(usePatientStore, {
       rawPatients: 'rawPatients',
-      pageCache: 'pageCache',
-      pagination: 'pagination',
+      allPatientIds: 'allPatientIds',
+      displayedPatients: 'displayedPatients',
+      hasMore: 'hasMore',
       patientLoading: 'loading',
       patientError: 'error',
       selectedPatient: 'selectedPatient',
       hospitalFilter: 'hospitalFilter'
     }),
 
-    // Состояние больниц с переименованием
     ...mapState(useHospitalStore, {
       hospitals: 'hospitals',
       hospitalOptions: 'hospitalOptions',
@@ -27,26 +29,8 @@ export default {
       hospitalError: 'error'
     }),
 
-    displayedPatients() {
-      const pageIds = this.pageCache?.get(this.pagination.currentPage) || []
-      return pageIds
-          .map(id => this.rawPatients?.get(id))
-          .filter(Boolean)
-          .map(transformForListPanel)
-    },
-
-    filteredPatients() {
-      if (!this.searchQuery) return this.displayedPatients
-      const q = this.searchQuery.toLowerCase()
-      return this.displayedPatients.filter(p =>
-          p.name.toLowerCase().includes(q) ||
-          (p.phone && p.phone.toLowerCase().includes(q))
-      )
-    },
-
     progressPercentage() {
-      const total = this.displayedPatients.length
-      return total ? Math.round((this.filteredPatients.length / total) * 100) : 0
+      return  0
     },
 
     selectedPatientInfo() {
@@ -67,7 +51,7 @@ export default {
   },
   methods: {
     ...mapActions(usePatientStore, [
-      'loadPatients',
+      'loadMore',
       'selectPatient',
       'searchPatients',
       'clearSearch',
@@ -76,6 +60,11 @@ export default {
     ...mapActions(useHospitalStore, [
       'loadHospitals'
     ]),
+
+    onClearSearch() {
+      this.searchQuery = '';
+      this.clearSearch();
+    },
 
     async handlePatientClick(patient) {
       try {
@@ -105,17 +94,48 @@ export default {
     onHospitalChange(event) {
       const hospitalId = event.target.value ? parseInt(event.target.value) : null
       this.setHospitalFilter(hospitalId)
-      this.loadPatients(1).catch(err => {
-        console.error('Ошибка загрузки пациентов после смены больницы:', err)
+    },
+
+    setupObserver() {
+      const listElement = this.$refs.listContainer
+      if (!listElement) return
+
+      this.observer = new IntersectionObserver((entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting && this.hasMore && !this.patientLoading) {
+          this.loadMore()
+        }
+      }, {
+        root: listElement,
+        threshold: 0.1
       })
+
+      const trigger = this.$refs.trigger
+      if (trigger) {
+        this.observer.observe(trigger)
+      }
     },
   },
   created() {
     Promise.all([
       this.loadHospitals(),
-      this.loadPatients(1)
+      this.loadMore()
     ]).catch(err => {
       console.error('Ошибка при инициализации:', err)
     })
-  }
+  },
+  mounted() {
+    this.setupObserver()
+  },
+  updated() {
+    if (this.observer) {
+      this.observer.disconnect()
+    }
+    this.setupObserver()
+  },
+  beforeUnmount() {
+    if (this.observer) {
+      this.observer.disconnect()
+    }
+  },
 }
