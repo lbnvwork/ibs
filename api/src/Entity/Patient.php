@@ -10,7 +10,9 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource]
+#[ApiResource(
+    paginationClientItemsPerPage: true,
+)]
 #[ApiFilter(SearchFilter::class, properties: [
     'lastname' => 'partial',
     'hospital' => 'exact'
