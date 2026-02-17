@@ -1,62 +1,178 @@
-<div class="patient-history" ref="patientHistoryRef">
-  <!-- Остальной код шаблона без изменений -->
-  <div class="patient-header">
-    <h1>Электронная история болезни пациента</h1>
-  </div>
-  
-  <div v-if="patient" class="patient-info">
-    <p><strong>ФИО: {{ patient.name }}</strong>, {{ patient.age }} ({{ patient.birthDate }})</p>
-    <p><strong>Проживает:</strong> {{ patient.address }}</p>
-    <p><strong>Мобильный телефон:</strong> {{ patient.phone }}</p>
-    <p><strong>Email:</strong> {{ patient.email }}</p>
-    <p><strong>Паспорт:</strong> {{ patient.passport }}</p>
-    <p><strong>Полис:</strong> {{ patient.insurance }}</p>
-    <p><strong>СНИЛС:</strong> {{ patient.snils }}</p>
-    <p><strong>ЛПУ:</strong> {{ patient.hospital }}</p>
-    <p><em>{{ patient.additionalInfo }}</em></p>
-  </div>
+<div class="patient-history">
+    <div class="patient-header">
+        <h1>Электронная история болезни пациента</h1>
+    </div>
 
-  <div class="diagnosis-section">
-    <h3>Диагностика</h3>
-    <ul>
-      <li v-if="patient">{{ patient.diagnosis }}</li>
-    </ul>
-  </div>
+    <div v-if="patient" class="patient-main-content">
+        <div class="left-column">
+            <div class="patient-info-compact">
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>ФИО:</label>
+                        <span><strong>{{ patient.name }}</strong>, {{ patient.age }} ({{ patient.birthDate }})</span>
+                    </div>
+                </div>
 
-  <div class="medical-data" ref="medicalDataContainer">
-    <h3>Медицинские данные</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Дата</th>
-          <th>МНО</th>
-          <th>Анализ №1</th>
-          <th>Анализ №2</th>
-          <th>ЧСС</th>
-          <th>АД</th>
-          <th>Принимаемая<br>доза</th>
-          <th>Назначенная<br>доза</th>
-          <th>Рекомендации</th>
-          <th>Комментарий</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(data, index) in medicalData" :key="index">
-          <td data-label="Дата">{{ data.date }}</td>
-          <td data-label="МНО">{{ data.inr }}</td>
-          <td data-label="Анализ №1">{{ data.analysis1 }}</td>
-          <td data-label="Анализ №2">{{ data.analysis2 }}</td>
-          <td data-label="ЧСС">{{ data.heartRate }}</td>
-          <td data-label="АД">{{ data.bloodPressure }}</td>
-          <td data-label="Принимаемая доза препаратов">{{ data.currentDose }}</td>
-          <td data-label="Назначенная доза препарата">{{ data.prescribedDose }}</td>
-          <td data-label="Рекомендации">{{ data.recommendations }}</td>
-          <td data-label="Комментарий">{{ data.comment }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-<div v-if="isScrollable" class="scroll-hint">
-  ← Прокрутите вправо для просмотра полной таблицы →
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>Проживание:</label>
+                        <span>{{ patient.address }}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>Телефон:</label>
+                        <span>{{ patient.phone }}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>Email:</label>
+                        <span>{{ patient.email }}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>Паспорт:</label>
+                        <span>{{ patient.passport }}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>Полис:</label>
+                        <span>{{ patient.insurance }}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>СНИЛС:</label>
+                        <span>{{ patient.snils }}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>ЛПУ:</label>
+                        <span>{{ patient.hospital }}</span>
+                    </div>
+                </div>
+
+                <div class="consent-row">
+                    <div class="consent-text">Информированное согласие на обработку данных и мониторинг</div>
+                    <div class="status-container">
+                        <span class="status-text">{{ patient.consentSigned ? 'Подписано' : 'Не подписано' }}</span>
+                        <div class="status-indicator" :class="patient.consentSigned ? 'signed' : 'not-signed'">
+                            <svg v-if="patient.consentSigned" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <svg v-else width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Диагноз</h3>
+                <div class="section-content">
+                    <p>{{ patient.diagnosis }}</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Осложнения</h3>
+                <div class="section-content">
+                    <ul>
+                        <li v-for="(condition, index) in patient.additionalConditions" :key="index">
+                            {{ condition }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <!-- Виджет рисков -->
+            <div v-if="patient.riskScores" class="section risk-scale-section">
+                <RiskScale :risk-scores="patient.riskScores" />
+            </div>
+
+            <!-- Фармакогенетика -->
+            <div v-if="patient.pharmacogenetics && patient.pharmacogenetics.length" class="section">
+                <h3>Фармакогенетика</h3>
+                <div class="section-content pharmacogenetics-content">
+                    <div
+                            v-for="(item, index) in patient.pharmacogenetics"
+                            :key="index"
+                            class="pharmacogenetics-item"
+                    >
+                        {{ item }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Мутации/Полиморфизмы -->
+            <div v-if="patient.mutations && patient.mutations.length" class="section">
+                <h3>Мутации/Полиморфизмы</h3>
+                <div class="section-content mutations-content">
+                    <div
+                            v-for="(item, index) in patient.mutations"
+                            :key="index"
+                            class="mutation-item"
+                    >
+                        {{ item }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Сообщение загрузки -->
+    <div v-else class="loading-message">
+        <p>Загрузка данных пациента...</p>
+        <p>ID пациента: {{ id }}</p>
+    </div>
+
+    <div v-if="patient" class="medical-data">
+        <h3>Медицинские данные</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>МНО</th>
+                    <th>Анализ №1</th>
+                    <th>Анализ №2</th>
+                    <th>ЧСС</th>
+                    <th>АД</th>
+                    <th>Принимаемая доза</th>
+                    <th>Назначенная доза</th>
+                    <th>Рекомендации</th>
+                    <th>Комментарий</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(data, index) in medicalData" :key="index">
+                    <td>{{ data.date }}</td>
+                    <td><strong>{{ data.inr }}</strong></td>
+                    <td>{{ data.analysis1 }}</td>
+                    <td>{{ data.analysis2 }}</td>
+                    <td>{{ data.heartRate }}</td>
+                    <td>{{ data.bloodPressure }}</td>
+                    <td>{{ data.currentDose }}</td>
+                    <td>{{ data.prescribedDose }}</td>
+                    <td class="recommendations">{{ data.recommendations }}</td>
+                    <td class="comment">{{ data.comment }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

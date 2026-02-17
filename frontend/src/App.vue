@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Sidebar from './components/Sidebar.vue'
+import Sidebar from './components/Sidebar/Sidebar.vue'
 import PatientListPanel from './components/PatientListPanel/PatientListPanel.vue'
 import MainHeader from './components/MainHeader.vue'
 
