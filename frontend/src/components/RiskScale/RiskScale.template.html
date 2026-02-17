@@ -1,0 +1,75 @@
+<div class="risk-scale-widget">
+    <div class="scales-column">
+        <!-- CHA2DS2VASc -->
+        <div class="scale-row">
+            <div class="scale-label">CHA₂DS₂VASc</div>
+            <div class="scale-content">
+                <div class="score-circle" :style="{ backgroundColor: getCha2ds2VascColor(riskScores.cha2ds2Vasc) }">
+                    {{ riskScores.cha2ds2Vasc }}
+                </div>
+                <div class="scale-bar-container">
+                    <div class="scale-bar">
+                        <div
+                                class="scale-progress"
+                                :style="{
+                  width: calculateProgress(riskScores.cha2ds2Vasc, 9),
+                  backgroundColor: getCha2ds2VascColor(riskScores.cha2ds2Vasc)
+                }"
+                        ></div>
+                    </div>
+                    <div class="scale-interpretation">
+                        {{ getCha2ds2VascInterpretation(riskScores.cha2ds2Vasc) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HAS-BLED -->
+        <div class="scale-row">
+            <div class="scale-label">HAS-BLED</div>
+            <div class="scale-content">
+                <div class="score-circle" :style="{ backgroundColor: getHasBledColor(riskScores.hasBled) }">
+                    {{ riskScores.hasBled }}
+                </div>
+                <div class="scale-bar-container">
+                    <div class="scale-bar">
+                        <div
+                                class="scale-progress"
+                                :style="{
+                  width: calculateProgress(riskScores.hasBled, 9),
+                  backgroundColor: getHasBledColor(riskScores.hasBled)
+                }"
+                        ></div>
+                    </div>
+                    <div class="scale-interpretation">
+                        {{ getHasBledInterpretation(riskScores.hasBled) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCORE -->
+        <div class="scale-row">
+            <div class="scale-label">SCORE</div>
+            <div class="scale-content">
+                <div class="score-circle" :style="{ backgroundColor: getScoreColor(riskScores.score) }">
+                    {{ riskScores.score }}
+                </div>
+                <div class="scale-bar-container">
+                    <div class="scale-bar">
+                        <div
+                                class="scale-progress"
+                                :style="{
+                  width: calculateProgress(riskScores.score, 8),
+                  backgroundColor: getScoreColor(riskScores.score)
+                }"
+                        ></div>
+                    </div>
+                    <div class="scale-interpretation">
+                        {{ getScoreInterpretation(riskScores.score) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
