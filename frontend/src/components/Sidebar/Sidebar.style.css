@@ -1,0 +1,103 @@
+.sidebar {
+    width: 60px;
+    background: #5291e9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 7px 0;
+    user-select: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.sidebar button {
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 6px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.sidebar button:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    transition: all 0.2s ease;
+}
+
+.sidebar button:hover .icon {
+    transform: scale(1.1);
+}
+
+.sidebar button::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    pointer-events: none;
+}
+
+.sidebar button:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 5px 0;
+    width: 80%;
+}
+
+.disabled-button {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.disabled-button:hover {
+    background: none !important;
+}
+
+.disabled-button:hover::after {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 50px;
+    }
+
+    .sidebar button {
+        width: 35px;
+        height: 35px;
+    }
+
+    .icon {
+        width: 20px;
+        height: 20px;
+    }
+}
