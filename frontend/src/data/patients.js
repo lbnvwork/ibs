@@ -13,13 +13,26 @@ export const patients = [
     snils: "20969171795",
     hospital: "Курская больница №1 им. Н.С. Короткова",
     diagnosis: "ФП постоянная форма. ОНМК 2017 г.",
-    additionalInfo: "Информированное согласие на обработку данных и мониторинг",
+    consentSigned: true,
     additionalConditions: [
       "Язвенная болезнь 12ПК",
       "Мочекаменная болезнь",
       "Целевой диапазон МНО: 2.0-3.0"
     ],
     inrRange: "2.0-3.0",
+      riskScores: {
+      cha2ds2Vasc: 4,
+      hasBled: 1,
+      score: 2
+    },
+    pharmacogenetics: [
+      "VKORC1 GG - нормальный метаболизм варфарина",
+      "CYP2C9 *1/*1 - нормальная активность"
+    ],
+    mutations: [
+      "MTHFR (677) CC - нормальный",
+      "Faktor V Leiden - не выявлено"
+    ],
     medicalHistory: [
       {
         date: "03.10.2023",
@@ -361,12 +374,25 @@ export const patients = [
     snils: "173-83-46-3",
     hospital: "Поликлиника № 4",
     diagnosis: "Фибрилляция предсердий",
-    additionalInfo: "Информированное согласие на обработку данных и мониторинг",
+    consentSigned: false,
     additionalConditions: [
       "Артериальная гипертензия",
       "Целевой диапазон МНО: 2.0-3.0"
     ],
     inrRange: "2.0-3.0",
+      riskScores: {
+      cha2ds2Vasc: 2,
+      hasBled: 3,
+      score: 5
+    },
+    pharmacogenetics: [
+      "VKORC1 AG - умеренная чувствительность",
+      "CYP2C9 *1/*3 - сниженная активность"
+    ],
+    mutations: [
+      "MTHFR (677) CT - гетерозигота",
+      "Prothrombin G20210A - не выявлено"
+    ],
     medicalHistory: [
       {
         date: "30.03.2025",
@@ -585,6 +611,222 @@ export const patients = [
         comment: "Автоматическое назначение"
       }
     ]
+  },
+  {
+    id: 3,
+    name: "Ефремова Светлана Николаевна",
+    age: "34 лет",
+    birthDate: "02.02.1991",
+    address: "г. Курск, ул. Еремина, д. 17/2, кв. 3",
+    phone: "+7 (988) 756-31-99",
+    email: "stepanos@mail.ru",
+    passport: "4527 538834",
+    insurance: "461320967509",
+    snils: "172-82-45-2",
+    hospital: "Женская консультация № 2",
+    diagnosis: "Протезирование аортального клапана механическим протезом от мая 2023 г.",
+    consentSigned: true,
+    additionalConditions: [
+      "Механический протез аортального клапана",
+      "Целевой диапазон МНО: 2.5-3.5"
+    ],
+    inrRange: "2.5-3.5",
+    riskScores: {
+      cha2ds2Vasc: 1,
+      hasBled: 1,
+      score: 1
+    },
+    pharmacogenetics: [
+      "VKORC1 GG - Чувствительность к варфарину",
+      "Не выявлено Чувствительность к ПОАК",
+      "ITGB3 - полиморфизм выявлен"
+    ],
+    mutations: [
+      "MTHFR (677) AT; РАН 5G4G",
+      "MTRR AG"
+    ],
+    medicalHistory: [
+      {
+        date: "22.05.2023",
+        inr: "1.15",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "78",
+        bloodPressure: "120/80",
+        currentDose: "0",
+        prescribedDose: "5.0",
+        recommendations: "Начало терапии варфарином после протезирования клапана. Принимать 5 мг ежедневно. Контроль МНО 25.05.2023",
+        comment: "Кардиохирург Петров А.В."
+      },
+      {
+        date: "25.05.2023",
+        inr: "1.85",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "76",
+        bloodPressure: "118/78",
+        currentDose: "5.0",
+        prescribedDose: "6.0",
+        recommendations: "Увеличить дозу варфарина до 6 мг ежедневно. Контроль МНО 29.05.2023",
+        comment: "Кардиохирург Петров А.В."
+      },
+      {
+        date: "29.05.2023",
+        inr: "2.45",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "74",
+        bloodPressure: "116/76",
+        currentDose: "6.0",
+        prescribedDose: "5.5",
+        recommendations: "Снизить дозу варфарина до 5.5 мг ежедневно. Контроль МНО 02.06.2023",
+        comment: "Кардиолог Сидорова Е.Л."
+      },
+      {
+        date: "02.06.2023",
+        inr: "2.95",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "72",
+        bloodPressure: "115/75",
+        currentDose: "5.5",
+        prescribedDose: "5.0",
+        recommendations: "Снизить дозу варфарина до 5 мг ежедневно. Целевой диапазон достигнут. Контроль МНО 09.06.2023",
+        comment: "Кардиолог Сидорова Е.Л."
+      },
+      {
+        date: "09.06.2023",
+        inr: "3.15",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "70",
+        bloodPressure: "114/74",
+        currentDose: "5.0",
+        prescribedDose: "4.5",
+        recommendations: "Снизить дозу варфарина до 4.5 мг ежедневно. Контроль МНО 16.06.2023",
+        comment: "Кардиолог Сидорова Е.Л."
+      },
+      {
+        date: "16.06.2023",
+        inr: "2.85",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "68",
+        bloodPressure: "112/72",
+        currentDose: "4.5",
+        prescribedDose: "4.5",
+        recommendations: "Дозировку варфарина оставить прежней. МНО в целевом диапазоне. Контроль через 2 недели",
+        comment: "Автоматическое назначение"
+      },
+      {
+        date: "30.06.2023",
+        inr: "3.45",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "66",
+        bloodPressure: "110/70",
+        currentDose: "4.5",
+        prescribedDose: "4.0",
+        recommendations: "Снизить дозу варфарина до 4 мг ежедневно. Контроль МНО 07.07.2023",
+        comment: "Кардиолог Сидорова Е.Л."
+      },
+      {
+        date: "07.07.2023",
+        inr: "2.65",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "65",
+        bloodPressure: "108/68",
+        currentDose: "4.0",
+        prescribedDose: "4.0",
+        recommendations: "Дозировку варфарина оставить прежней. МНО в целевом диапазоне. Контроль через 4 недели",
+        comment: "Автоматическое назначение"
+      },
+      {
+        date: "04.08.2023",
+        inr: "2.55",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "64",
+        bloodPressure: "106/66",
+        currentDose: "4.0",
+        prescribedDose: "4.0",
+        recommendations: "Дозировку варфарина оставить прежней. Стабильное состояние. Контроль через 6 недель",
+        comment: "Автоматическое назначение"
+      },
+      {
+        date: "15.09.2023",
+        inr: "2.35",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "63",
+        bloodPressure: "104/64",
+        currentDose: "4.0",
+        prescribedDose: "4.25",
+        recommendations: "Увеличить дозу варфарина до 4.25 мг ежедневно. Контроль МНО 22.09.2023",
+        comment: "Кардиолог Сидорова Е.Л."
+      },
+      {
+        date: "22.09.2023",
+        inr: "2.95",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "62",
+        bloodPressure: "102/62",
+        currentDose: "4.25",
+        prescribedDose: "4.25",
+        recommendations: "Дозировку варфарина оставить прежней. МНО в целевом диапазоне. Контроль через 8 недель",
+        comment: "Автоматическое назначение"
+      },
+      {
+        date: "17.11.2023",
+        inr: "2.85",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "61",
+        bloodPressure: "100/60",
+        currentDose: "4.25",
+        prescribedDose: "4.25",
+        recommendations: "Дозировку варфарина оставить прежней. Стабильное состояние. Контроль через 12 недель",
+        comment: "Автоматическое назначение"
+      },
+      {
+        date: "09.02.2024",
+        inr: "2.75",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "60",
+        bloodPressure: "98/58",
+        currentDose: "4.25",
+        prescribedDose: "4.25",
+        recommendations: "Дозировку варфарина оставить прежней. Продолжать наблюдение. Следующий контроль 03.05.2024",
+        comment: "Кардиолог Сидорова Е.Л."
+      },
+      {
+        date: "03.05.2024",
+        inr: "2.65",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "59",
+        bloodPressure: "96/56",
+        currentDose: "4.25",
+        prescribedDose: "4.25",
+        recommendations: "Дозировку варфарина оставить прежней. Стабильное течение. Контроль через 6 месяцев",
+        comment: "Автоматическое назначение"
+      },
+      {
+        date: "02.11.2024",
+        inr: "2.55",
+        analysis1: "-",
+        analysis2: "-",
+        heartRate: "58",
+        bloodPressure: "94/54",
+        currentDose: "4.25",
+        prescribedDose: "4.25",
+        recommendations: "Дозировку варфарина оставить прежней. Состояние стабильное. Продолжать терапию",
+        comment: "Автоматическое назначение"
+      }
+    ]
   }
 ];
 
@@ -611,6 +853,17 @@ export const monitoringPatients = [
     comment: "Последний контроль: 16.09.2025",
     highlightRed: false,
     highlightBlue: false
+  },
+  {
+    id: 3,
+    name: "Ефремова Светлана Николаевна",
+    age: "34 лет",
+    diagnosis: "Протезирование аортального клапана",
+    smsStatus: "📱✓",
+    indicators: '<span style="color:#2a5c98;">MHO - 2,8</span>, Целевой диапазон: 2.5-3.5',
+    comment: "Последний контроль: 15.12.2023",
+    highlightRed: false,
+    highlightBlue: false
   }
 ];
 
@@ -633,5 +886,14 @@ export const panelPatients = [
     status: "активный",
     inr: "2.3",
     targetRange: "2.0-3.0"
+  },
+  {
+    id: 3,
+    name: "Ефремова Светлана Николаевна",
+    info: "34 лет, Протезирование аортального клапана, МНО: 2.8 (целевой диапазон 2.5-3.5)",
+    diagnosis: "Протезирование аортального клапана",
+    status: "активный",
+    inr: "2.8",
+    targetRange: "2.5-3.5"
   }
 ];

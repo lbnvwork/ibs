@@ -1,0 +1,22 @@
+<div class="sidebar" aria-label="Navigation sidebar">
+    <button
+            :title="backButtonTitle"
+            :class="{ 'disabled-button': !isPatientHistory }"
+            @click="handleBackButton"
+    >
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+    </button>
+
+    <template v-for="(item, index) in sidebarItems" :key="index">
+        <button
+                v-if="item.type === 'button'"
+                :title="item.title"
+                @click="handleButtonClick(item.title)"
+        >
+            <svg class="icon" viewBox="0 0 24 24" v-html="item.icon"></svg>
+        </button>
+        <div v-else-if="item.type === 'divider'" class="divider"></div>
+    </template>
+</div>

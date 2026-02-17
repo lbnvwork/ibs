@@ -11,7 +11,6 @@ body {
 .app {
   display: flex;
   height: 100vh;
-  /* Разрешаем прокрутку */
   overflow: hidden;
 }
 
@@ -98,7 +97,6 @@ body {
   background: #ffffff;
   border: 1px solid #ddd;
   position: relative;
-  /* Разрешаем прокрутку */
   overflow: hidden;
 }
 
@@ -132,19 +130,11 @@ header .user-icon {
 }
 
 /* Контент */
-/* .content {
-  padding: 20px;
-  overflow-y: auto;
-  flex-grow: 1;
-  height: calc(100vh - 60px);
-} */
-
 .content {
   padding: 20px;
   overflow-y: auto;
   flex-grow: 1;
   height: calc(100vh - 60px);
-  /* Важно для flex-контейнеров */
   min-width: 0;
 }
 
@@ -191,4 +181,11 @@ html, body, #app {
   padding: 8px;
   background: #f5f5f5;
   border-radius: 4px;
+}
+
+.router-container {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  min-height: 0;
 }
