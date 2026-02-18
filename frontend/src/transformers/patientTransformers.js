@@ -4,24 +4,23 @@ import { calculateAge, formatPhone } from '@/utils/formatters'
  * Для боковой панели (PatientListPanel)
  */
 export function transformForListPanel(patient) {
-    if (!patient) return null
+    if (!patient) return null;
 
-    const { lastname, firstname, secondName } = patient
+    const { lastname, firstname, secondName } = patient;
 
-    // Формируем фамилию + инициалы
-    let name = lastname || ''
+    let name = lastname || '';
     if (firstname) {
-        name += ' ' + firstname.charAt(0).toUpperCase() + '.'
+        name += ' ' + firstname.charAt(0).toUpperCase() + '.';
     }
     if (secondName) {
-        name += ' ' + secondName.charAt(0).toUpperCase() + '.'
+        name += ' ' + secondName.charAt(0).toUpperCase() + '.';
     }
-    if (!name.trim()) name = 'Без имени'
+    if (!name.trim()) name = 'Без имени';
 
     return {
         id: patient.id,
         name: name,
-        status: patient.status || 'активный' // если нужно
+        status: patient.status,
     }
 }
 
