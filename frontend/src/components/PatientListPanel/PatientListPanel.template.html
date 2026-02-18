@@ -40,7 +40,16 @@
             >
                 <span class="patient-icon">👤</span>
                 <span class="patient-name">{{ patient.name }}</span>
-                <span class="patient-status" :class="patient.status" v-if="patient.status">{{ patient.status }}</span>
+                <span v-if="patient.status"
+                      class="patient-status"
+                      :class="{
+                          'status-active': patient.status === 'активный',
+                          'status-inactive': patient.status === 'неактивный'
+                      }"
+                      :title="patient.status === 'активный' ? 'Активный' : 'Неактивный'"
+                      role="status"
+                      :aria-label="patient.status === 'активный' ? 'Активный' : 'Неактивный'">
+                </span>
             </div>
 
             <div ref="trigger" class="trigger"></div>
