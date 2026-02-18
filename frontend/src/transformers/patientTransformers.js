@@ -21,7 +21,7 @@ export function transformForListPanel(patient) {
     return {
         id: patient.id,
         name: name,
-        status: patient.status || 'активный' // если нужно
+        status: patient.status || 'активный'
     }
 }
 
