@@ -2,10 +2,12 @@ import { defineStore } from 'pinia'
 import { patientApi } from '@/api/patients'
 import { PATIENTS_PER_PAGE } from '@/utils/constants'
 import { transformForListPanel } from '@/transformers/patientTransformers'
+import apiClient from '@/api/client'
 
 export const usePatientStore = defineStore('patient', {
     state: () => ({
         rawPatients: new Map(),
+        statuses: {},
         selectedPatient: null,
         loading: false,
         error: null,
@@ -20,9 +22,14 @@ export const usePatientStore = defineStore('patient', {
     getters: {
         displayedPatients: (state) => {
             return state.allPatientIds
-                .map(id => state.rawPatients.get(id))
-                .filter(Boolean)
-                .map(patient => transformForListPanel(patient))
+                .map(id => {
+                    const patient = state.rawPatients.get(id);
+                    if (!patient) return null;
+                    const status = state.statuses[id];
+
+                    return transformForListPanel({ ...patient, status });
+                })
+                .filter(Boolean);
         },
 
         totalLoaded: (state) => state.allPatientIds.length,
@@ -37,27 +44,28 @@ export const usePatientStore = defineStore('patient', {
 
         setHospitalFilter(hospitalId) {
             this.hospitalFilter = hospitalId;
-            this.resetList()
-            this.loadMore()
+            this.resetList();
+            this.loadMore();
         },
 
         resetList() {
-            this.allPatientIds = []
-            this.rawPatients.clear()
-            this.nextPage = 1
-            this.hasMore = true
-            this.selectedPatient = null
+            this.allPatientIds = [];
+            this.rawPatients.clear();
+            this.statuses = {};
+            this.nextPage = 1;
+            this.hasMore = true;
+            this.selectedPatient = null;
         },
 
         async selectPatient(id) {
             if (this.rawPatients.has(id)) {
-                this.selectedPatient = this.rawPatients.get(id)
-                return
+                this.selectedPatient = this.rawPatients.get(id);
+                return;
             }
             try {
-                const patient = await patientApi.getOne(id)
-                this.rawPatients.set(patient.id, patient)
-                this.selectedPatient = patient
+                const patient = await patientApi.getOne(id);
+                this.rawPatients.set(patient.id, patient);
+                this.selectedPatient = patient;
             } catch (err) {
                 console.error(`[PatientStore] Ошибка загрузки пациента ${id}:`, err)
                 this.error = `Не удалось загрузить данные пациента`
@@ -65,7 +73,7 @@ export const usePatientStore = defineStore('patient', {
         },
 
         async loadMore() {
-            if (this.loading || !this.hasMore) return
+            if (this.loading || !this.hasMore) return;
 
             this.loading = true;
             this.error = null;
@@ -73,55 +81,76 @@ export const usePatientStore = defineStore('patient', {
             try {
                 const filters = {}
                 if (this.hospitalFilter) {
-                    filters.hospital = `/api/hospitals/${this.hospitalFilter}`
+                    filters.hospital = `/api/hospitals/${this.hospitalFilter}`;
                 }
                 if (this.searchQuery) {
-                    filters.lastname = this.searchQuery
+                    filters.lastname = this.searchQuery;
                 }
                 if (this.drugGroupFilter) {
                     filters.drugGroup = this.drugGroupFilter;
                 }
                 const order = { lastname: 'asc' }
 
-                const result = await patientApi.getAll(this.nextPage, PATIENTS_PER_PAGE, filters, order)
+                const result = await patientApi.getAll(this.nextPage, PATIENTS_PER_PAGE, filters, order);
 
                 if (result.items.length === 0) {
-                    this.hasMore = false
-                    return
+                    this.hasMore = false;
+                    return;
                 }
 
-                const newIds = []
+                const newIds = [];
                 result.items.forEach(patient => {
-                    this.rawPatients.set(patient.id, patient)
-                    newIds.push(patient.id)
+                    this.rawPatients.set(patient.id, patient);
+                    newIds.push(patient.id);
                 })
-                this.allPatientIds.push(...newIds)
-
-                this.nextPage++
+                this.allPatientIds.push(...newIds);
+                this.nextPage++;
 
                 if (result.items.length < PATIENTS_PER_PAGE) {
-                    this.hasMore = false
+                    this.hasMore = false;
                 }
 
+                this.loadStatuses(newIds).catch(err => {
+                    console.error('Ошибка загрузки статусов:', err);
+                });
+
                 if (this.allPatientIds.length > 0 && !this.selectedPatient) {
-                    this.selectedPatient = this.rawPatients.get(this.allPatientIds[0])
+                    this.selectedPatient = this.rawPatients.get(this.allPatientIds[0]);
                 }
             } catch (err) {
-                this.error = err.message || 'Ошибка загрузки пациентов'
-                console.error('[PatientStore]', err)
+                this.error = err.message || 'Ошибка загрузки пациентов';
+                console.error('[PatientStore]', err);
                 // await this._loadMockPatients()
             } finally {
-                this.loading = false
+                this.loading = false;
+            }
+        },
+
+        async loadStatuses(patientIds) {
+            if (!patientIds.length) return;
+
+            const idsToLoad = patientIds.filter(id => !this.statuses[id]);
+            if (!idsToLoad.length) return;
+
+            try {
+                const response = await apiClient.post('/patients/status', { ids: idsToLoad });
+                let statusArray = response.data?.member;
+
+                statusArray.forEach(item => {
+                    this.statuses[item.id] = item.status;
+                });
+            } catch (err) {
+                console.error('Failed to load statuses', err);
             }
         },
 
         async searchPatients(query) {
             if (!query.trim()) {
-                this.searchQuery = ''
-                this.resetList()
-                this.loadMore()
+                this.searchQuery = '';
+                this.resetList();
+                this.loadMore();
 
-                return
+                return;
             }
             this.searchQuery = query
             this.resetList()
@@ -129,14 +158,14 @@ export const usePatientStore = defineStore('patient', {
         },
 
         clearSearch() {
-            this.searchQuery = ''
-            this.resetList()
-            this.loadMore()
+            this.searchQuery = '';
+            this.resetList();
+            this.loadMore();
         },
 
         async _loadMockPatients() {
             try {
-                const { panelPatients } = await import('@/data/patients')
+                const { panelPatients } = await import('@/data/patients');
                 const mockItems = panelPatients.map((p, i) => ({
                     id: p.id,
                     lastname: p.name.split(' ')[0] || '',
@@ -147,21 +176,21 @@ export const usePatientStore = defineStore('patient', {
                     address: 'г. Курск, ул. Ломакина, д. 5, кв. 7',
                     comment: '',
                     hospital: '/api/hospitals/1'
-                }))
+                }));
 
-                this.rawPatients.clear()
-                this.allPatientIds = []
+                this.rawPatients.clear();
+                this.allPatientIds = [];
                 mockItems.forEach(p => {
                     this.rawPatients.set(p.id, p)
                     this.allPatientIds.push(p.id)
-                })
-                this.hasMore = false
-                this.nextPage = 1
+                });
+                this.hasMore = false;
+                this.nextPage = 1;
                 if (this.allPatientIds.length > 0 && !this.selectedPatient) {
-                    this.selectedPatient = this.rawPatients.get(this.allPatientIds[0])
+                    this.selectedPatient = this.rawPatients.get(this.allPatientIds[0]);
                 }
             } catch (e) {
-                console.error('Не удалось загрузить моки', e)
+                console.error('Не удалось загрузить моки', e);
             }
         }
     }
