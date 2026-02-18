@@ -26,6 +26,10 @@ class Drug
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $genitive = null;
 
+    #[ORM\ManyToOne(targetEntity: DrugGroup::class)]
+    #[ORM\JoinColumn(name: 'group_id', referencedColumnName: 'id')]
+    private ?DrugGroup $group = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,5 +66,15 @@ class Drug
     {
         $this->genitive = $genitive;
         return $this;
+    }
+
+    public function getGroup(): ?DrugGroup
+    {
+        return $this->group;
+    }
+
+    public function setGroup(?DrugGroup $group): void
+    {
+        $this->group = $group;
     }
 }

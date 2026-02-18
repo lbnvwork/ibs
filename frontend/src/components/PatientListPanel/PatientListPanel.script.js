@@ -3,6 +3,7 @@ import { usePatientStore } from '@/stores/patientStore'
 import { useHospitalStore } from '@/stores/hospitalStore'
 import { calculateAge } from '@/utils/formatters'
 import debounce from 'lodash/debounce'
+import { useDrugGroupStore } from '@/stores/drugGroupStore';
 
 export default {
   name: 'PatientListPanel',
@@ -11,6 +12,13 @@ export default {
     observer: null,
   }),
   computed: {
+    ...mapState(useDrugGroupStore, {
+      drugGroups: 'drugGroups',
+      drugGroupOptions: 'drugGroupOptions',
+      drugGroupLoading: 'loading',
+      drugGroupError: 'error'
+    }),
+
     ...mapState(usePatientStore, {
       rawPatients: 'rawPatients',
       allPatientIds: 'allPatientIds',
@@ -19,7 +27,8 @@ export default {
       patientLoading: 'loading',
       patientError: 'error',
       selectedPatient: 'selectedPatient',
-      hospitalFilter: 'hospitalFilter'
+      hospitalFilter: 'hospitalFilter',
+      drugGroupFilter: 'drugGroupFilter'
     }),
 
     ...mapState(useHospitalStore, {
@@ -55,15 +64,24 @@ export default {
       'selectPatient',
       'searchPatients',
       'clearSearch',
-      'setHospitalFilter'
+      'setHospitalFilter',
+      'setDrugGroupFilter'
     ]),
     ...mapActions(useHospitalStore, [
       'loadHospitals'
+    ]),
+    ...mapActions(useDrugGroupStore, [
+        'loadDrugGroups'
     ]),
 
     onClearSearch() {
       this.searchQuery = '';
       this.clearSearch();
+    },
+
+    onDrugGroupChange(event) {
+      const groupId = event.target.value ? parseInt(event.target.value) : null;
+      this.setDrugGroupFilter(groupId);
     },
 
     async handlePatientClick(patient) {
@@ -119,6 +137,7 @@ export default {
   created() {
     Promise.all([
       this.loadHospitals(),
+      this.loadDrugGroups(),
       this.loadMore()
     ]).catch(err => {
       console.error('Ошибка при инициализации:', err)

@@ -14,6 +14,7 @@ export const usePatientStore = defineStore('patient', {
         allPatientIds: [],
         hasMore: true,
         nextPage: 1,
+        drugGroupFilter: null,
     }),
 
     getters: {
@@ -28,6 +29,12 @@ export const usePatientStore = defineStore('patient', {
     },
 
     actions: {
+        setDrugGroupFilter(drugGroupId) {
+            this.drugGroupFilter = drugGroupId;
+            this.resetList();
+            this.loadMore();
+        },
+
         setHospitalFilter(hospitalId) {
             this.hospitalFilter = hospitalId;
             this.resetList()
@@ -70,6 +77,9 @@ export const usePatientStore = defineStore('patient', {
                 }
                 if (this.searchQuery) {
                     filters.lastname = this.searchQuery
+                }
+                if (this.drugGroupFilter) {
+                    filters.drugGroup = this.drugGroupFilter;
                 }
                 const order = { lastname: 'asc' }
 
