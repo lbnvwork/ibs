@@ -11,7 +11,7 @@ export const useDrugGroupStore = defineStore('drugGroup', {
     getters: {
         drugGroupOptions: (state) => {
             return [
-                { value: null, label: 'Все категории' },
+                { value: '', label: 'Все категории' },
                 ...state.drugGroups.map(g => ({ value: g.id, label: g.fullName || g.name }))
             ];
         }

@@ -12,7 +12,7 @@ export const useHospitalStore = defineStore('hospital', {
 
     getters: {
         hospitalOptions: (state) => {
-            const options = [{ value: null, label: 'Все лечебные учреждения' }]
+            const options = [{ value: '', label: 'Все лечебные учреждения' }]
             state.hospitals.forEach(h => {
                 options.push({ value: h.id, label: h.name })
             })
