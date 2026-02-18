@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
     paginationClientItemsPerPage: true,
 )]
 #[ApiFilter(SearchFilter::class, properties: [
-    'lastname' => 'partial',
+    'lastname' => 'ipartial',
     'hospital' => 'exact'
 ])]
 #[ApiFilter(OrderFilter::class, properties: ['lastname'])]
