@@ -16,7 +16,7 @@ export default {
       drugGroups: 'drugGroups',
       drugGroupOptions: 'drugGroupOptions',
       drugGroupLoading: 'loading',
-      drugGroupError: 'error'
+      drugGroupError: 'error',
     }),
 
     ...mapState(usePatientStore, {
@@ -28,30 +28,30 @@ export default {
       patientError: 'error',
       selectedPatient: 'selectedPatient',
       hospitalFilter: 'hospitalFilter',
-      drugGroupFilter: 'drugGroupFilter'
+      drugGroupFilter: 'drugGroupFilter',
     }),
 
     ...mapState(useHospitalStore, {
       hospitals: 'hospitals',
       hospitalOptions: 'hospitalOptions',
       hospitalLoading: 'loading',
-      hospitalError: 'error'
+      hospitalError: 'error',
     }),
 
     progressPercentage() {
-      return  0
+      return  0;
     },
 
     selectedPatientInfo() {
       if (!this.selectedPatient) {
         return { name: '', info: 'Выберите пациента' }
       }
-      const patient = this.selectedPatient
+      const patient = this.selectedPatient;
       const fullName = [patient.lastname, patient.firstname, patient.secondName]
-          .filter(Boolean).join(' ').trim() || 'Без имени'
-      const age = calculateAge(patient.birthday)
-      const ageText = age ? `${age} лет` : 'Возраст не указан'
-      const phone = patient.smsPhone || 'телефон не указан'
+          .filter(Boolean).join(' ').trim() || 'Без имени';
+      const age = calculateAge(patient.birthday);
+      const ageText = age ? `${age} лет` : 'Возраст не указан';
+      const phone = patient.smsPhone || 'телефон не указан';
       return {
         name: fullName,
         info: `${ageText}, тел: ${phone}`
@@ -65,13 +65,13 @@ export default {
       'searchPatients',
       'clearSearch',
       'setHospitalFilter',
-      'setDrugGroupFilter'
+      'setDrugGroupFilter',
     ]),
     ...mapActions(useHospitalStore, [
-      'loadHospitals'
+      'loadHospitals',
     ]),
     ...mapActions(useDrugGroupStore, [
-        'loadDrugGroups'
+        'loadDrugGroups',
     ]),
 
     onClearSearch() {
@@ -86,51 +86,51 @@ export default {
 
     async handlePatientClick(patient) {
       try {
-        await this.selectPatient(patient.id)
-        this.$router.push(`/patient/${patient.id}`)
+        await this.selectPatient(patient.id);
+        this.$router.push(`/patient/${patient.id}`);
       } catch (error) {
-        console.error('Ошибка при выборе пациента:', error)
+        console.error('Ошибка при выборе пациента:', error);
       }
     },
 
     handlePatientHover: debounce(function(patient) {
       this.selectPatient(patient.id).catch(err => {
-        console.error('Ошибка при наведении:', err)
+        console.error('Ошибка при наведении:', err);
       })
     }, 100),
 
     onSearchInput: debounce(function() {
       if (this.searchQuery.length >= 2) {
         this.searchPatients(this.searchQuery).catch(err => {
-          console.error('Ошибка поиска:', err)
+          console.error('Ошибка поиска:', err);
         })
       } else if (this.searchQuery.length === 0) {
-        this.clearSearch()
+        this.clearSearch();
       }
     }, 300),
 
     onHospitalChange(event) {
-      const hospitalId = event.target.value ? parseInt(event.target.value) : null
-      this.setHospitalFilter(hospitalId)
+      const hospitalId = event.target.value ? parseInt(event.target.value) : null;
+      this.setHospitalFilter(hospitalId);
     },
 
     setupObserver() {
-      const listElement = this.$refs.listContainer
-      if (!listElement) return
+      const listElement = this.$refs.listContainer;
+      if (!listElement) return;
 
       this.observer = new IntersectionObserver((entries) => {
-        const entry = entries[0]
+        const entry = entries[0];
         if (entry.isIntersecting && this.hasMore && !this.patientLoading) {
-          this.loadMore()
+          this.loadMore();
         }
       }, {
         root: listElement,
-        threshold: 0.1
+        threshold: 0.1,
       })
 
-      const trigger = this.$refs.trigger
+      const trigger = this.$refs.trigger;
       if (trigger) {
-        this.observer.observe(trigger)
+        this.observer.observe(trigger);
       }
     },
   },
@@ -140,21 +140,21 @@ export default {
       this.loadDrugGroups(),
       this.loadMore()
     ]).catch(err => {
-      console.error('Ошибка при инициализации:', err)
+      console.error('Ошибка при инициализации:', err);
     })
   },
   mounted() {
-    this.setupObserver()
+    this.setupObserver();
   },
   updated() {
     if (this.observer) {
-      this.observer.disconnect()
+      this.observer.disconnect();
     }
-    this.setupObserver()
+    this.setupObserver();
   },
   beforeUnmount() {
     if (this.observer) {
-      this.observer.disconnect()
+      this.observer.disconnect();
     }
   },
 }
