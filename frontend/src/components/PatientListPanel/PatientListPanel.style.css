@@ -213,6 +213,13 @@ input[type="search"]::-webkit-search-cancel-button {
   color: #333;
 }
 
+.no-patients {
+  text-align: center;
+  padding: 50px;
+  font-size: 17px;
+  color: #666;
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 1024px) {
   .left-panel {
