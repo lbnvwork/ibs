@@ -5,32 +5,71 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['user:read']],
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['user:read']],
+            security: "is_granted('ROLE_ADMIN') or object == user"
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['user:write']],
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['user:write']],
+            security: "is_granted('ROLE_ADMIN') or object == user"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+    ]
+)]
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $login = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $password = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $userName = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $roles = null;
+    #[ORM\Column(type: 'json', nullable: false, options: ['default' => '[]'])]
+    #[Groups(['user:read'])]
+    private array $roles = [];
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
+
+    #[ORM\ManyToOne(targetEntity: MedicalPersonnel::class)]
+    #[ORM\JoinColumn(name: 'medical_personnel_id', referencedColumnName: 'id', nullable: true)]
+    #[Groups(['user:read'])]
+    private ?MedicalPersonnel $medicalPersonnel = null;
 
     public function getId(): ?int
     {
@@ -70,12 +109,16 @@ class User
         return $this;
     }
 
-    public function getRoles(): ?int
+    public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        if (!in_array('ROLE_USER', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
+        return array_unique($roles);
     }
 
-    public function setRoles(?int $roles): self
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
         return $this;
@@ -90,5 +133,32 @@ class User
     {
         $this->comment = $comment;
         return $this;
+    }
+
+    public function getMedicalPersonnel(): ?MedicalPersonnel
+    {
+        return $this->medicalPersonnel;
+    }
+
+    public function setMedicalPersonnel(?MedicalPersonnel $medicalPersonnel): self
+    {
+        $this->medicalPersonnel = $medicalPersonnel;
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->login;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // Ничего не делаем, можно очистить временные данные
     }
 }
