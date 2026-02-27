@@ -3,13 +3,15 @@ import { usePatientStore } from '@/stores/patientStore'
 import { useHospitalStore } from '@/stores/hospitalStore'
 import { calculateAge } from '@/utils/formatters'
 import debounce from 'lodash/debounce'
-import { useDrugGroupStore } from '@/stores/drugGroupStore';
+import { useDrugGroupStore } from '@/stores/drugGroupStore'
+import { useAuthStore } from '@/stores/authStore'
 
 export default {
   name: 'PatientListPanel',
   data: () => ({
     searchQuery: '',
     observer: null,
+    authStore: null,
   }),
   computed: {
     ...mapState(useDrugGroupStore, {
@@ -38,15 +40,23 @@ export default {
       hospitalError: 'error',
     }),
 
+    isLoginPage() {
+      return this.$route?.meta?.isLoginPage === true;
+    },
+
+    isAuthenticated() {
+      return this.authStore?.isAuthenticated || false;
+    },
+
     progressPercentage() {
-      return  0;
+      return 0
     },
 
     selectedPatientInfo() {
       if (!this.selectedPatient) {
-        return { name: '', info: 'Выберите пациента' }
+        return { name: '', info: 'Выберите пациента' };
       }
-      const patient = this.selectedPatient;
+      const patient = this.selectedPatient
       const fullName = [patient.lastname, patient.firstname, patient.secondName]
           .filter(Boolean).join(' ').trim() || 'Без имени';
       const age = calculateAge(patient.birthday);
@@ -71,8 +81,20 @@ export default {
       'loadHospitals',
     ]),
     ...mapActions(useDrugGroupStore, [
-        'loadDrugGroups',
+      'loadDrugGroups',
     ]),
+
+    async loadInitialData() {
+      try {
+        await Promise.all([
+          this.loadHospitals(),
+          this.loadDrugGroups(),
+          this.loadMore(),
+        ])
+      } catch (err) {
+        console.error('Ошибка при инициализации:', err);
+      }
+    },
 
     onClearSearch() {
       this.searchQuery = '';
@@ -115,18 +137,23 @@ export default {
     },
 
     setupObserver() {
+      if (this.isLoginPage || !this.isAuthenticated) {
+        return;
+      }
+
       const listElement = this.$refs.listContainer;
       if (!listElement) return;
 
       this.observer = new IntersectionObserver((entries) => {
         const entry = entries[0];
+        if (this.isLoginPage) return;
         if (entry.isIntersecting && this.hasMore && !this.patientLoading) {
           this.loadMore();
         }
       }, {
         root: listElement,
         threshold: 0.1,
-      })
+      });
 
       const trigger = this.$refs.trigger;
       if (trigger) {
@@ -135,26 +162,30 @@ export default {
     },
   },
   created() {
-    Promise.all([
-      this.loadHospitals(),
-      this.loadDrugGroups(),
-      this.loadMore()
-    ]).catch(err => {
-      console.error('Ошибка при инициализации:', err);
-    })
+    this.authStore = useAuthStore();
+    if (!this.isLoginPage && this.isAuthenticated) {
+      this.loadInitialData();
+    }
   },
   mounted() {
-    this.setupObserver();
+    if (!this.isLoginPage && this.isAuthenticated) {
+      this.setupObserver();
+    }
   },
   updated() {
     if (this.observer) {
       this.observer.disconnect();
+      this.observer = null;
+      if (!this.isLoginPage && this.isAuthenticated) {
+        this.setupObserver();
+      }
     }
     this.setupObserver();
   },
   beforeUnmount() {
     if (this.observer) {
-      this.observer.disconnect();
+        this.observer.disconnect();
+        this.observer = null;
     }
   },
 }
