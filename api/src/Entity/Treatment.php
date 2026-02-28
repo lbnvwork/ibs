@@ -9,7 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'treatments')]
+#[ORM\Table(name: 'treatments', indexes: [
+    new ORM\Index(name: 'idx_treatment_patient_id', columns: ['patient_id']),
+    new ORM\Index(name: 'idx_treatment_patient_beg_dt', columns: ['patient_id', 'beg_dt']),
+    new ORM\Index(name: 'idx_treatment_drug_id', columns: ['drug_id'])
+])]
 class Treatment
 {
     #[ORM\Id]
