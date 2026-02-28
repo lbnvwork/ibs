@@ -39,7 +39,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'users')]
+#[ORM\Table(name: 'users', indexes: [
+    new ORM\Index(name: 'idx_users_medpers', columns: ['medical_personnel_id'])
+])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
