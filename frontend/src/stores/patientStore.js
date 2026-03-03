@@ -106,9 +106,7 @@ export const usePatientStore = defineStore('patient', {
                 this.allPatientIds.push(...newIds);
                 this.nextPage++;
 
-                if (result.items.length < PATIENTS_PER_PAGE) {
-                    this.hasMore = false;
-                }
+                this.hasMore = !!result.next;
 
                 this.loadStatuses(newIds).catch(err => {
                     console.error('Ошибка загрузки статусов:', err);
@@ -120,7 +118,6 @@ export const usePatientStore = defineStore('patient', {
             } catch (err) {
                 this.error = err.message || 'Ошибка загрузки пациентов';
                 console.error('[PatientStore]', err);
-                // await this._loadMockPatients()
             } finally {
                 this.loading = false;
             }
