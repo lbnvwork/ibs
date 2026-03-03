@@ -4,7 +4,8 @@ export function extractData(response) {
         return {
             items: data.member,
             totalItems: data.totalItems,
-            view: data.view
+            view: data.view,
+            next: data.view?.next || null
         }
     }
     return data
