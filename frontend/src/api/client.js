@@ -1,5 +1,4 @@
 import axios from 'axios';
-import router from '@/router';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api';
 
@@ -18,7 +17,7 @@ apiClient.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-})
+});
 
 apiClient.interceptors.response.use(
     response => response,
@@ -30,12 +29,14 @@ apiClient.interceptors.response.use(
             message: error.message
         });
 
-        if(error.response && error.response.status === 401) {
-            localStorage.removeItem('token');
-            router.push('/login');
+        if (error.response && error.response.status === 401) {
+            if (!window.location.pathname.startsWith('/login')) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
         }
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
-)
+);
 
 export default apiClient;
