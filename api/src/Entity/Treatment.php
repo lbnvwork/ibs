@@ -6,6 +6,9 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use App\Filter\ActiveTreatmentFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ApiResource]
 #[ORM\Entity]
@@ -13,6 +16,10 @@ use Doctrine\ORM\Mapping as ORM;
     new ORM\Index(name: 'idx_treatment_patient_id', columns: ['patient_id']),
     new ORM\Index(name: 'idx_treatment_patient_beg_dt', columns: ['patient_id', 'beg_dt']),
     new ORM\Index(name: 'idx_treatment_drug_id', columns: ['drug_id'])
+])]
+#[ApiFilter(ActiveTreatmentFilter::class)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'patient' => 'exact',
 ])]
 class Treatment
 {
