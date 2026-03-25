@@ -1,3 +1,4 @@
+<div v-if="error" class="error-message">{{ error }}</div>
 <div class="patient-monitoring">
     <div class="filter-tabs">
       <button 
@@ -38,44 +39,49 @@
             </div>
         </div>
 
-        <div v-if="activeTab === 'warfarin'" class="tab-content active">
-            <div class="table-container">
-                <table aria-label="Таблица пациентов">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Статус SMS</th>
-                        <th>ФИО</th>
-                        <th>Возраст</th>
-                        <th>Диагноз</th>
-                        <th>MHO / Hb / Дополнительно</th>
-                        <th>Комментарий</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr 
-                        v-for="(patient, index) in warfarinPatients" 
-                        :key="index"
-                        :class="{
-                        'highlight-red': patient.highlightRed,
-                        'highlight-blue': patient.highlightBlue
-                        }"
-                    >
-                        <td>{{ index + 1 }}</td>
-                        <td class="icon-cell">{{ patient.smsStatus }}</td>
-                        <td>
-                        <router-link :to="`/patient/${patient.id}`">
-                            {{ patient.name }}
-                        </router-link>
-                        </td>
-                        <td>{{ patient.age }}</td>
-                        <td>{{ patient.diagnosis }}</td>
-                        <td v-html="patient.indicators"></td>
-                        <td class="comment">{{ patient.comment }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div v-if="loading" class="loading-indicator">Загрузка данных...</div>
+        
+        <div v-else-if="error" class="error-message">{{ error }}</div>
+        
+        <div v-else class="table-container">
+            <table aria-label="Таблица пациентов">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Статус SMS</th>
+                    <th>ФИО</th>
+                    <th>Возраст</th>
+                    <th>Диагноз</th>
+                    <th>MHO / Hb / Дополнительно</th>
+                    <th>Комментарий</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr 
+                    v-for="(patient, index) in filteredPatients" 
+                    :key="patient.id"
+                    :class="{
+                    'highlight-red': patient.highlightRed,
+                    'highlight-blue': patient.highlightBlue
+                    }"
+                >
+                    <td>{{ index + 1 }}</td>
+                    <td class="icon-cell">{{ patient.smsStatus }}</td>
+                    <td>
+                    <router-link :to="`/patient/${patient.id}`">
+                        {{ patient.name }}
+                    </router-link>
+                    </td>
+                    <td>{{ patient.age }}</td>
+                    <td>{{ patient.diagnosis }}</td>
+                    <td v-html="patient.indicators"></td>
+                    <td class="comment">{{ patient.comment }}</td>
+                </tr>
+                <tr v-if="!filteredPatients.length && !loading && !error">
+                  <td colspan="7" class="empty-message">Нет пациентов для отображения</td>
+                </tr>
+              </tbody>
+            </table>
         </div>
     </div>
   </div>
