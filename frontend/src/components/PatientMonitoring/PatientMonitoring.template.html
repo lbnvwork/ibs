@@ -83,5 +83,22 @@
               </tbody>
             </table>
         </div>
+        <div class="pagination" v-if="totalPages > 1">
+          <button @click="firstPage" :disabled="currentPage === 1"><<</button>
+          <button @click="prevPage" :disabled="currentPage === 1"><</button>
+          <span> 
+              <input 
+                  type="number" 
+                  v-model.number="pageInput" 
+                  @keyup.enter="goToPageInput" 
+                  :min="1" 
+                  :max="totalPages"
+                  style="width: 60px; text-align: center;"
+              > 
+              из {{ totalPages }}
+          </span>
+          <button @click="nextPage" :disabled="currentPage === totalPages">></button>
+          <button @click="lastPage" :disabled="currentPage === totalPages">>></button>
+      </div>
     </div>
   </div>

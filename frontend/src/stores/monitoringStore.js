@@ -11,12 +11,18 @@ export const useMonitoringStore = defineStore('monitoring', {
         loading: false,
         error: null,
         activeDrugId: null,
+        currentPage: 1,
+        itemsPerPage: 30,
+        totalItems: 0,
+        totalPages: 0,
+        nextPageUrl: null,
+        prevPageUrl: null,
     }),
     getters: {
         hasPatients: (state) => state.patients.length > 0,
     },
     actions: {
-        async fetchMonitoringData(drugId) {
+        async fetchMonitoringData(drugId, page = 1) {
             
             if (!drugId) return;
             this.activeDrugId = drugId;
@@ -26,17 +32,29 @@ export const useMonitoringStore = defineStore('monitoring', {
             try {
                 // 1. Пациенты по препарату
                 const patientResponse = await patientApi.getAll(
-                    1,                        // page
-                    50,                       // itemsPerPage
-                    { drug: drugId },         // filters
-                    { lastname: 'asc' }       // order
+                    page,
+                    this.itemsPerPage,
+                    { drug: drugId },
+                    { lastname: 'asc' }
                 );
                 const patients = patientResponse.items || patientResponse.member || [];
                 if (!patients.length) {
                     this.patients = [];
+                    this.totalItems = 0;
+                    this.totalPages = 0;
+                    this.nextPageUrl = null;
+                    this.prevPageUrl = null;
+                    this.currentPage = page;
 
                     return;
                 }
+
+                this.totalItems = patientResponse.totalItems;
+                this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+                this.nextPageUrl = patientResponse.view?.next || null;
+                this.prevPageUrl = patientResponse.view?.previous || null;
+                this.currentPage = page;
+
                 const patientIds = patients.map(p => p.id);
 
                 // 2. Активные лечения для этих пациентов
@@ -47,9 +65,6 @@ export const useMonitoringStore = defineStore('monitoring', {
                     itemsPerPage: 10000000,
                 });
                 const treatments = treatmentsResponse.member || treatmentsResponse;
-
-                console.log('treatments count:', treatments.length);
-                console.log('sample treatment:', treatments[0]);
                 
                 // Создаём Map patientId -> лечение (берём первое, если несколько)
                 const treatmentByPatient = new Map();
@@ -60,24 +75,16 @@ export const useMonitoringStore = defineStore('monitoring', {
                     }
                 });
 
-                console.log('treatmentByPatient size:', treatmentByPatient.size);
-                console.log('has patient 4184?', treatmentByPatient.has(4184));
-
                 // 3. Получаем анализы для этих лечений
                 const treatmentIds = Array.from(treatmentByPatient.values()).map(t => t.id);
                 let testHistoryMap = new Map();
                 if (treatmentIds.length) {
-                    const params = {
+                    const historyResponse = await testHistoryApi.getAll({
                         'treatment[]': treatmentIds,
                         order: { creationDt: 'desc' },
-                        itemsPerPage: 10000000
-                    };
-                    const historyResponse = await testHistoryApi.getAll(params);
+                        itemsPerPage: 10000000,
+                    });
                     const historyItems = historyResponse.member || historyResponse;
-
-                    console.log('historyItems count:', historyItems.length);
-                    console.log('sample history:', historyItems[0]);
-                    console.log('has treatment 4160?', testHistoryMap.has(4160));
 
                     historyItems.forEach(h => {
                         const treatmentId = getIdFromIri(h.treatment);
@@ -120,11 +127,6 @@ export const useMonitoringStore = defineStore('monitoring', {
                         indicatorsHtml = 'нет данных';
                     }
 
-                    if (patient.id === 4184) {
-                        console.log('Patient 4184 treatment:', treatment);
-                        console.log('Patient 4184 testHistory:', testHistory);
-                    }
-
                     return {
                         id: patient.id,
                         name: `${patient.lastname} ${patient.firstname} ${patient.secondName}`,
@@ -148,6 +150,31 @@ export const useMonitoringStore = defineStore('monitoring', {
         },
         async setDrug(drugId) {
             await this.fetchMonitoringData(drugId)
+        },
+        async setPage(page) {
+            if (this.activeDrugId && page >= 1 && page <= this.totalPages) {
+                await this.fetchMonitoringData(this.activeDrugId, page);
+            }
+        },
+        async nextPage() {
+            if (this.nextPageUrl) {
+                await this.setPage(this.currentPage + 1);
+            }
+        },
+        async prevPage() {
+            if (this.prevPageUrl) {
+                await this.setPage(this.currentPage - 1);
+            }
+        },
+        async firstPage() {
+            if (this.totalPages > 0) {
+                await this.setPage(1);
+            }
+        },
+        async lastPage() {
+            if (this.totalPages > 0) {
+                await this.setPage(this.totalPages);
+            }
         },
     },
 });
