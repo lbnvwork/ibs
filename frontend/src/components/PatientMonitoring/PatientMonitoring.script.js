@@ -13,18 +13,24 @@ export default {
     };
   },
   computed: {
-    ...mapState(useMonitoringStore, ['patients', 'loading', 'error']),
+    ...mapState(useMonitoringStore, ['patients', 'loading', 'error', 'currentPage', 'totalPages']),
     filteredPatients() {
       // Пока без фильтра по диагнозам – просто возвращаем всех
       return this.patients;
     },
   },
   watch: {
+    currentPage: {
+        immediate: true,
+        handler(val) {
+            this.pageInput = val;
+        }
+    },
     activeTab: {
       immediate: true,
       handler(newDrugId) {
         if (newDrugId) {
-          this.fetchMonitoringData(newDrugId);
+          this.fetchMonitoringData(newDrugId, 1);
         }
       },
     },
@@ -33,7 +39,7 @@ export default {
     await this.loadDrugs();
   },
   methods: {
-    ...mapActions(useMonitoringStore, ['fetchMonitoringData']),
+    ...mapActions(useMonitoringStore, ['fetchMonitoringData', 'setPage', 'nextPage', 'prevPage', 'firstPage', 'lastPage']),
     async loadDrugs() {
       try {
         const response = await drugApi.getAll({
@@ -51,6 +57,14 @@ export default {
       } catch (err) {
         console.error('Ошибка загрузки списка препаратов', err);
       }
-    }
+    },
+    goToPageInput() {
+        let page = parseInt(this.pageInput);
+        if (isNaN(page)) page = 1;
+        page = Math.min(Math.max(page, 1), this.totalPages);
+        if (page !== this.currentPage) {
+            this.setPage(page);
+        }
+    },
   },
 }
