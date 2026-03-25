@@ -27,7 +27,7 @@ export const useMonitoringStore = defineStore('monitoring', {
                 // 1. Пациенты по препарату
                 const patientResponse = await patientApi.getAll(
                     1,                        // page
-                    32,                       // itemsPerPage
+                    50,                       // itemsPerPage
                     { drug: drugId },         // filters
                     { lastname: 'asc' }       // order
                 );
