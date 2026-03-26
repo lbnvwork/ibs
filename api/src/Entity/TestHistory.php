@@ -10,7 +10,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\Controller\GetLatestTestHistoriesController;
+use App\State\TestHistoryLatestProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(
@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
         new GetCollection(
             name: 'latest_test_histories',
             uriTemplate: '/test_histories/latest',
-            controller: GetLatestTestHistoriesController::class,
+            provider: TestHistoryLatestProvider::class,
             paginationEnabled: false,
         ),
         new GetCollection(), // стандартная
