@@ -1,4 +1,3 @@
-<div v-if="error" class="error-message">{{ error }}</div>
 <div class="patient-monitoring">
     <div class="filter-tabs">
       <button 
@@ -39,11 +38,7 @@
             </div>
         </div>
 
-        <div v-if="loading" class="loading-indicator">Загрузка данных...</div>
-        
-        <div v-else-if="error" class="error-message">{{ error }}</div>
-        
-        <div v-else class="table-container">
+        <div class="table-container">
             <table aria-label="Таблица пациентов">
                 <thead>
                 <tr>
@@ -77,10 +72,19 @@
                     <td v-html="patient.indicators"></td>
                     <td class="comment">{{ patient.comment }}</td>
                 </tr>
-                <tr v-if="!filteredPatients.length && !loading && !error">
-                  <td colspan="7" class="empty-message">Нет пациентов для отображения</td>
+                <tr v-if="loading" class="loading-row">
+                    <td colspan="7">
+                        <div class="loading-spinner"></div>
+                        <span>Загрузка данных...</span>
+                    </td>
                 </tr>
-              </tbody>
+                <tr v-else-if="!filteredPatients.length && !error" class="empty-row">
+                    <td colspan="7">Нет пациентов для отображения</td>
+                </tr>
+                <tr v-else-if="error" class="error-row">
+                    <td colspan="7">{{ error }}</td>
+                </tr>
+                </tbody>
             </table>
         </div>
         <div class="pagination" v-if="totalPages > 1">
@@ -99,6 +103,6 @@
           </span>
           <button @click="nextPage" :disabled="currentPage === totalPages">></button>
           <button @click="lastPage" :disabled="currentPage === totalPages">>></button>
-      </div>
+        </div>
     </div>
-  </div>
+</div>
