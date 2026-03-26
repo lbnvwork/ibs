@@ -23,7 +23,6 @@ export const useMonitoringStore = defineStore('monitoring', {
     },
     actions: {
         async fetchMonitoringData(drugId, page = 1) {
-            
             if (!drugId) return;
             this.activeDrugId = drugId;
             this.loading = true;
@@ -58,11 +57,10 @@ export const useMonitoringStore = defineStore('monitoring', {
                 const patientIds = patients.map(p => p.id);
 
                 // 2. Активные лечения для этих пациентов
-                const treatmentsResponse = await treatmentApi.getAll({
+                const treatmentsResponse = await treatmentApi.getAllWithoutPagination({
                     patient: patientIds,
                     active: true,
                     order: { begDt: 'desc' },
-                    itemsPerPage: 10000000,
                 });
                 const treatments = treatmentsResponse.member || treatmentsResponse;
                 
@@ -79,13 +77,7 @@ export const useMonitoringStore = defineStore('monitoring', {
                 const treatmentIds = Array.from(treatmentByPatient.values()).map(t => t.id);
                 let testHistoryMap = new Map();
                 if (treatmentIds.length) {
-                    const historyResponse = await testHistoryApi.getAll({
-                        'treatment[]': treatmentIds,
-                        order: { creationDt: 'desc' },
-                        itemsPerPage: 10000000,
-                    });
-                    const historyItems = historyResponse.member || historyResponse;
-
+                    const historyItems = await testHistoryApi.getLatestByTreatments(treatmentIds);
                     historyItems.forEach(h => {
                         const treatmentId = getIdFromIri(h.treatment);
                         if (treatmentId && !testHistoryMap.has(treatmentId)) {
