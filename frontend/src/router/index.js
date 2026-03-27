@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import PatientMonitoring from '../components/PatientMonitoring/PatientMonitoring.vue';
+import Home from '@/components/Home/Home.vue';
 import PatientHistory from '../components/PatientHistory/PatientHistory.vue';
 import Login from '../components/Login/Login.vue';
 
@@ -13,7 +13,7 @@ const routes = [
   { 
     path: '/', 
     name: 'Home',
-    component: PatientMonitoring,
+    component: Home,
     meta: { requiresAuth: true }
   },
   { 

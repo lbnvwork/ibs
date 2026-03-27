@@ -4,7 +4,7 @@ import { drugApi } from '@/api/drug';
 import PatientTable from '@/components/PatientTable/PatientTable.vue';
 
 export default {
-  name: 'PatientMonitoring',
+  name: 'PatientWorkList',
   components: { PatientTable },
   data() {
     return {
