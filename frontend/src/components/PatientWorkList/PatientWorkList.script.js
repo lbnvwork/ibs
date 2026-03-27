@@ -1,16 +1,16 @@
 import { mapState, mapActions } from 'pinia';
 import { useMonitoringStore } from '@/stores/monitoringStore';
-import { drugApi } from '@/api/drug';
 import PatientTable from '@/components/PatientTable/PatientTable.vue';
+import drugsMixin from '@/mixins/drugsMixin';
 
 export default {
   name: 'PatientWorkList',
   components: { PatientTable },
+  mixins: [drugsMixin],
   data() {
     return {
       activeTab: null,
       selectedDiagnosis: 'all',
-      tabs: [],
       pageInput: 1,
     };
   },
@@ -35,29 +35,15 @@ export default {
       },
     },
   },
-  async created() {
-    await this.loadDrugs();
-  },
   methods: {
-    ...mapActions(useMonitoringStore, ['fetchMonitoringData', 'setPage', 'nextPage', 'prevPage', 'firstPage', 'lastPage']),
-    async loadDrugs() {
-      try {
-        const response = await drugApi.getAll({
-          order: { group: 'asc', id: 'asc' },
-        });
-        const drugs = response.member || response;
-        this.tabs = drugs.map(drug => ({
-          id: drug.id,
-          name: drug.nominative,
-          drugId: drug.id,
-        }));
-        if (this.tabs.length > 0) {
-          this.activeTab = this.tabs[0].drugId;
-        }
-      } catch (err) {
-        console.error('Ошибка загрузки списка препаратов', err);
-      }
-    },
+    ...mapActions(useMonitoringStore, [
+      'fetchMonitoringData',
+      'setPage',
+      'nextPage',
+      'prevPage',
+      'firstPage',
+      'lastPage'
+    ]),
     goToPage(page) {
       let num = parseInt(page);
       if (isNaN(num)) num = 1;
