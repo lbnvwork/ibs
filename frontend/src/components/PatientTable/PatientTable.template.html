@@ -13,15 +13,17 @@
 
   <div class="table-content">
     <div class="table-header">
-      <h3>Пациенты, требующие контроля</h3>
-      <div class="filter-controls">
-        <label for="diagnosis-select">Выборка пациентов по нозологиям*</label>
-        <select id="diagnosis-select" v-model="selectedDiagnosisLocal">
-          <option value="all">Все</option>
-          <option value="ibs">ИБС, Фибрилляция предсердий</option>
-          <option value="other">Другое</option>
-        </select>
-      </div>
+        <slot name="title">
+            <h3>Пациенты, требующие контроля</h3>
+        </slot>
+        <div class="filter-controls">
+            <label for="diagnosis-select">Выборка пациентов по нозологиям*</label>
+            <select id="diagnosis-select" v-model="selectedDiagnosisLocal">
+            <option value="all">Все</option>
+            <option value="ibs">ИБС, Фибрилляция предсердий</option>
+            <option value="other">Другое</option>
+            </select>
+        </div>
     </div>
 
     <div class="table-container">
