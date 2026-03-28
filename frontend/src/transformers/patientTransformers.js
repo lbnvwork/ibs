@@ -1,4 +1,4 @@
-import { calculateAge, formatPhone } from '@/utils/formatters'
+import { calculateAge, formatAge } from '@/utils/formatters'
 
 /**
  * Для боковой панели (PatientListPanel)
@@ -38,7 +38,7 @@ export function transformForMonitoring(patient) {
     return {
         id: patient.id,
         name: fullName,
-        age: age ? `${age} лет` : '',
+        age: age ? formatAge(age) : '',
         smsStatus: patient.smsStatus || '📱✓', // временно, будет из связанных данных
         diagnosis: patient.diagnosis || 'Диагноз не указан', // тоже временно
         indicators: patient.indicators || '<span>MHO - 2.5</span>', // заглушка

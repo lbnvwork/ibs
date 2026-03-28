@@ -1,7 +1,7 @@
 import { mapState, mapActions } from 'pinia'
 import { usePatientStore } from '@/stores/patientStore'
 import { useHospitalStore } from '@/stores/hospitalStore'
-import { calculateAge } from '@/utils/formatters'
+import { calculateAge, formatAge } from '@/utils/formatters'
 import debounce from 'lodash/debounce'
 import { useDrugGroupStore } from '@/stores/drugGroupStore'
 import { useAuthStore } from '@/stores/authStore'
@@ -60,7 +60,7 @@ export default {
       const fullName = [patient.lastname, patient.firstname, patient.secondName]
           .filter(Boolean).join(' ').trim() || 'Без имени';
       const age = calculateAge(patient.birthday);
-      const ageText = age ? `${age} лет` : 'Возраст не указан';
+      const ageText = age ? formatAge(age) : 'Возраст не указан';
       const phone = patient.smsPhone || 'телефон не указан';
       return {
         name: fullName,
