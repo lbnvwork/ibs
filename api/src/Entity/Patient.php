@@ -12,9 +12,7 @@ use App\Filter\PatientDrugFilter;
 use App\Filter\PatientGroupFilter;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(
-    paginationClientItemsPerPage: true,
-)]
+#[ApiResource]
 #[ApiFilter(SearchFilter::class, properties: [
     'lastname' => 'ipartial',
     'hospital' => 'exact'
