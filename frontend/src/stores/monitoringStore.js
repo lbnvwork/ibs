@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { patientApi } from '@/api/patients';
 import { treatmentApi } from '@/api/treatments';
 import { testHistoryApi } from '@/api/testHistory';
-import { calculateAge } from '@/utils/formatters';
+import { calculateAge, formatAge } from '@/utils/formatters';
 import { getIdFromIri } from '@/utils/apiHelpers';
 
 export const useMonitoringStore = defineStore('monitoring', {
@@ -122,7 +122,7 @@ export const useMonitoringStore = defineStore('monitoring', {
                     return {
                         id: patient.id,
                         name: `${patient.lastname} ${patient.firstname} ${patient.secondName}`,
-                        age: age ? `${age} лет` : '—',
+                        age: age ? formatAge(age) : '—',
                         diagnosis: treatment?.diagnosis || '—',
                         smsStatus: '📱',
                         indicators: indicatorsHtml,

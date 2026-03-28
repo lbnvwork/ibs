@@ -56,7 +56,6 @@
             <td :colspan="colspan">{{ error }}</td>
           </tr>
           <slot name="tbody" :patients="patients" :error="error" :loading="loading">
-            <!-- Тело по умолчанию, если слот не определён -->
             <tr v-for="(patient, index) in patients" :key="patient.id">
               <td>{{ index + 1 }}</td>
               <td class="icon-cell">{{ patient.smsStatus }}</td>
