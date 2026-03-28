@@ -1,0 +1,19 @@
+<div class="home">
+  <div class="filter-tabs">
+    <button
+      :class="{ active: activeFilter === 'monitoring' }"
+      @click="activeFilter = 'monitoring'"
+    >
+      Мониторинг
+    </button>
+    <button
+      :class="{ active: activeFilter === 'patientList' }"
+      @click="activeFilter = 'patientList'"
+    >
+      Работа со списком пациентов
+    </button>
+  </div>
+
+  <PatientMonitoring v-if="activeFilter === 'monitoring'" />
+  <PatientWorkList v-else-if="activeFilter === 'patientList'" />
+</div>

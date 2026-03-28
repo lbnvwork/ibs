@@ -4,7 +4,7 @@ import PatientTable from '@/components/PatientTable/PatientTable.vue';
 import drugsMixin from '@/mixins/drugsMixin';
 
 export default {
-  name: 'PatientMonitoring',
+  name: 'PatientWorkList',
   components: { PatientTable },
   mixins: [drugsMixin],
   data() {

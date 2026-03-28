@@ -52,7 +52,8 @@ final class PatientDrugFilter extends AbstractFilter
                 FROM App\Entity\Treatment t2
                 WHERE t2.patient = o.id
             )')
-            ->andWhere('t.drug = :' . $parameterName);
+            ->andWhere('t.drug = :' . $parameterName)
+            ->andWhere('t.realEndDt IS NULL');
 
         $queryBuilder->andWhere($queryBuilder->expr()->exists($subQuery->getDQL()))
             ->setParameter($parameterName, $value);

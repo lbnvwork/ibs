@@ -20,3 +20,9 @@ export function extractIdFromIri(iri) {
 export function createPaginationParams(page = 1, itemsPerPage = 30, filters = {}) {
     return { page, itemsPerPage, ...filters }
 }
+
+export function getIdFromIri(iri) {
+    if (!iri) return null;
+    const parts = iri.split('/');
+    return parseInt(parts[parts.length - 1]);
+}
