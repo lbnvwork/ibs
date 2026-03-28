@@ -99,6 +99,10 @@ class Treatment
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $pin = null;
 
+    #[ORM\ManyToOne(targetEntity: Mkb10::class)]
+    #[ORM\JoinColumn(name: 'mkb10_id', referencedColumnName: 'id', nullable: true)]
+    private ?Mkb10 $mkb10 = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -288,6 +292,17 @@ class Treatment
     public function setPin(?int $pin): self
     {
         $this->pin = $pin;
+        return $this;
+    }
+
+    public function getMkb10(): ?Mkb10
+    {
+        return $this->mkb10;
+    }
+
+    public function setMkb10(?Mkb10 $mkb10): self
+    {
+        $this->mkb10 = $mkb10;
         return $this;
     }
 }
