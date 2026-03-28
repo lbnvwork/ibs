@@ -2,13 +2,22 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use App\State\Mkb10PopularProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(
     operations: [
+        new GetCollection(
+            name: ' ',
+            uriTemplate: '/mkb10/popular',
+            provider: Mkb10PopularProvider::class,
+            paginationEnabled: false
+        ),
         new GetCollection(),
         new Get(),
     ],
@@ -17,6 +26,10 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 #[ORM\Entity]
 #[ORM\Table(name: 'mkb10')]
+#[ApiFilter(SearchFilter::class, properties: [
+    'mkbCode' => 'partial',
+    'mkbName' => 'partial',
+])]
 class Mkb10
 {
     #[ORM\Id]
