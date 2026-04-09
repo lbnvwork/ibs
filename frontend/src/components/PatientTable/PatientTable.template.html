@@ -17,12 +17,8 @@
             <h3>Пациенты, требующие контроля</h3>
         </slot>
         <div class="filter-controls">
-            <label for="diagnosis-select">Выборка пациентов по нозологиям*</label>
-            <select id="diagnosis-select" v-model="selectedDiagnosisLocal">
-            <option value="all">Все</option>
-            <option value="ibs">ИБС, Фибрилляция предсердий</option>
-            <option value="other">Другое</option>
-            </select>
+          <label for="diagnosis-select">Выборка пациентов по нозологиям*</label>
+          <DiagnosisSelect v-model="selectedDiagnosisLocal" />
         </div>
     </div>
 

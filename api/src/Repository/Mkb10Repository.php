@@ -43,4 +43,30 @@ class Mkb10Repository extends ServiceEntityRepository
         }
         return $result;
     }
+
+    public function searchByCodeOrName(string $query, int $limit = 20): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT *
+            FROM mkb10
+            WHERE mkb_code ILIKE :query
+            OR mkb_name ILIKE :query
+            ORDER BY 
+                CASE 
+                    WHEN mkb_code = :query_exact THEN 1
+                    WHEN mkb_code ILIKE :query_start THEN 2
+                    ELSE 3
+                END,
+                mkb_code
+            LIMIT :limit
+        ';
+        $stmt = $conn->executeQuery($sql, [
+            'query' => "%$query%",
+            'query_exact' => $query,
+            'query_start' => "$query%",
+            'limit' => $limit,
+        ]);
+        return $stmt->fetchAllAssociative();
+    }
 }
