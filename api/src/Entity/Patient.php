@@ -8,6 +8,7 @@ use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use App\Filter\PatientDiagnosisFilter;
 use App\Filter\PatientDrugFilter;
 use App\Filter\PatientGroupFilter;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,6 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiFilter(OrderFilter::class, properties: ['lastname'])]
 #[ApiFilter(PatientGroupFilter::class, properties: [PatientGroupFilter::DRUG_GROUP_FILTER_NAME])]
 #[ApiFilter(PatientDrugFilter::class, properties: ['drug'])]
+#[ApiFilter(PatientDiagnosisFilter::class, properties: ['diagnosisCode'])]
 #[ORM\Entity]
 #[ORM\Table(name: 'patients')]
 class Patient

@@ -1,8 +1,8 @@
 <PatientTable
   :tabs="tabs"
   v-model:activeTab="activeTab"
-  v-model:selectedDiagnosis="selectedDiagnosis"
-  :patients="filteredPatients"
+  v-model:selectedDiagnosis="selectedDiagnosisCodes"
+  :patients="patients"
   :loading="loading"
   :error="error"
   :totalPages="totalPages"

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
@@ -8,17 +10,25 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\State\Mkb10PopularProvider;
+use App\State\Mkb10SearchProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(
+    shortName: 'mkb10',
     operations: [
         new GetCollection(
-            name: ' ',
+            name: 'popular',
             uriTemplate: '/mkb10/popular',
             provider: Mkb10PopularProvider::class,
-            paginationEnabled: false
+            paginationEnabled: false,
         ),
-        new GetCollection(),
+        new GetCollection(
+            name: 'search',
+            uriTemplate: '/mkb10/search',
+            provider: Mkb10SearchProvider::class,
+            paginationEnabled: false,
+        ),
+        new GetCollection(uriTemplate: '/mkb10'),
         new Get(),
     ],
     order: ['mkbCode' => 'ASC'],
@@ -27,8 +37,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\Table(name: 'mkb10')]
 #[ApiFilter(SearchFilter::class, properties: [
-    'mkbCode' => 'partial',
-    'mkbName' => 'partial',
+    'mkbCode' => 'ipartial',
+    'mkbName' => 'ipartial',
 ])]
 class Mkb10
 {
@@ -57,7 +67,6 @@ class Mkb10
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $date = null;
 
-    // Геттеры и сеттеры (можно оставить развёрнутые)
     public function getId(): ?int
     {
         return $this->id;
