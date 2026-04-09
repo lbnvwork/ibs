@@ -1,9 +1,12 @@
+import DiagnosisSelect from '@/components/common/DiagnosisSelect/DiagnosisSelect.vue';
+
 export default {
+  components: { DiagnosisSelect },
   name: 'PatientTable',
   props: {
     tabs: Array,
     activeTab: [String, Number],
-    selectedDiagnosis: String,
+    selectedDiagnosis: Array,
     patients: Array,
     loading: Boolean,
     error: String,
@@ -21,8 +24,6 @@ export default {
       set(val) { this.$emit('update:selectedDiagnosis', val); }
     },
     colspan() {
-      // Для правильного отображения сообщений о загрузке/ошибке/пустоте
-      // можно вычислить количество колонок из слотов. Но для простоты поставим большое число.
       return 100;
     }
   }

@@ -11,6 +11,7 @@ export const useMonitoringStore = defineStore('monitoring', {
         loading: false,
         error: null,
         activeDrugId: null,
+        selectedDiagnosisCodes: [],
         currentPage: 1,
         itemsPerPage: 30,
         totalItems: 0,
@@ -29,11 +30,15 @@ export const useMonitoringStore = defineStore('monitoring', {
             this.error = null;
             
             try {
-                // 1. Пациенты по препарату
+                const filters = { drug: drugId };
+                if (this.selectedDiagnosisCodes && this.selectedDiagnosisCodes.length) {
+                    filters.diagnosisCode = this.selectedDiagnosisCodes;
+                }
+
                 const patientResponse = await patientApi.getAll(
                     page,
                     this.itemsPerPage,
-                    { drug: drugId },
+                    filters,
                     { lastname: 'asc' }
                 );
                 const patients = patientResponse.items || patientResponse.member || [];
@@ -43,7 +48,6 @@ export const useMonitoringStore = defineStore('monitoring', {
                     this.totalPages = 0;
                     this.nextPageUrl = null;
                     this.prevPageUrl = null;
-                    this.currentPage = page;
 
                     return;
                 }
@@ -56,7 +60,6 @@ export const useMonitoringStore = defineStore('monitoring', {
 
                 const patientIds = patients.map(p => p.id);
 
-                // 2. Активные лечения для этих пациентов
                 const treatmentsResponse = await treatmentApi.getAllWithoutPagination({
                     patient: patientIds,
                     active: true,
@@ -64,7 +67,6 @@ export const useMonitoringStore = defineStore('monitoring', {
                 });
                 const treatments = treatmentsResponse.member || treatmentsResponse;
                 
-                // Создаём Map patientId -> лечение (берём первое, если несколько)
                 const treatmentByPatient = new Map();
                 treatments.forEach(t => {
                     const patientId = getIdFromIri(t.patient);
@@ -73,7 +75,6 @@ export const useMonitoringStore = defineStore('monitoring', {
                     }
                 });
 
-                // 3. Получаем анализы для этих лечений
                 const treatmentIds = Array.from(treatmentByPatient.values()).map(t => t.id);
                 let testHistoryMap = new Map();
                 if (treatmentIds.length) {
@@ -86,7 +87,6 @@ export const useMonitoringStore = defineStore('monitoring', {
                     });
                 }
 
-                // 4. Формируем итоговый массив для таблицы
                 const monitoringPatients = patients.map(patient => {
                     const treatment = treatmentByPatient.get(patient.id);
                     const testHistory = treatment ? testHistoryMap.get(treatment.id) : null;
@@ -140,29 +140,46 @@ export const useMonitoringStore = defineStore('monitoring', {
                 this.loading = false;
             }
         },
-        async setDrug(drugId) {
-            await this.fetchMonitoringData(drugId)
+   
+        setSelectedDiagnosisCodes(codes) {
+            if (JSON.stringify(this.selectedDiagnosisCodes) !== JSON.stringify(codes)) {
+                this.selectedDiagnosisCodes = codes;
+                if (this.activeDrugId) {
+                    this.fetchMonitoringData(this.activeDrugId, 1);
+                }
+            }
         },
+   
+        async setDrug(drugId) {
+            this.selectedDiagnosisCodes = [];
+            this.currentPage = 1;
+            await this.fetchMonitoringData(drugId);
+        },
+        
         async setPage(page) {
             if (this.activeDrugId && page >= 1 && page <= this.totalPages) {
                 await this.fetchMonitoringData(this.activeDrugId, page);
             }
         },
+        
         async nextPage() {
             if (this.nextPageUrl) {
                 await this.setPage(this.currentPage + 1);
             }
         },
+        
         async prevPage() {
             if (this.prevPageUrl) {
                 await this.setPage(this.currentPage - 1);
             }
         },
+        
         async firstPage() {
             if (this.totalPages > 0) {
                 await this.setPage(1);
             }
         },
+        
         async lastPage() {
             if (this.totalPages > 0) {
                 await this.setPage(this.totalPages);

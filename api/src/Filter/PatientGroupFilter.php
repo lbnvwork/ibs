@@ -46,14 +46,14 @@ final class PatientGroupFilter extends AbstractFilter
 
         $subQuery = $entityManager->createQueryBuilder()
             ->select('1')
-            ->from(Treatment::class, 't')
-            ->where('t.patient = o.id')
-            ->andWhere('t.begDt = (
-            SELECT MAX(t2.begDt)
-            FROM App\Entity\Treatment t2
-            WHERE t2.patient = o.id
+            ->from(Treatment::class, 't_group')
+            ->where('t_group.patient = o.id')
+            ->andWhere('t_group.begDt = (
+            SELECT MAX(t2_group.begDt)
+            FROM App\Entity\Treatment t2_group
+            WHERE t2_group.patient = o.id
         )')
-            ->andWhere('t.drug IN (
+            ->andWhere('t_group.drug IN (
             SELECT d.id
             FROM App\Entity\Drug d
             WHERE d.group = :' . $parameterName . '
