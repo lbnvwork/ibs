@@ -6,6 +6,7 @@ export default {
       tabs: [],
       drugsLoading: false,
       drugsError: null,
+      activeTab: null,
     };
   },
   methods: {

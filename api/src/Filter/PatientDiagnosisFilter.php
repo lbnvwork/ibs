@@ -13,14 +13,14 @@ use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
-final class PatientDrugFilter extends AbstractFilter
+final class PatientDiagnosisFilter extends AbstractFilter
 {
-    public const DRUG_FILTER_NAME = 'drug';
+    public const DIAGNOSIS_FILTER_NAME = 'diagnosisCode';
 
     public function __construct(
-        ManagerRegistry         $managerRegistry,
-        ?LoggerInterface        $logger = null,
-        ?array                  $properties = null,
+        ManagerRegistry $managerRegistry,
+        ?LoggerInterface $logger = null,
+        ?array $properties = null,
         ?NameConverterInterface $nameConverter = null
     ) {
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
@@ -35,37 +35,43 @@ final class PatientDrugFilter extends AbstractFilter
         ?Operation $operation = null,
         array $context = []
     ): void {
-        if ($property !== self::DRUG_FILTER_NAME) {
+        if ($property !== self::DIAGNOSIS_FILTER_NAME) {
             return;
         }
 
-        $parameterName = $queryNameGenerator->generateParameterName(self::DRUG_FILTER_NAME);
+        $codes = is_array($value) ? $value : [$value];
+        if (empty($codes)) {
+            return;
+        }
+
+        $parameterName = $queryNameGenerator->generateParameterName('diagnosisCodes');
         $entityManager = $this->managerRegistry->getManager();
 
         $subQuery = $entityManager->createQueryBuilder()
             ->select('1')
-            ->from(Treatment::class, 't_drug')
-            ->where('t_drug.patient = o.id')
-            ->andWhere('t_drug.begDt = (
-                SELECT MAX(t2_drug.begDt)
-                FROM App\Entity\Treatment t2_drug
-                WHERE t2_drug.patient = o.id
+            ->from(Treatment::class, 't_diag')
+            ->innerJoin('t_diag.mkb10', 'm')
+            ->where('t_diag.patient = o.id')
+            ->andWhere('t_diag.begDt = (
+                SELECT MAX(t2_diag.begDt)
+                FROM App\Entity\Treatment t2_diag
+                WHERE t2_diag.patient = o.id
             )')
-            ->andWhere('t_drug.drug = :' . $parameterName)
-            ->andWhere('t_drug.realEndDt IS NULL');
+            ->andWhere('t_diag.realEndDt IS NULL')
+            ->andWhere('m.mkbCode IN (:' . $parameterName . ')');
 
         $queryBuilder->andWhere($queryBuilder->expr()->exists($subQuery->getDQL()))
-            ->setParameter($parameterName, $value);
+            ->setParameter($parameterName, $codes);
     }
 
     public function getDescription(string $resourceClass): array
     {
         return [
-            self::DRUG_FILTER_NAME => [
-                'property' => self::DRUG_FILTER_NAME,
-                'type' => 'int',
+            self::DIAGNOSIS_FILTER_NAME => [
+                'property' => self::DIAGNOSIS_FILTER_NAME,
+                'type' => 'array',
                 'required' => false,
-                'description' => 'Фильтр пациентов по конкретному препарату (текущее лечение)',
+                'description' => 'Фильтр пациентов по коду диагноза (активное лечение)',
             ],
         ];
     }
