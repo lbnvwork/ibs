@@ -1,9 +1,9 @@
 <div class="multi-diagnosis-select" ref="selectContainer">
     <div class="select-input" @click="toggleOptions">
         <div class="tags-container">
-            <span v-for="code in selectedCodes" :key="code" class="tag">
+            <span v-for="code in selectedCodes" :key="code" class="tag" @click="removeDiagnosis(code)">
                 {{ getShortLabel(code) }}
-                <button @click.stop="removeDiagnosis(code)" class="tag-remove">×</button>
+                <span class="tag-remove">×</span>
             </span>
             <input
                 type="text"

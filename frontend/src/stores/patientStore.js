@@ -159,36 +159,5 @@ export const usePatientStore = defineStore('patient', {
             this.resetList();
             this.loadMore();
         },
-
-        async _loadMockPatients() {
-            try {
-                const { panelPatients } = await import('@/data/patients');
-                const mockItems = panelPatients.map((p, i) => ({
-                    id: p.id,
-                    lastname: p.name.split(' ')[0] || '',
-                    firstname: p.name.split(' ')[1] || '',
-                    secondName: p.name.split(' ')[2] || '',
-                    birthday: '1958-04-07T00:00:00+00:00',
-                    smsPhone: '+79192758819',
-                    address: 'г. Курск, ул. Ломакина, д. 5, кв. 7',
-                    comment: '',
-                    hospital: '/api/hospitals/1'
-                }));
-
-                this.rawPatients.clear();
-                this.allPatientIds = [];
-                mockItems.forEach(p => {
-                    this.rawPatients.set(p.id, p)
-                    this.allPatientIds.push(p.id)
-                });
-                this.hasMore = false;
-                this.nextPage = 1;
-                if (this.allPatientIds.length > 0 && !this.selectedPatient) {
-                    this.selectedPatient = this.rawPatients.get(this.allPatientIds[0]);
-                }
-            } catch (e) {
-                console.error('Не удалось загрузить моки', e);
-            }
-        }
     }
 })
