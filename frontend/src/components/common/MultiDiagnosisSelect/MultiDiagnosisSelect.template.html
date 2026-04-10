@@ -1,4 +1,4 @@
-<div class="multi-diagnosis-select" v-click-outside="closeOptions">
+<div class="multi-diagnosis-select" ref="selectContainer">
     <div class="select-input" @click="toggleOptions">
         <div class="tags-container">
             <span v-for="code in selectedCodes" :key="code" class="tag">
@@ -9,7 +9,6 @@
                 type="text"
                 v-model="search"
                 @input="onSearchInput"
-                @focus="openOptions"
                 placeholder="Поиск или выберите..."
                 class="search-input-inline"
             />

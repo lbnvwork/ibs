@@ -1,5 +1,7 @@
 import { mkb10Api } from '@/api/mkb10';
 
+const MIN_SEARCH_LENGTH = 3;
+
 export default {
     name: 'MultiDiagnosisSelect',
     props: {
@@ -15,6 +17,12 @@ export default {
             searchTimeout: null,
             isOpen: false,
         };
+    },
+    mounted() {
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    beforeDestroy() {
+        document.removeEventListener('click', this.handleClickOutside);
     },
     watch: {
         modelValue: {
@@ -38,7 +46,7 @@ export default {
     },
     computed: {
         validOptions() {
-            if (!this.search || this.search.length < 2) return this.options;
+            if (!this.search || this.search.length < MIN_SEARCH_LENGTH) return this.options;
             const lowerSearch = this.search.toLowerCase();
             return this.options.filter(opt => 
                 opt.mkbCode.toLowerCase().includes(lowerSearch) ||
@@ -55,7 +63,7 @@ export default {
                 const data = await mkb10Api.getPopular();
                 const popularData = Array.isArray(data) ? data : (data.member || []);
                 this.popular = popularData;
-                if (!this.search || this.search.length < 2) {
+                if (!this.search || this.search.length < MIN_SEARCH_LENGTH) {
                     this.options = [...this.popular];
                 }
             } catch (err) {
@@ -67,7 +75,7 @@ export default {
             this.searchTimeout = setTimeout(() => this.doSearch(), 300);
         },
         async doSearch() {
-            if (!this.search || this.search.length < 2) {
+            if (!this.search || this.search.length < MIN_SEARCH_LENGTH) {
                 this.options = [...this.popular];
                 return;
             }
@@ -84,6 +92,9 @@ export default {
                     }))
                     .filter(item => item.mkbCode && item.mkbName);
                 this.options = normalized;
+                if (normalized.length) {
+                    this.openOptions();
+                }
             } catch (err) {
                 console.error('Ошибка поиска диагнозов', err);
             } finally {
@@ -106,7 +117,12 @@ export default {
         },
         getShortLabel(code) {
             const found = [...this.options, ...this.popular].find(opt => opt && opt.mkbCode === code);
-            return found ? found.mkbCode : code; // показываем только код, чтобы сэкономить место
+            return found ? found.mkbCode : code;
+        },
+        handleClickOutside(event) {
+            if (this.$refs.selectContainer && !this.$refs.selectContainer.contains(event.target)) {
+                this.closeOptions();
+            }
         },
     },
 };
