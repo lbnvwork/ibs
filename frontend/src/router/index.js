@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/components/Home/Home.vue';
 import PatientHistory from '../components/PatientHistory/PatientHistory.vue';
 import Login from '../components/Login/Login.vue';
+import { useAuthStore } from '../stores/authStore';
 
 const routes = [
   {
@@ -31,7 +32,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  import('../stores/authStore').then(({ useAuthStore }) => {
     const authStore = useAuthStore();
     const isAuthenticated = authStore.isAuthenticated;
     if (to.meta.requiresAuth && !isAuthenticated) {
@@ -41,7 +41,6 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
-  });
 });
 
 export default router;
