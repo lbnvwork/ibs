@@ -1,7 +1,7 @@
-import DiagnosisSelect from '@/components/common/DiagnosisSelect/DiagnosisSelect.vue';
+import MultiDiagnosisSelect from '@/components/common/MultiDiagnosisSelect/MultiDiagnosisSelect.vue';
 
 export default {
-  components: { DiagnosisSelect },
+  components: { MultiDiagnosisSelect },
   name: 'PatientTable',
   props: {
     tabs: Array,
