@@ -1,25 +1,30 @@
 <div class="diagnosis-select">
-    <v-select
-        v-model="selected"
+    <Multiselect
+        v-model="selectedCodes"
         :options="options"
-        :filterable="false"
-        :loading="loading"
-        :searchable="true"
-        :clearable="true"
         :multiple="true"
+        :searchable="true"
+        :close-on-select="false"
+        :clearable="true"
+        :loading="loading"
+        :filterable="false"
         placeholder="Поиск или выберите из списка"
-        @search="onSearch"
-        :get-option-label="getOptionLabel"
-        :get-option-key="getOptionKey"
+        @search-change="onSearch"
+        label="mkbName"
+        track-by="mkbCode"
+        :reduce="(option) => option.mkbCode"
     >
         <template #no-options>
             <div class="empty-message">Ничего не найдено</div>
         </template>
-        <template #option="{ mkbCode, mkbName }">
-            <strong>{{ mkbCode }}</strong> — {{ mkbName }}
+        <template #option="{ option }">
+            <strong>{{ option.mkbCode }}</strong> — {{ option.mkbName }}
         </template>
-        <template #selected-option="{ mkbCode }">
-            {{ mkbCode }}
+        <template #tag="{ option, remove }">
+            <div class="multiselect-tag">
+                {{ option.mkbCode }}
+                <span class="multiselect-tag-remove" @click="remove(option)">×</span>
+            </div>
         </template>
-    </v-select>
+    </Multiselect>
 </div>

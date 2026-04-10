@@ -1,16 +1,16 @@
-import vSelect from 'vue-select';
-import 'vue-select/dist/vue-select.css';
+import Multiselect from '@vueform/multiselect';
+import '@vueform/multiselect/themes/default.css';
 import { mkb10Api } from '@/api/mkb10';
 
 export default {
     name: 'DiagnosisSelect',
-    components: { vSelect },
+    components: { Multiselect },
     props: {
         modelValue: { type: Array, default: () => [] },
     },
     data() {
         return {
-            selected: [],
+            selectedCodes: [], // массив строк (кодов)
             options: [],
             loading: false,
             popular: [],
@@ -20,18 +20,22 @@ export default {
         modelValue: {
             immediate: true,
             handler(val) {
-                if (Array.isArray(val) && val.length) {
-                    const allOptions = [...this.options, ...this.popular];
-                    this.selected = val
-                        .map(code => allOptions.find(d => d.mkbCode === code))
-                        .filter(Boolean);
-                } else {
-                    this.selected = [];
+                // Синхронизация из родителя
+                const safeVal = Array.isArray(val) ? val : [];
+                if (JSON.stringify(safeVal) !== JSON.stringify(this.selectedCodes)) {
+                    this.selectedCodes = [...safeVal];
                 }
             },
         },
-        selected(val) {
-            this.$emit('update:modelValue', val.map(d => d.mkbCode));
+        selectedCodes: {
+            handler(val) {
+                // Отправляем в родитель
+                const safeVal = Array.isArray(val) ? val : [];
+                if (JSON.stringify(safeVal) !== JSON.stringify(this.modelValue)) {
+                    this.$emit('update:modelValue', safeVal);
+                }
+            },
+            deep: true,
         },
     },
     async created() {
@@ -41,39 +45,31 @@ export default {
         async loadPopular() {
             try {
                 const data = await mkb10Api.getPopular();
-                this.popular = Array.isArray(data) ? data : (data.member || []);
+                const popularData = Array.isArray(data) ? data : (data.member || []);
+                this.popular = popularData; // уже camelCase
                 this.options = [...this.popular];
+                console.log('Popular loaded:', this.popular);
             } catch (err) {
                 console.error('Ошибка загрузки популярных диагнозов', err);
             }
         },
-        onSearch: debounce(async function (search, loading) {
+        onSearch: debounce(async function (search) {
             if (!search || search.length < 2) {
                 this.options = [...this.popular];
                 return;
             }
-            loading(true);
+            this.loading = true;
             try {
                 const data = await mkb10Api.search(search);
                 const results = Array.isArray(data) ? data : (data.member || []);
-                 const normalized = results.map(item => ({
-                    id: item.id,
-                    mkbCode: item.mkb_code,
-                    mkbName: item.mkb_name,
-                }));
-                this.options = normalized;
+                this.options = results; // уже camelCase
+                console.log('Search results:', results);
             } catch (err) {
                 console.error('Ошибка поиска диагнозов', err);
             } finally {
-                loading(false);
+                this.loading = false;
             }
         }, 300),
-        getOptionLabel(option) {
-            return `${option.mkbCode} — ${option.mkbName}`;
-        },
-        getOptionKey(option) {
-            return option.id;
-        },
     },
 };
 

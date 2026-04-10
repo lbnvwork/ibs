@@ -1,8 +1,25 @@
 .diagnosis-select {
     min-width: 350px;
 }
-
+.multiselect-tag {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.multiselect-tag-remove {
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 4px;
+}
 .empty-message {
-    text-align: center;
     padding: 8px;
+    text-align: center;
+    color: #6c757d;
+}
+
+.multiselect-option.is-selected {
+    background: #e0e0e0; /* серый вместо зелёного */
 }

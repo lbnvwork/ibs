@@ -1,0 +1,28 @@
+<div class="multi-diagnosis-select" v-click-outside="closeOptions">
+    <div class="select-input" @click="toggleOptions">
+        <div class="tags-container">
+            <span v-for="code in selectedCodes" :key="code" class="tag">
+                {{ getShortLabel(code) }}
+                <button @click.stop="removeDiagnosis(code)" class="tag-remove">×</button>
+            </span>
+            <input
+                type="text"
+                v-model="search"
+                @input="onSearchInput"
+                @focus="openOptions"
+                placeholder="Поиск или выберите..."
+                class="search-input-inline"
+            />
+        </div>
+        <span class="arrow">▼</span>
+    </div>
+    <div class="options-dropdown" v-if="isOpen">
+        <div class="options-list">
+            <label v-for="opt in validOptions" :key="opt.id" class="option">
+                <input type="checkbox" :value="opt.mkbCode" v-model="selectedCodes" />
+                <strong>{{ opt.mkbCode }}</strong> — {{ opt.mkbName }}
+            </label>
+            <div v-if="!validOptions.length && search.length >= 2" class="no-options">Ничего не найдено</div>
+        </div>
+    </div>
+</div>
