@@ -1,0 +1,97 @@
+.multi-diagnosis-select {
+    position: relative;
+    width: 100%;
+    min-width: 300px;
+}
+
+.select-input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+}
+
+.tag {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tag-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+}
+
+.search-input-inline {
+    border: none;
+    outline: none;
+    flex: 1;
+    min-width: 80px;
+    padding: 4px;
+    font-size: 14px;
+}
+
+.arrow {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.options-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;           /* прижимаем к правому краю компонента */
+    left: auto;         /* отключаем левое позиционирование */
+    margin-top: 2px;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: max-content;
+    min-width: 100%;
+    max-width: 90vw;
+}
+
+.options-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.option {
+    display: block;
+    padding: 6px 8px;
+    cursor: pointer;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.option:hover {
+    background: #f8f9fa;
+}
+
+.no-options {
+    padding: 8px;
+    text-align: center;
+    color: #6c757d;
+}
