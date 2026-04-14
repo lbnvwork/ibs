@@ -1,4 +1,58 @@
 <div class="patient-add">
     <h2>Добавление нового пациента</h2>
-    <p>Форма будет здесь</p>
+    <form @submit.prevent="submitForm">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="lastname">Фамилия *</label>
+                <input type="text" id="lastname" v-model="patient.lastname" required>
+            </div>
+            <div class="form-group">
+                <label for="firstname">Имя *</label>
+                <input type="text" id="firstname" v-model="patient.firstname" required>
+            </div>
+            <div class="form-group">
+                <label for="secondName">Отчество</label>
+                <input type="text" id="secondName" v-model="patient.secondName">
+            </div>
+            <div class="form-group">
+                <label for="birthday">Дата рождения *</label>
+                <input type="date" id="birthday" v-model="patient.birthday" required>
+            </div>
+            <div class="form-group">
+                <label for="sex">Пол</label>
+                <select id="sex" v-model="patient.sex">
+                    <option value="0">Женский</option>
+                    <option value="1">Мужской</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="smsPhone">Телефон *</label>
+                <input type="tel" id="smsPhone" v-model="patient.smsPhone" required placeholder="8(XXX)XXX-XX-XX">
+            </div>
+            <div class="form-group">
+                <label for="address">Адрес</label>
+                <input type="text" id="address" v-model="patient.address">
+            </div>
+            <div class="form-group">
+                <label for="passport">Паспорт</label>
+                <input type="text" id="passport" v-model="patient.passport">
+            </div>
+            <div class="form-group">
+                <label for="snils">СНИЛС</label>
+                <input type="text" id="snils" v-model="patient.snils">
+            </div>
+            <div class="form-group">
+                <label for="healthInsurance">Полис</label>
+                <input type="text" id="healthInsurance" v-model="patient.healthInsurance">
+            </div>
+            <div class="form-group full-width">
+                <label for="comment">Комментарий</label>
+                <textarea id="comment" v-model="patient.comment" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Сохранить</button>
+            <button type="button" @click="$router.push('/')">Отмена</button>
+        </div>
+    </form>
 </div>
