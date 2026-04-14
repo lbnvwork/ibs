@@ -3,6 +3,7 @@ import Home from '@/components/Home/Home.vue';
 import PatientHistory from '../components/PatientHistory/PatientHistory.vue';
 import Login from '../components/Login/Login.vue';
 import { useAuthStore } from '../stores/authStore';
+import PatientAdd from '@/components/PatientAdd/PatientAdd.vue';
 
 const routes = [
   {
@@ -15,14 +16,20 @@ const routes = [
     path: '/', 
     name: 'Home',
     component: Home,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, backTarget: null }
   },
   { 
     path: '/patient/:id',
     name: 'PatientHistory', 
     component: PatientHistory,
     props: true,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, backTarget: '/' }
+  },
+  {
+      path: '/patient/add',
+      name: 'PatientAdd',
+      component: PatientAdd,
+      meta: { requiresAuth: true, backTarget: '/' }
   }
 ];
 
