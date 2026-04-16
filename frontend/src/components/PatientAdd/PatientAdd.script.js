@@ -1,4 +1,5 @@
 import { hospitalApi } from '@/api/hospitals';
+import { patientApi } from '@/api/patients';
 
 export default {
     name: 'PatientAdd',
@@ -20,6 +21,8 @@ export default {
             },
             hospitals: [],
             loadingHospitals: false,
+            loading: false,
+            error: null,
         };
     },
     async created() {
@@ -36,8 +39,36 @@ export default {
                 this.loadingHospitals = false;
             }
         },
-        submitForm() {
-            console.log('Форма отправлена', this.patient);
+        async submitForm() {
+            this.loading = true;
+            this.error = null;
+
+            try {
+                const patientData = {
+                    lastname: this.patient.lastname,
+                    firstname: this.patient.firstname,
+                    secondName: this.patient.secondName,
+                    birthday: this.patient.birthday,
+                    sex: this.patient.sex,
+                    smsPhone: this.patient.smsPhone,
+                    address: this.patient.address,
+                    passport: this.patient.passport,
+                    snils: this.patient.snils,
+                    healthInsurance: this.patient.healthInsurance,
+                    comment: this.patient.comment,
+                    hospital: `/api/hospitals/${this.patient.hospitalId}`,
+                };
+
+                console.log('Отправляемые данные:', patientData);
+                const createdPatient = await patientApi.create(patientData);
+                const patientId = createdPatient.id;
+                //this.$router.push(`/patient/${patientId}`);
+            } catch (err) {
+                console.error(err);
+                this.error = err.response?.data?.detail || 'Ошибка при сохранении пациента';
+            } finally {
+                this.loading = false;
+            }
         }
     }
 };
