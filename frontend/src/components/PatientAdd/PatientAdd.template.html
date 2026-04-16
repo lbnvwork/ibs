@@ -1,5 +1,7 @@
 <div class="patient-add">
     <h2>Добавление нового пациента</h2>
+    <div v-if="loading" class="loading-overlay">Сохранение...</div>
+    <div v-if="error" class="error-message">{{ error }}</div>
     <form @submit.prevent="submitForm">
         <div class="form-grid">
             <div class="form-group">
@@ -59,7 +61,7 @@
             </div>
         </div>
         <div class="form-actions">
-            <button type="submit">Сохранить</button>
+            <button type="submit" :disabled="loading">Сохранить</button>
             <button type="button" @click="$router.push('/')">Отмена</button>
         </div>
     </form>
