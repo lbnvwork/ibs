@@ -79,24 +79,17 @@ export default {
         }
     },
     computed: {
-        isPatientHistory() {
-            return this.$route && this.$route.path.startsWith('/patient/') && this.$route.path !== '/patient/add';
+        isBackButtonActive() {
+            return this.$route && this.$route.path !== '/';
         },
         backButtonTitle() {
-            const backTarget = this.$route.meta.backTarget;
-            if (backTarget === '/') {
-                return 'Вернуться к списку пациентов';
-            }
-            return 'Отмена действия, возврат';
+            return 'Вернуться к списку пациентов';
         }
     },
     methods: {
         handleBackButton() {
-            const backTarget = this.$route.meta.backTarget;
-            if (backTarget && this.$router) {
-                this.$router.push(backTarget);
-            } else if (this.$router) {
-                this.$router.go(-1);
+            if (this.$route.path !== '/') {
+                this.$router.push('/');
             }
         },
         handleButtonClick(item) {
