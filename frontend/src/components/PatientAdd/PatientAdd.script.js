@@ -1,3 +1,5 @@
+import { hospitalApi } from '@/api/hospitals';
+
 export default {
     name: 'PatientAdd',
     data() {
@@ -13,13 +15,28 @@ export default {
                 passport: '',
                 snils: '',
                 healthInsurance: '',
-                comment: ''
-            }
+                comment: '',
+                hospitalId: null,
+            },
+            hospitals: [],
+            loadingHospitals: false,
         };
     },
+    async created() {
+        await this.loadHospitals();
+    },
     methods: {
+        async loadHospitals() {
+            this.loadingHospitals = true;
+            try {
+                this.hospitals = await hospitalApi.getAll();
+            } catch (error) {
+                console.error('Ошибка при загрузке больниц:', error);
+            } finally {
+                this.loadingHospitals = false;
+            }
+        },
         submitForm() {
-            // временно
             console.log('Форма отправлена', this.patient);
         }
     }

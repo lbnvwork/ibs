@@ -3,6 +3,14 @@
     <form @submit.prevent="submitForm">
         <div class="form-grid">
             <div class="form-group">
+                <label for="hospital">Больница *</label>
+                <select id="hospital" v-model="patient.hospitalId" required>
+                    <option v-for="h in hospitals" :key="h.id" :value="h.id">
+                        {{ h.name }} ({{ h.region || '' }})
+                    </option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="lastname">Фамилия *</label>
                 <input type="text" id="lastname" v-model="patient.lastname" required>
             </div>
