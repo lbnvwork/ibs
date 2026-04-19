@@ -7,4 +7,7 @@ export const mkb10Api = {
     search(query) {
         return apiClient.get('/mkb10/search', { params: { q: query, itemsPerPage: 20 } }).then(res => res.data);
     },
+    getByCode(code) {
+        return apiClient.get('/mkb10', { params: { mkbCode: code } }).then(res => res.data);
+    },
 };
