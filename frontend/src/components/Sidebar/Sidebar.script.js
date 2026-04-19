@@ -1,3 +1,5 @@
+import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths';
+
 export default {
     name: 'Sidebar',
     data() {
@@ -80,7 +82,7 @@ export default {
     },
     computed: {
         isBackButtonActive() {
-            return this.$route && this.$route.path !== '/';
+            return this.$route && this.$route.path !== HOME_PATH;
         },
         backButtonTitle() {
             return 'Вернуться к списку пациентов';
@@ -88,15 +90,18 @@ export default {
     },
     methods: {
         handleBackButton() {
-            if (this.$route.path !== '/') {
-                this.$router.push('/');
+            const backTarget = this.$route.meta.backTarget;
+            if (backTarget) {
+                this.$router.push(backTarget);
+            } else {
+                this.$router.push(HOME_PATH);
             }
         },
         handleButtonClick(item) {
             console.log('Clicked:', item.name);
             switch (item.name) {
                 case 'patientAdd':
-                    this.$router.push('/patient/add');
+                    this.$router.push(PATIENT_ADD_PATH);
                     break;
                 default:
                     console.log('Not implemented yet');

@@ -1,5 +1,6 @@
 import { hospitalApi } from '@/api/hospitals';
 import { patientApi } from '@/api/patients';
+import { TREATMENT_ADD } from '@/router/paths';
 
 export default {
     name: 'PatientAdd',
@@ -55,14 +56,13 @@ export default {
                     passport: this.patient.passport,
                     snils: this.patient.snils,
                     healthInsurance: this.patient.healthInsurance,
-                    comment: this.patient.comment,
+                    comment: this.patient.comment   ,
                     hospital: `/api/hospitals/${this.patient.hospitalId}`,
                 };
 
                 console.log('Отправляемые данные:', patientData);
                 const createdPatient = await patientApi.create(patientData);
-                const patientId = createdPatient.id;
-                //this.$router.push(`/patient/${patientId}`);
+                this.$router.push(TREATMENT_ADD(createdPatient.id));
             } catch (err) {
                 console.error(err);
                 this.error = err.response?.data?.detail || 'Ошибка при сохранении пациента';
