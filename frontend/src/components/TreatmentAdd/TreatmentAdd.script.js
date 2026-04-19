@@ -69,7 +69,19 @@ export default {
                 console.error('Ошибка загрузки препаратов', err);
             }
         },
+        validateForm() {
+            if (!this.treatment.drugId) return 'Выберите препарат';
+            if (!this.treatment.begDt) return 'Укажите дату начала лечения';
+            if (!this.treatment.diagnosis.trim()) return 'Введите диагноз (текст)';
+            return null;
+        },
         async submitForm() {
+            const validationError = this.validateForm();
+            if (validationError) {
+                this.error = validationError;
+                return;
+            }
+
             this.loading = true;
             this.error = null;
 

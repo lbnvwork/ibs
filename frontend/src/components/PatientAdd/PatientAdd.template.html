@@ -37,7 +37,7 @@
             </div>
             <div class="form-group">
                 <label for="smsPhone">Телефон *</label>
-                <input type="tel" id="smsPhone" v-model="patient.smsPhone" required placeholder="8(XXX)XXX-XX-XX">
+                <input type="tel" id="smsPhone" v-model="patient.smsPhone" @blur="formatPhoneField" required placeholder="8(XXX)XXX-XX-XX">
             </div>
             <div class="form-group">
                 <label for="address">Адрес</label>
@@ -45,11 +45,11 @@
             </div>
             <div class="form-group">
                 <label for="passport">Паспорт</label>
-                <input type="text" id="passport" v-model="patient.passport">
+                <input type="text" id="passport" v-model="patient.passport" @blur="formatPassportField" placeholder="XXXX XXXXXX">
             </div>
             <div class="form-group">
                 <label for="snils">СНИЛС</label>
-                <input type="text" id="snils" v-model="patient.snils">
+                <input type="text" id="snils" v-model="patient.snils" @blur="formatSnilsField" placeholder="XXX-XXX-XXX XX">
             </div>
             <div class="form-group">
                 <label for="healthInsurance">Полис</label>
