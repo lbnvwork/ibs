@@ -13,9 +13,17 @@
                 </select>
             </div>
             <div class="form-group full-width">
-                <label>Диагноз</label>
+                <label>Выберите код МКБ-10</label>
                 <MultiDiagnosisSelect v-model="selectedDiagnosisCodes" />
                 <small>Выберите диагноз из списка или начните вводить</small>
+            </div>
+            <div class="form-group">
+                <label for="diagnosisCode">Код МКБ-10</label>
+                <input type="text" id="diagnosisCode" v-model="treatment.diagnosisCode">
+            </div>
+            <div class="form-group full-width">
+                <label for="diagnosis">Диагноз (текст) *</label>
+                <textarea id="diagnosis" v-model="treatment.diagnosis" rows="2" required></textarea>
             </div>
             <div class="form-group">
                 <label for="begDt">Дата начала лечения *</label>

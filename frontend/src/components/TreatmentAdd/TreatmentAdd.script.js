@@ -1,12 +1,11 @@
 import { drugApi } from '@/api/drug';
 import { treatmentApi } from '@/api/treatments';
+import { mkb10Api } from '@/api/mkb10';
 import MultiDiagnosisSelect from '@/components/common/MultiDiagnosisSelect/MultiDiagnosisSelect.vue';
 
 export default {
     name: 'TreatmentAdd',
-    components: {
-        MultiDiagnosisSelect,
-    },
+    components: { MultiDiagnosisSelect },
     props: {
         patientId: {
             type: String,
@@ -21,6 +20,8 @@ export default {
                 mnoFrom: null,
                 mnoTo: null,
                 comment: '',
+                diagnosis: '',
+                diagnosisCode: '',
             },
             selectedDiagnosisCodes: [],
             drugs: [],
@@ -28,9 +29,32 @@ export default {
             error: null,
         };
     },
-    computed: {
-        patientId() {
-            return this.patientId;
+    watch: {
+        selectedDiagnosisCodes: {
+            async handler(newVal) {
+                if (newVal && newVal.length) {
+                    const code = newVal[0];
+                    try {
+                        const data = await mkb10Api.getByCode(code);
+                        const member = data.member || data;
+                        if (member.length) {
+                            this.treatment.diagnosis = member[0].mkbName;
+                            this.treatment.diagnosisCode = member[0].mkbCode;
+                        } else {
+                            this.treatment.diagnosis = '';
+                            this.treatment.diagnosisCode = code;
+                        }
+                    } catch (err) {
+                        console.error('Ошибка загрузки диагноза', err);
+                        this.treatment.diagnosis = '';
+                        this.treatment.diagnosisCode = code;
+                    }
+                } else {
+                    this.treatment.diagnosis = '';
+                    this.treatment.diagnosisCode = '';
+                }
+            },
+            deep: true,
         },
     },
     async created() {
@@ -57,14 +81,12 @@ export default {
                     mnoFrom: this.treatment.mnoFrom,
                     mnoTo: this.treatment.mnoTo,
                     comment: this.treatment.comment,
+                    diagnosis: this.treatment.diagnosis,
+                    diagnosisCode: this.treatment.diagnosisCode,
                 };
 
-                if (this.selectedDiagnosisCodes.length) {
-                    treatmentData.diagnosisCode = this.selectedDiagnosisCodes[0];
-                }
-
                 await treatmentApi.create(treatmentData);
-                //this.$router.push(`/patient/${this.patientId}`);
+                this.$router.push(`/patient/${this.patientId}`);
             } catch (err) {
                 console.error(err);
                 this.error = err.response?.data?.detail || 'Ошибка при сохранении лечения';
