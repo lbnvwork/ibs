@@ -12,6 +12,7 @@ use App\Filter\PatientDiagnosisFilter;
 use App\Filter\PatientDrugFilter;
 use App\Filter\PatientGroupFilter;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource]
 #[ApiFilter(SearchFilter::class, properties: [
@@ -34,27 +35,41 @@ class Patient
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 255)]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $firstname;
 
+    #[Assert\Length(min: 2, max: 255)]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $secondName;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 255)]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $lastname;
 
     #[ORM\Column(type: 'datetime', nullable: false)]
     private \DateTimeInterface $birthday;
 
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'integer')]
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
     private int $sex = 0;
 
+    #[Assert\NotBlank]
+    #[Assert\Regex(
+        pattern: '/^8\(\d{3}\)\d{3}-\d{2}-\d{2}$/', 
+        message: 'Телефон должен быть в формате 8(XXX)XXX-XX-XX'
+    )]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $smsPhone;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $address = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/^\d{4} \d{6}$/', message: 'Паспорт должен быть в формате XXXX XXXXXX')]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $passport = null;
 
@@ -64,9 +79,13 @@ class Patient
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/^\d{3}-\d{3}-\d{3} \d{2}$/', message: 'СНИЛС должен быть в формате XXX-XXX-XXX XX')]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $snils = null;
 
+    #[Assert\NotBlank]
     #[ORM\ManyToOne(targetEntity: Hospital::class)]
     #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', nullable: true)]
     private ?Hospital $hospital = null;

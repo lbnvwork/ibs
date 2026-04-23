@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Filter\ActiveTreatmentFilter;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -52,18 +53,25 @@ class Treatment
     #[ORM\Column(type: 'integer', unique: true, nullable: true)]
     private ?int $code = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $diagnosis;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comorbidities = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'float')]
     #[ORM\Column(type: 'float', nullable: false)]
     private float $mnoFrom;
 
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'float')]
     #[ORM\Column(type: 'float', nullable: false)]
     private float $mnoTo;
 
+    #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeInterface::class)]
     #[ORM\Column(type: 'datetime', nullable: false)]
     private \DateTimeInterface $begDt;
 
@@ -79,7 +87,9 @@ class Treatment
     #[ORM\ManyToOne(targetEntity: Patient::class)]
     #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: true)]
     private ?Patient $patient = null;
-
+    
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'integer')]
     #[ORM\ManyToOne(targetEntity: Drug::class)]
     #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
     private ?Drug $drug = null;
@@ -93,6 +103,8 @@ class Treatment
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
     private int $flags = 0;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(name: 'diagnosis_code', type: 'string', length: 255, nullable: true)]
     private ?string $diagnosisCode = null;
 
