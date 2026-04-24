@@ -89,7 +89,6 @@ class Treatment
     private ?Patient $patient = null;
     
     #[Assert\NotBlank]
-    #[Assert\Type(type: 'integer')]
     #[ORM\ManyToOne(targetEntity: Drug::class)]
     #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
     private ?Drug $drug = null;
