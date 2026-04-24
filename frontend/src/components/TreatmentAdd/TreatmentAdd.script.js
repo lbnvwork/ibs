@@ -2,6 +2,7 @@ import { drugApi } from '@/api/drug';
 import { treatmentApi } from '@/api/treatments';
 import { mkb10Api } from '@/api/mkb10';
 import MultiDiagnosisSelect from '@/components/common/MultiDiagnosisSelect/MultiDiagnosisSelect.vue';
+import { parseApiError } from '@/utils/apiErrorHandler';
 
 export default {
     name: 'TreatmentAdd',
@@ -101,7 +102,7 @@ export default {
                 this.$router.push(`/patient/${this.patientId}`);
             } catch (err) {
                 console.error(err);
-                this.error = err.response?.data?.detail || 'Ошибка при сохранении лечения';
+                this.error = parseApiError(err);
             } finally {
                 this.loading = false;
             }

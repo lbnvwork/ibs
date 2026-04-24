@@ -41,14 +41,16 @@ class Patient
     private string $firstname;
 
     #[Assert\Length(min: 2, max: 255)]
-    #[ORM\Column(type: 'text', nullable: false)]
-    private string $secondName;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $secondName;
 
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 255)]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $lastname;
 
+    #[Assert\LessThanOrEqual(value: 'today', message: 'Дата рождения не может быть в будущем.')]
+    #[Assert\GreaterThanOrEqual(value: '-120 years', message: 'Возраст не может превышать 120 лет.')]
     #[ORM\Column(type: 'datetime', nullable: false)]
     private \DateTimeInterface $birthday;
 
@@ -65,6 +67,7 @@ class Patient
     #[ORM\Column(type: 'text', nullable: false)]
     private string $smsPhone;
 
+    #[Assert\NotBlank]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $address = null;
 
@@ -117,12 +120,12 @@ class Patient
         return $this;
     }
 
-    public function getSecondName(): string
+    public function getSecondName(): ?string
     {
         return $this->secondName;
     }
 
-    public function setSecondName(string $secondName): self
+    public function setSecondName(?string $secondName): self
     {
         $this->secondName = $secondName;
         return $this;
