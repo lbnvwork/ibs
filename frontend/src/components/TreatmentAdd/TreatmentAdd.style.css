@@ -64,6 +64,18 @@ h2 {
     background: #f0f0f0;
     color: #333;
 }
+.field-error {
+    color: #d9534f;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+.has-error input,
+.has-error select,
+.has-error textarea {
+    border-color: #d9534f;
+    background-color: #fff0f0;
+}
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;

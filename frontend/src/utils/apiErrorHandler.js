@@ -1,15 +1,13 @@
 export function parseApiError(err) {
     const response = err.response?.data;
-    if (!response) return err.message || 'Неизвестная ошибка';
-
-    if (response.violations && Array.isArray(response.violations)) {
-        const messages = response.violations.map(v => `${v.propertyPath}: ${v.message}`).join('\n');
-        return messages;
+    if (response?.violations) {
+        return { violations: response.violations };
     }
-
-    if (response.detail) return response.detail;
-
-    if (response.title) return response.title;
-
-    return 'Ошибка сервера';
+    if (response?.detail) {
+        const detail = response.detail.includes('NULL')
+            ? 'Это значение не должно быть пустым.'
+            : response.detail;
+        return { generalError: detail };
+    }
+    return { generalError: 'Ошибка сервера' };
 }

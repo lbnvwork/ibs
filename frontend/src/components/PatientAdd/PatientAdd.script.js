@@ -26,6 +26,7 @@ export default {
             loadingHospitals: false,
             loading: false,
             error: null,
+            fieldErrors: {},
         };
     },
     async created() {
@@ -51,16 +52,10 @@ export default {
         formatSnilsField() {
             this.patient.snils = formatSnils(this.patient.snils);
         },
-        validateForm() {
+        validateFormAndSetErrors() {
             const rules = {
-                lastname: { 
-                    required: true, 
-                    message: 'Фамилия обязательна' 
-                },
-                firstname: { 
-                    required: true, 
-                    message: 'Имя обязательно' 
-                },
+                lastname: { required: true, message: 'Фамилия обязательна' },
+                firstname: { required: true, message: 'Имя обязательно' },
                 birthday: {
                     required: true,
                     message: 'Дата рождения обязательна',
@@ -76,53 +71,54 @@ export default {
                     },
                     errorMsg: 'Дата рождения не может быть в будущем и возраст не может превышать 120 лет.'
                 },
-                smsPhone: { 
-                    required: true, 
-                    message: 'Телефон обязателен', 
-                    validator: (val) => isValidPhone(val), 
-                    errorMsg: 'Телефон должен содержать 11 цифр (8 или 7) в формате 8(XXX)XXX-XX-XX' },
-                hospitalId: { 
-                    required: true, 
-                    message: 'Больница обязательна' 
+                smsPhone: {
+                    required: true,
+                    message: 'Телефон обязателен',
+                    validator: (val) => isValidPhone(val),
+                    errorMsg: 'Телефон должен содержать 11 цифр (8 или 7) в формате 8(XXX)XXX-XX-XX'
                 },
-                address: { 
-                    required: true, 
-                    message: 'Адрес обязателен' 
-                },
-                passport: { 
-                    required: true, 
+                hospitalId: { required: true, message: 'Больница обязательна' },
+                address: { required: true, message: 'Адрес обязателен' },
+                passport: {
+                    required: true,
                     message: 'Паспорт обязателен',
-                    validator: (val) => !val || isValidPassport(val), 
-                    errorMsg: 'Паспорт должен быть в формате XXXX XXXXXX (4 и 6 цифр)' 
+                    validator: (val) => isValidPassport(val),
+                    errorMsg: 'Паспорт должен быть в формате XXXX XXXXXX (4 и 6 цифр)'
                 },
-                snils: { 
-                    required: true, 
+                snils: {
+                    required: true,
                     message: 'СНИЛС обязателен',
-                    validator: (val) => !val || isValidSnils(val), 
-                    errorMsg: 'СНИЛС должен содержать 11 цифр в формате XXX-XXX-XXX XX' 
+                    validator: (val) => isValidSnils(val),
+                    errorMsg: 'СНИЛС должен содержать 11 цифр в формате XXX-XXX-XXX XX'
                 },
             };
+
+            const newErrors = {};
+            let hasError = false;
 
             for (const [field, rule] of Object.entries(rules)) {
                 const value = this.patient[field];
                 if (rule.required && !value) {
-                    return rule.message;
-                }
-                if (rule.validator && !rule.validator(value)) {
-                    return rule.errorMsg;
+                    newErrors[field] = rule.message;
+                    hasError = true;
+                } else if (rule.validator && !rule.validator(value)) {
+                    newErrors[field] = rule.errorMsg;
+                    hasError = true;
                 }
             }
-            return null;
+
+            this.fieldErrors = newErrors;
+            return hasError;
         },
         async submitForm() {
-            const validationError = this.validateForm();
-            if (validationError) {
-                this.error = validationError;
+            if (this.validateFormAndSetErrors()) {
+                this.error = null;
                 return;
             }
 
             this.loading = true;
             this.error = null;
+            this.fieldErrors = {};
 
             try {
                 const patientData = {
@@ -143,8 +139,27 @@ export default {
                 const createdPatient = await patientApi.create(patientData);
                 this.$router.push(`/patient/${createdPatient.id}/treatment/add`);
             } catch (err) {
-                console.error(err);
-                this.error = parseApiError(err);
+                const parsed = parseApiError(err);
+                if (parsed.violations) {
+                    const fieldErrors = {};
+                    parsed.violations.forEach(v => {
+                        const field = v.propertyPath;
+                        let msg = v.message;
+                        const prefix = `${field}: `;
+                        if (msg.startsWith(prefix)) {
+                            msg = msg.slice(prefix.length);
+                        }
+                        if (!fieldErrors[field]) fieldErrors[field] = [];
+                        fieldErrors[field].push(msg);
+                    });
+                    this.fieldErrors = Object.fromEntries(
+                        Object.entries(fieldErrors).map(([f, arr]) => [f, arr.join(' ')])
+                    );
+                    this.error = null;
+                } else {
+                    this.fieldErrors = {};
+                    this.error = parsed.generalError;
+                }
             } finally {
                 this.loading = false;
             }
