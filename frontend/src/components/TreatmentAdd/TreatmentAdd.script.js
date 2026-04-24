@@ -28,6 +28,7 @@ export default {
             drugs: [],
             loading: false,
             error: null,
+            fieldErrors: {},
         };
     },
     watch: {
@@ -70,21 +71,66 @@ export default {
                 console.error('Ошибка загрузки препаратов', err);
             }
         },
-        validateForm() {
-            if (!this.treatment.drugId) return 'Выберите препарат';
-            if (!this.treatment.begDt) return 'Укажите дату начала лечения';
-            if (!this.treatment.diagnosis.trim()) return 'Введите диагноз (текст)';
-            return null;
+        validateFormAndSetErrors() {
+            const rules = {
+                drugId: {
+                    required: true,
+                    message: 'Выберите препарат',
+                },
+                begDt: {
+                    required: true,
+                    message: 'Укажите дату начала лечения',
+                },
+                diagnosis: {
+                    required: true,
+                    message: 'Введите диагноз (текст)',
+                    validator: (val) => val && val.trim().length > 0,
+                    errorMsg: 'Введите диагноз (текст)',
+                },
+                mnoFrom: {
+                    required: true,
+                    message: 'Целевой диапазон МНО (от) обязателен',
+                },
+                mnoTo: {
+                    required: true,
+                    message: 'Целевой диапазон МНО (до) обязателен',
+                },
+            };
+
+            const newErrors = {};
+            let hasError = false;
+
+            for (const [field, rule] of Object.entries(rules)) {
+                const value = this.treatment[field];
+                if (rule.required && (value === null || value === undefined || value === '')) {
+                    newErrors[field] = rule.message;
+                    hasError = true;
+                } else if (rule.validator && !rule.validator(value)) {
+                    newErrors[field] = rule.errorMsg;
+                    hasError = true;
+                }
+            }
+
+            if (this.treatment.mnoFrom !== null && this.treatment.mnoFrom !== undefined && this.treatment.mnoFrom !== '' &&
+                this.treatment.mnoTo !== null && this.treatment.mnoTo !== undefined && this.treatment.mnoTo !== '') {
+                if (this.treatment.mnoFrom > this.treatment.mnoTo) {
+                    newErrors.mnoFrom = 'МНО «от» не может быть больше МНО «до»';
+                    hasError = true;
+                }
+            }
+
+            this.fieldErrors = newErrors;
+            return hasError;
         },
         async submitForm() {
-            const validationError = this.validateForm();
-            if (validationError) {
-                this.error = validationError;
+            if (this.validateFormAndSetErrors()) {
+                this.error = null;
                 return;
             }
 
             this.loading = true;
             this.error = null;
+            this.fieldErrors = {};
 
             try {
                 const treatmentData = {
@@ -102,7 +148,27 @@ export default {
                 this.$router.push(`/patient/${this.patientId}`);
             } catch (err) {
                 console.error(err);
-                this.error = parseApiError(err);
+                const parsed = parseApiError(err);
+                if (parsed.violations) {
+                    const fieldErrors = {};
+                    parsed.violations.forEach(v => {
+                        const field = v.propertyPath;
+                        let msg = v.message;
+                        const prefix = `${field}: `;
+                        if (msg.startsWith(prefix)) {
+                            msg = msg.slice(prefix.length);
+                        }
+                        if (!fieldErrors[field]) fieldErrors[field] = [];
+                        fieldErrors[field].push(msg);
+                    });
+                    this.fieldErrors = Object.fromEntries(
+                        Object.entries(fieldErrors).map(([f, arr]) => [f, arr.join(' ')])
+                    );
+                    this.error = null;
+                } else {
+                    this.fieldErrors = {};
+                    this.error = parsed.generalError;
+                }
             } finally {
                 this.loading = false;
             }

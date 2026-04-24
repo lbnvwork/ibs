@@ -4,42 +4,56 @@
     <div v-if="error" class="error-message">{{ error }}</div>
     <form @submit.prevent="submitForm">
         <div class="form-grid">
-            <div class="form-group">
+            <div class="form-group" :class="{ 'has-error': fieldErrors.drug }">
                 <label for="drug">Препарат *</label>
                 <select id="drug" v-model="treatment.drugId" required>
                     <option v-for="drug in drugs" :key="drug.id" :value="drug.id">
                         {{ drug.nominative }}
                     </option>
                 </select>
+                <span v-if="fieldErrors.drug" class="field-error">{{ fieldErrors.drug }}</span>
             </div>
+
             <div class="form-group full-width">
                 <label>Выберите код МКБ-10</label>
                 <MultiDiagnosisSelect v-model="selectedDiagnosisCodes" />
                 <small>Выберите диагноз из списка или начните вводить</small>
             </div>
-            <div class="form-group">
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.diagnosisCode }">
                 <label for="diagnosisCode">Код МКБ-10</label>
                 <input type="text" id="diagnosisCode" v-model="treatment.diagnosisCode">
+                <span v-if="fieldErrors.diagnosisCode" class="field-error">{{ fieldErrors.diagnosisCode }}</span>
             </div>
-            <div class="form-group full-width">
+
+            <div class="form-group full-width" :class="{ 'has-error': fieldErrors.diagnosis }">
                 <label for="diagnosis">Диагноз (текст) *</label>
                 <textarea id="diagnosis" v-model="treatment.diagnosis" rows="2" required></textarea>
+                <span v-if="fieldErrors.diagnosis" class="field-error">{{ fieldErrors.diagnosis }}</span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.begDt }">
                 <label for="begDt">Дата начала лечения *</label>
                 <input type="date" id="begDt" v-model="treatment.begDt" required>
+                <span v-if="fieldErrors.begDt" class="field-error">{{ fieldErrors.begDt }}</span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.mnoFrom }">
                 <label for="mnoFrom">Целевой МНО от</label>
                 <input type="number" step="0.1" id="mnoFrom" v-model="treatment.mnoFrom">
+                <span v-if="fieldErrors.mnoFrom" class="field-error">{{ fieldErrors.mnoFrom }}</span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.mnoTo }">
                 <label for="mnoTo">Целевой МНО до</label>
                 <input type="number" step="0.1" id="mnoTo" v-model="treatment.mnoTo">
+                <span v-if="fieldErrors.mnoTo" class="field-error">{{ fieldErrors.mnoTo }}</span>
             </div>
-            <div class="form-group full-width">
+
+            <div class="form-group full-width" :class="{ 'has-error': fieldErrors.comment }">
                 <label for="comment">Комментарий к лечению</label>
                 <textarea id="comment" v-model="treatment.comment" rows="3"></textarea>
+                <span v-if="fieldErrors.comment" class="field-error">{{ fieldErrors.comment }}</span>
             </div>
         </div>
         <div class="form-actions">

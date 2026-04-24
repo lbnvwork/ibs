@@ -53,25 +53,23 @@ class Treatment
     #[ORM\Column(type: 'integer', unique: true, nullable: true)]
     private ?int $code = null;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'treatment.diagnosis.not_blank')]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $diagnosis;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comorbidities = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Type(type: 'float')]
+    #[Assert\NotBlank(message: 'treatment.mnoFrom.not_blank')]
     #[ORM\Column(type: 'float', nullable: false)]
     private float $mnoFrom;
 
-    #[Assert\NotBlank]
-    #[Assert\Type(type: 'float')]
+    #[Assert\NotBlank(message: 'treatment.mnoTo.not_blank')]
     #[ORM\Column(type: 'float', nullable: false)]
     private float $mnoTo;
 
-    #[Assert\NotBlank]
-    #[Assert\Type(\DateTimeInterface::class)]
+    #[Assert\NotBlank(message: 'treatment.begDt.not_blank')]
+    #[Assert\Type(\DateTimeInterface::class, message: 'treatment.begDt.type')]
     #[ORM\Column(type: 'datetime', nullable: false)]
     private \DateTimeInterface $begDt;
 
@@ -88,7 +86,7 @@ class Treatment
     #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: true)]
     private ?Patient $patient = null;
     
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'treatment.drug.not_blank')]
     #[ORM\ManyToOne(targetEntity: Drug::class)]
     #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
     private ?Drug $drug = null;
@@ -102,8 +100,8 @@ class Treatment
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
     private int $flags = 0;
 
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(message: 'treatment.diagnosisCode.not_blank')]
+    #[Assert\Length(max: 255, maxMessage: 'treatment.diagnosisCode.length')]
     #[ORM\Column(name: 'diagnosis_code', type: 'string', length: 255, nullable: true)]
     private ?string $diagnosisCode = null;
 
