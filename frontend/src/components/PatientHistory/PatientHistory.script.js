@@ -40,8 +40,7 @@ export default {
           itemsPerPage: 1,
           order: { begDt: 'desc' }
         });
-        const treatmentData = treatmentResp.data ? treatmentResp.data : treatmentResp;
-        const treatments = (treatmentResp.member) ? treatmentResp.member : [];
+        const treatments = treatmentResp.member || [];
         const treatment = treatments.length > 0 ? treatments[0] : null;
 
         let hospitalName = '';
@@ -57,8 +56,7 @@ export default {
         if (treatment?.drug) {
           const drugId = extractIdFromIri(treatment.drug);
           if (drugId) {
-            const drugData = await drugApi.getAll();
-            const drugs = drugData.member || [];
+            const drugs = await drugApi.getAll().member || [];
             const found = drugs.find(d => d.id === drugId);
             if (found) drugName = found.nominative || found.genitive || '';
           }
