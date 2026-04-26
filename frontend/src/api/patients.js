@@ -17,5 +17,9 @@ export const patientApi = {
 
     search(query, page = 1, itemsPerPage = PATIENTS_PER_PAGE) {
         return this.getAll(page, itemsPerPage, { lastname: query })
-    }
+    },
+
+    create(data) {
+        return apiClient.post('/patients', data).then(res => res.data);
+    },
 }

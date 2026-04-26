@@ -13,10 +13,15 @@ export function calculateAge(birthday) {
     }
 }
 
-export function formatPhone(phone) {
-    if (!phone) return '—';
-
-    return phone;
+export function formatPhone(value) {
+    if (!value) return '-';
+    const digits = value.replace(/\D/g, '');
+    if (digits.length === 0) return '';
+    if (digits.length <= 1) return digits;
+    if (digits.length <= 4) return `8(${digits.slice(1,4)}`;
+    if (digits.length <= 7) return `8(${digits.slice(1,4)})${digits.slice(4,7)}`;
+    if (digits.length <= 9) return `8(${digits.slice(1,4)})${digits.slice(4,7)}-${digits.slice(7,9)}`;
+    return `8(${digits.slice(1,4)})${digits.slice(4,7)}-${digits.slice(7,9)}-${digits.slice(9,11)}`;
 }
 
 export function formatDate(dateStr) {
@@ -41,3 +46,20 @@ export function formatAge(age) {
         return `${age} года`;
     return `${age} лет`;
 }
+
+export function formatPassport(value) {
+    if (!value) return '';
+    const digits = value.replace(/\D/g, '');
+    if (digits.length <= 4) return digits;
+    return `${digits.slice(0,4)} ${digits.slice(4,10)}`;
+}
+
+export function formatSnils(value) {
+    if (!value) return '';
+    const digits = value.replace(/\D/g, '');
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0,3)}-${digits.slice(3,6)}`;
+    if (digits.length <= 9) return `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6,9)}`;
+    return `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6,9)} ${digits.slice(9,11)}`;
+}
+

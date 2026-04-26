@@ -1,0 +1,51 @@
+This value should not be blank.: Это значение не должно быть пустым.
+This value is too short. It should have {{ limit }} characters or more.: Значение слишком короткое. Должно содержать {{ limit }} или более символов.
+This value is too long. It should have {{ limit }} characters or less.: Значение слишком длинное. Должно содержать {{ limit }} или менее символов.
+This value should be of type {{ type }}.: Значение должно иметь тип {{ type }}.
+This value is not a valid datetime.: Неверный формат даты и времени.
+This value is not a valid date.: Неверный формат даты.
+This value should be less than or equal to {{ compared_value }}.: Значение должно быть меньше или равно {{ compared_value }}.
+This value should be greater than or equal to {{ compared_value }}.: Значение должно быть больше или равно {{ compared_value }}.
+This value is not a valid regular expression.: Значение не соответствует требуемому формату.
+
+# Кастомные сообщения для полей пациента
+patient.lastname.not_blank: Фамилия не может быть пустой.
+patient.lastname.length: Фамилия должна содержать от 2 до 255 символов.
+
+patient.firstname.not_blank: Имя не может быть пустым.
+patient.firstname.length: Имя должно содержать от 2 до 255 символов.
+
+patient.birthday.not_blank: Дата рождения обязательна.
+patient.birthday.type: Неверный формат даты рождения.
+patient.birthday.max: Дата рождения не может быть в будущем.
+patient.birthday.min: Возраст не может превышать 120 лет.
+
+patient.smsPhone.not_blank: Телефон обязателен.
+patient.smsPhone.regex: Телефон должен быть в формате 8(XXX)XXX-XX-XX.
+
+patient.address.not_blank: Адрес обязателен.
+
+patient.passport.not_blank: Паспорт обязателен.
+patient.passport.regex: Паспорт должен быть в формате XXXX XXXXXX (4 цифры, пробел, 6 цифр).
+
+patient.snils.not_blank: СНИЛС обязателен.
+patient.snils.regex: СНИЛС должен быть в формате XXX-XXX-XXX XX (11 цифр).
+
+patient.sex.type: Пол должен быть целым числом (0 или 1).
+
+patient.hospital.not_blank: Больница обязательна.
+
+# Кастомные сообщения для полей лечения (Treatment)
+treatment.diagnosis.not_blank: Диагноз не может быть пустым.
+
+treatment.mnoFrom.not_blank: Целевой диапазон МНО (от) обязателен.
+
+treatment.mnoTo.not_blank: Целевой диапазон МНО (до) обязателен.
+
+treatment.begDt.not_blank: Дата начала лечения обязательна.
+treatment.begDt.type: Неверный формат даты.
+
+treatment.drug.not_blank: Препарат обязателен.
+
+treatment.diagnosisCode.not_blank: Код диагноза обязателен.
+treatment.diagnosisCode.length: Код диагноза не может превышать 255 символов.

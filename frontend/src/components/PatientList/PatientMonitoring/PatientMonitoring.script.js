@@ -1,6 +1,6 @@
 import { mapState } from 'pinia';
 import { useMonitoringStore } from '@/stores/monitoringStore';
-import PatientTable from '@/components/PatientTable/PatientTable.vue';
+import PatientTable from '@/components/PatientList/PatientTable/PatientTable.vue';
 import drugsMixin from '@/mixins/drugsMixin';
 import diagnosisFilterMixin from '@/mixins/diagnosisFilterMixin';
 import paginationMixin from '@/mixins/paginationMixin';

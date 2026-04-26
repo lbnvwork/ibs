@@ -1,0 +1,91 @@
+<div class="patient-add">
+    <h2>Добавление нового пациента</h2>
+    <div v-if="loading" class="loading-overlay">Сохранение...</div>
+    <div v-if="error" class="error-message">{{ error }}</div>
+    <form @submit.prevent="submitForm">
+        <div class="form-grid">
+            <div class="form-group" :class="{ 'has-error': fieldErrors.hospitalId }">
+                <label for="hospital">Больница *</label>
+                <select id="hospital" v-model="patient.hospitalId" required>
+                    <option v-for="h in hospitals" :key="h.id" :value="h.id">
+                        {{ h.name }} ({{ h.region || '' }})
+                    </option>
+                </select>
+                <span v-if="fieldErrors.hospitalId" class="field-error">{{ fieldErrors.hospitalId }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.lastname }">
+                <label for="lastname">Фамилия *</label>
+                <input type="text" id="lastname" v-model="patient.lastname" required>
+                <span v-if="fieldErrors.lastname" class="field-error">{{ fieldErrors.lastname }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.firstname }">
+                <label for="firstname">Имя *</label>
+                <input type="text" id="firstname" v-model="patient.firstname" required>
+                <span v-if="fieldErrors.firstname" class="field-error">{{ fieldErrors.firstname }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.secondName }">
+                <label for="secondName">Отчество</label>
+                <input type="text" id="secondName" v-model="patient.secondName">
+                <span v-if="fieldErrors.secondName" class="field-error">{{ fieldErrors.secondName }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.birthday }">
+                <label for="birthday">Дата рождения *</label>
+                <input type="date" id="birthday" v-model="patient.birthday" required>
+                <span v-if="fieldErrors.birthday" class="field-error">{{ fieldErrors.birthday }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.sex }">
+                <label for="sex">Пол</label>
+                <select id="sex" v-model="patient.sex">
+                    <option value="0">Женский</option>
+                    <option value="1">Мужской</option>
+                </select>
+                <span v-if="fieldErrors.sex" class="field-error">{{ fieldErrors.sex }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.smsPhone }">
+                <label for="smsPhone">Телефон *</label>
+                <input type="tel" id="smsPhone" v-model="patient.smsPhone" @blur="formatPhoneField" required placeholder="8(XXX)XXX-XX-XX">
+                <span v-if="fieldErrors.smsPhone" class="field-error">{{ fieldErrors.smsPhone }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.address }">
+                <label for="address">Адрес *</label>
+                <input type="text" id="address" v-model="patient.address" required>
+                <span v-if="fieldErrors.address" class="field-error">{{ fieldErrors.address }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.passport }">
+                <label for="passport">Паспорт *</label>
+                <input type="text" id="passport" v-model="patient.passport" @blur="formatPassportField" required placeholder="XXXX XXXXXX">
+                <span v-if="fieldErrors.passport" class="field-error">{{ fieldErrors.passport }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.snils }">
+                <label for="snils">СНИЛС *</label>
+                <input type="text" id="snils" v-model="patient.snils" @blur="formatSnilsField" required placeholder="XXX-XXX-XXX XX">
+                <span v-if="fieldErrors.snils" class="field-error">{{ fieldErrors.snils }}</span>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': fieldErrors.healthInsurance }">
+                <label for="healthInsurance">Полис</label>
+                <input type="text" id="healthInsurance" v-model="patient.healthInsurance">
+                <span v-if="fieldErrors.healthInsurance" class="field-error">{{ fieldErrors.healthInsurance }}</span>
+            </div>
+
+            <div class="form-group full-width" :class="{ 'has-error': fieldErrors.comment }">
+                <label for="comment">Комментарий</label>
+                <textarea id="comment" v-model="patient.comment" rows="3"></textarea>
+                <span v-if="fieldErrors.comment" class="field-error">{{ fieldErrors.comment }}</span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" :disabled="loading">Сохранить</button>
+            <button type="button" @click="$router.push('/')">Отмена</button>
+        </div>
+    </form>
+</div>
