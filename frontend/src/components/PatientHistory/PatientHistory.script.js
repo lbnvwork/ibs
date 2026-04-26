@@ -5,6 +5,7 @@ import { extractIdFromIri } from '@/utils/apiHelpers';
 import { calculateAge, formatAge } from '@/utils/formatters';
 import RiskScale from '@/components/RiskScale/RiskScale.vue';
 import apiClient from '@/api/client';
+import { testHistoryApi } from '@/api/testHistory';
 
 export default {
   name: 'PatientHistory',
@@ -56,11 +57,38 @@ export default {
         if (treatment?.drug) {
           const drugId = extractIdFromIri(treatment.drug);
           if (drugId) {
-            const drugs = await drugApi.getAll().member || [];
+            const drugResp = await drugApi.getAll();
+            const drugs = drugResp.member || [];
             const found = drugs.find(d => d.id === drugId);
             if (found) drugName = found.nominative || found.genitive || '';
           }
         }
+
+        // Загрузка истории анализов (один раз)
+        let historyItems = [];
+        if (treatment?.['@id']) {
+          const historyResp = await testHistoryApi.getAll({
+            treatment: treatment['@id'],
+            order: { creationDt: 'desc' }
+          });
+          historyItems = historyResp.member || [];
+        }
+
+        // Формирование таблицы
+        this.medicalData = historyItems.map(item => ({
+          date: item.creationDt
+            ? new Date(item.creationDt).toLocaleDateString('ru-RU')
+            : '—',
+          inr: item.mno !== undefined ? item.mno : '—',
+          analysis1: '—',
+          analysis2: '—',
+          heartRate: '—',
+          bloodPressure: '—',
+          currentDose: item.doze !== undefined ? item.doze : '—',
+          prescribedDose: '—',
+          recommendations: '—',
+          comment: item.comment || ''
+        }));
 
         const fullName = [
           patientData.lastname,
