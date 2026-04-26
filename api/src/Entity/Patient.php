@@ -12,6 +12,7 @@ use App\Filter\PatientDiagnosisFilter;
 use App\Filter\PatientDrugFilter;
 use App\Filter\PatientGroupFilter;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource]
 #[ApiFilter(SearchFilter::class, properties: [
@@ -34,27 +35,58 @@ class Patient
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $modDt = null;
 
+    #[Assert\NotBlank(message: 'patient.firstname.not_blank')]
+    #[Assert\Length(
+        min: 2, 
+        max: 255, 
+        minMessage: 'patient.firstname.length', 
+        maxMessage: 'patient.firstname.length'
+    )]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $firstname;
 
-    #[ORM\Column(type: 'text', nullable: false)]
-    private string $secondName;
+    #[Assert\Length(
+        min: 2, 
+        max: 255, 
+        minMessage: 'patient.secondName.length', 
+        maxMessage: 'patient.secondName.length'
+    )]
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $secondName = null;
 
+    #[Assert\NotBlank(message: 'patient.lastname.not_blank')]
+    #[Assert\Length(
+        min: 2, 
+        max: 255, 
+        minMessage: 'patient.lastname.length', 
+        maxMessage: 'patient.lastname.length'
+    )]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $lastname;
 
+    #[Assert\NotBlank(message: 'patient.birthday.not_blank')]
+    #[Assert\Type(\DateTimeInterface::class, message: 'patient.birthday.type')]
+    #[Assert\LessThanOrEqual(value: 'today', message: 'patient.birthday.max')]
+    #[Assert\GreaterThanOrEqual(value: '-120 years', message: 'patient.birthday.min')]
     #[ORM\Column(type: 'datetime', nullable: false)]
     private \DateTimeInterface $birthday;
 
+    #[Assert\NotBlank(message: 'patient.sex.not_blank')]
+    #[Assert\Type(type: 'integer', message: 'patient.sex.type')]
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
     private int $sex = 0;
 
+    #[Assert\NotBlank(message: 'patient.smsPhone.not_blank')]
+    #[Assert\Regex(pattern: '/^8\(\d{3}\)\d{3}-\d{2}-\d{2}$/', message: 'patient.smsPhone.regex')]
     #[ORM\Column(type: 'text', nullable: false)]
     private string $smsPhone;
 
+    #[Assert\NotBlank(message: 'patient.address.not_blank')]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $address = null;
 
+    #[Assert\NotBlank(message: 'patient.passport.not_blank')]
+    #[Assert\Regex(pattern: '/^\d{4} \d{6}$/', message: 'patient.passport.regex')]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $passport = null;
 
@@ -64,9 +96,12 @@ class Patient
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
+    #[Assert\NotBlank(message: 'patient.snils.not_blank')]
+    #[Assert\Regex(pattern: '/^\d{3}-\d{3}-\d{3} \d{2}$/', message: 'patient.snils.regex')]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $snils = null;
 
+    #[Assert\NotBlank(message: 'patient.hospital.not_blank')]
     #[ORM\ManyToOne(targetEntity: Hospital::class)]
     #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', nullable: true)]
     private ?Hospital $hospital = null;
@@ -98,12 +133,12 @@ class Patient
         return $this;
     }
 
-    public function getSecondName(): string
+    public function getSecondName(): ?string
     {
         return $this->secondName;
     }
 
-    public function setSecondName(string $secondName): self
+    public function setSecondName(?string $secondName): self
     {
         $this->secondName = $secondName;
         return $this;

@@ -9,3 +9,7 @@ services:
     App\OpenApi\JwtDecorator:
         decorates: 'api_platform.openapi.factory'
         arguments: [ '@.inner' ]
+        
+    App\EventListener\TrimAndNullifyStringsListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, priority: 10 }

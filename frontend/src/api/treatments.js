@@ -10,4 +10,7 @@ export const treatmentApi = {
     getOne(id) {
         return apiClient.get(`/treatments/${id}`).then(res => res.data);
     },
+    create(data) {
+        return apiClient.post('/treatments', data).then(res => res.data);
+    }
 };
