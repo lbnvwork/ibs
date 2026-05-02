@@ -33,6 +33,8 @@ export default {
     async loadPatientData() {
       this.loading = true;
       this.error = null;
+      this.medicalData = [];
+
       try {
         const patientData = await patientApi.getOne(this.id);
         const treatmentResp = await treatmentApi.getAll({
@@ -44,6 +46,7 @@ export default {
         const treatments = treatmentResp.member || [];
         const treatment = treatments.length > 0 ? treatments[0] : null;
 
+        // Загружаем больницу
         let hospitalName = '';
         if (patientData.hospital) {
           const hospitalId = extractIdFromIri(patientData.hospital);
@@ -53,6 +56,7 @@ export default {
           }
         }
 
+        // Загружаем препарат
         let drugName = '';
         if (treatment?.drug) {
           const drugId = extractIdFromIri(treatment.drug);
@@ -64,31 +68,47 @@ export default {
           }
         }
 
-        // Загрузка истории анализов (один раз)
+        // Загружаем историю анализов и назначения
         let historyItems = [];
+        let appointments = [];
         if (treatment?.['@id']) {
+          const apptResp = await apiClient.get('/appointments', {
+            params: {
+              treatment: treatment['@id'],
+              order: { appointmentDt: 'asc' },
+              itemsPerPage: 1000  // достаточно для полного списка
+            }
+          });
+          appointments = apptResp.data.member || [];
+          appointments.sort((a, b) => new Date(a.appointmentDt) - new Date(b.appointmentDt));
+
           const historyResp = await testHistoryApi.getAll({
             treatment: treatment['@id'],
-            order: { creationDt: 'desc' }
+            order: { creationDt: 'desc' },
+            itemsPerPage: 300
           });
           historyItems = historyResp.member || [];
+          historyItems.sort((a, b) => new Date(b.creationDt) - new Date(a.creationDt));
         }
 
-        // Формирование таблицы
-        this.medicalData = historyItems.map(item => ({
-          date: item.creationDt
-            ? new Date(item.creationDt).toLocaleDateString('ru-RU')
-            : '—',
-          inr: item.mno !== undefined ? item.mno : '—',
-          analysis1: '—',
-          analysis2: '—',
-          heartRate: '—',
-          bloodPressure: '—',
-          currentDose: item.doze !== undefined ? item.doze : '—',
-          prescribedDose: '—',
-          recommendations: '—',
-          comment: item.comment || ''
-        }));
+        this.medicalData = historyItems.map(item => {
+          const testDate = new Date(item.creationDt).getTime();
+          const nextAppt = appointments.find(a => new Date(a.appointmentDt).getTime() > testDate);
+          return {
+            date: item.creationDt
+              ? new Date(item.creationDt).toLocaleDateString('ru-RU')
+              : '—',
+            inr: item.mno !== undefined ? item.mno : '—',
+            analysis1: '—',
+            analysis2: '—',
+            heartRate: '—',
+            bloodPressure: '—',
+            currentDose: item.doze !== undefined ? item.doze : '—',
+            prescribedDose: nextAppt?.doze ?? '—',
+            recommendations: nextAppt?.comment || '',
+            comment: item.comment || ''
+          };
+        });
 
         const fullName = [
           patientData.lastname,

@@ -12,6 +12,8 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\State\TestHistoryLatestProvider;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
 #[ApiResource(
     operations: [
@@ -21,7 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
             provider: TestHistoryLatestProvider::class,
             paginationEnabled: false,
         ),
-        new GetCollection(), // стандартная
+        new GetCollection(),
         new Get(),
         new Post(),
         new Patch(),
@@ -30,6 +32,7 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 #[ORM\Entity]
 #[ORM\Table(name: 'test_history')]
+#[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
 class TestHistory
 {
     #[ORM\Id]
