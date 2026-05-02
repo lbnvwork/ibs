@@ -6,10 +6,13 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'appointments')]
+#[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
 class Appointment
 {
     #[ORM\Id]

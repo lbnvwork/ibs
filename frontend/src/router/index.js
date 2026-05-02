@@ -30,7 +30,7 @@ const routes = [
     path: PATIENT_HISTORY_TEMPLATE,
     name: 'PatientHistory', 
     component: PatientHistory,
-    props: true,
+    props: (route) => ({ id: route.params.patientId }),
     meta: { requiresAuth: true, backTarget: HOME_PATH }
   },
   {

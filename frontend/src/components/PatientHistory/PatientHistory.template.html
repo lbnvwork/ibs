@@ -1,4 +1,10 @@
 <div class="patient-history">
+    <div v-if="loading" class="loading-message">
+        <p>Загрузка данных пациента...</p>
+    </div>
+    <div v-else-if="error" class="loading-message">
+        <p style="color: red;">{{ error }}</p>
+    </div>
     <div class="patient-header">
         <h1>Электронная история болезни пациента</h1>
     </div>
@@ -99,45 +105,45 @@
         </div>
 
         <div class="right-column">
-            <!-- Виджет рисков -->
-            <div v-if="patient.riskScores" class="section risk-scale-section">
-                <RiskScale :risk-scores="patient.riskScores" />
+            <div class="section risk-scale-section">
+                <RiskScale v-if="patient.riskScores" :risk-scores="patient.riskScores" />
+                <div v-else class="section-content">
+                    <p>Нет данных о рисках</p>
+                </div>
             </div>
 
-            <!-- Фармакогенетика -->
-            <div v-if="patient.pharmacogenetics && patient.pharmacogenetics.length" class="section">
+            <div class="section">
                 <h3>Фармакогенетика</h3>
                 <div class="section-content pharmacogenetics-content">
-                    <div
-                            v-for="(item, index) in patient.pharmacogenetics"
-                            :key="index"
-                            class="pharmacogenetics-item"
-                    >
-                        {{ item }}
+                    <template v-if="patient.pharmacogenetics && patient.pharmacogenetics.length">
+                        <div v-for="(item, index) in patient.pharmacogenetics" :key="index" class="pharmacogenetics-item">
+                            {{ item }}
+                        </div>
+                    </template>
+                    <div v-else class="pharmacogenetics-item">
+                        Нет данных
                     </div>
                 </div>
             </div>
 
-            <!-- Мутации/Полиморфизмы -->
-            <div v-if="patient.mutations && patient.mutations.length" class="section">
+            <div class="section">
                 <h3>Мутации/Полиморфизмы</h3>
                 <div class="section-content mutations-content">
-                    <div
-                            v-for="(item, index) in patient.mutations"
-                            :key="index"
-                            class="mutation-item"
-                    >
-                        {{ item }}
+                    <template v-if="patient.mutations && patient.mutations.length">
+                        <div v-for="(item, index) in patient.mutations" :key="index" class="mutation-item">
+                            {{ item }}
+                        </div>
+                    </template>
+                    <div v-else class="mutation-item">
+                        Нет данных
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Сообщение загрузки -->
     <div v-else class="loading-message">
-        <p>Загрузка данных пациента...</p>
-        <p>ID пациента: {{ id }}</p>
+        <p>Пациент не найден</p>
     </div>
 
     <div v-if="patient" class="medical-data">
