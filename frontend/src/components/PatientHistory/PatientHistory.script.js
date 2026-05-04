@@ -78,7 +78,6 @@ export default {
             }
           });
           appointments = apptResp.data.member || [];
-          appointments.sort((a, b) => new Date(a.appointmentDt) - new Date(b.appointmentDt));
 
           const historyResp = await testHistoryApi.getAll({
             treatment: treatment['@id'],
@@ -86,7 +85,6 @@ export default {
             itemsPerPage: 300
           });
           historyItems = historyResp.member || [];
-          historyItems.sort((a, b) => new Date(b.creationDt) - new Date(a.creationDt));
         }
 
         this.medicalData = historyItems.map(item => {
