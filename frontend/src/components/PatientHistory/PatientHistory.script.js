@@ -39,14 +39,14 @@ export default {
         const patientData = await patientApi.getOne(this.id);
         const treatmentResp = await treatmentApi.getAll({
           patient: `/api/patients/${this.id}`,
-          active: true,
           itemsPerPage: 1,
           order: { begDt: 'desc' }
         });
         const treatments = treatmentResp.member || [];
         const treatment = treatments.length > 0 ? treatments[0] : null;
 
-        // Загружаем больницу
+        const isActive = treatment ? (treatment.realEndDt === null || treatment.realEndDt === undefined) : false;
+
         let hospitalName = '';
         if (patientData.hospital) {
           const hospitalId = extractIdFromIri(patientData.hospital);
@@ -56,7 +56,6 @@ export default {
           }
         }
 
-        // Загружаем препарат
         let drugName = '';
         if (treatment?.drug) {
           const drugId = extractIdFromIri(treatment.drug);
@@ -68,7 +67,6 @@ export default {
           }
         }
 
-        // Загружаем историю анализов и назначения
         let historyItems = [];
         let appointments = [];
         if (treatment?.['@id']) {
@@ -76,7 +74,7 @@ export default {
             params: {
               treatment: treatment['@id'],
               order: { appointmentDt: 'asc' },
-              itemsPerPage: 1000  // достаточно для полного списка
+              itemsPerPage: 1000
             }
           });
           appointments = apptResp.data.member || [];
@@ -137,7 +135,8 @@ export default {
           consentSigned: false,
           riskScores: null,
           pharmacogenetics: [],
-          mutations: []
+          mutations: [],
+          isActive: isActive,
         };
       } catch (err) {
         console.error('Ошибка загрузки истории:', err);
