@@ -15,6 +15,7 @@ use ApiPlatform\Metadata\Post;
 use App\Filter\ActiveTreatmentFilter;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource(
     operations: [
@@ -40,6 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(SearchFilter::class, properties: [
     'patient' => 'exact',
 ])]
+#[ApiFilter(OrderFilter::class, properties: ['begDt', 'realEndDt'])]
 class Treatment
 {
     #[ORM\Id]

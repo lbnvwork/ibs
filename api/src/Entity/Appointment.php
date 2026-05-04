@@ -8,11 +8,13 @@ use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: 'appointments')]
 #[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['appointmentDt'])]
 class Appointment
 {
     #[ORM\Id]
