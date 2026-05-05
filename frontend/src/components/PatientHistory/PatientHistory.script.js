@@ -2,7 +2,7 @@ import { patientApi } from '@/api/patients';
 import { treatmentApi } from '@/api/treatments';
 import { drugApi } from '@/api/drug';
 import { extractIdFromIri } from '@/utils/apiHelpers';
-import { calculateAge, formatAge } from '@/utils/formatters';
+import { calculateAge, formatAge, formatDate } from '@/utils/formatters';
 import RiskScale from '@/components/RiskScale/RiskScale.vue';
 import apiClient from '@/api/client';
 import { testHistoryApi } from '@/api/testHistory';
@@ -18,7 +18,9 @@ export default {
       patient: null,
       loading: true,
       error: null,
-      medicalData: []
+      medicalData: [],
+      editingPatient: false,
+      editingTreatment: false,
     }
   },
   watch: {
@@ -114,10 +116,11 @@ export default {
         const age = calculateAge(patientData.birthday);
 
         this.patient = {
+          // персональные данные
           name: fullName,
           age: age ? formatAge(age) : '—',
           birthDate: patientData.birthday
-            ? new Date(patientData.birthday).toLocaleDateString('ru-RU')
+            ? formatDate(patientData.birthday)
             : '—',
           address: patientData.address || '—',
           phone: patientData.smsPhone || '—',
@@ -126,25 +129,23 @@ export default {
           insurance: patientData.healthInsurance || '—',
           snils: patientData.snils || '—',
           hospital: hospitalName || '—',
+
+          // лечение
           diagnosis: treatment?.diagnosis || '—',
           comorbiditiesRaw: treatment?.comorbidities || '',
           additionalConditions: treatment?.comorbidities
-            ? [treatment.comorbidities] 
+            ? [treatment.comorbidities]
             : ['Нет данных'],
           mnoFrom: treatment?.mnoFrom ?? null,
           mnoTo: treatment?.mnoTo ?? null,
           drugName: drugName || '—',
           drugId: treatment?.drug ? extractIdFromIri(treatment.drug) : null,
-          begDt: treatment?.begDt?.toISOString?.() ?? null,
-          planEndDt: treatment?.planEndDt?.toISOString?.() ?? null,
+          begDt: treatment?.begDt ? formatDate(treatment.begDt) : null,
+          planEndDt: treatment?.planEndDt ? formatDate(treatment.planEndDt) : null,
           treatmentComment: treatment?.comment || '',
           treatmentIri: treatment?.['@id'] || null,
-          consentSigned: false,
-          riskScores: null,
-          pharmacogenetics: [],
-          mutations: [],
           isActive: isActive,
-          realEndDt: treatment?.realEndDt?.toISOString?.() ?? null,
+          realEndDt: treatment?.realEndDt ? formatDate(treatment.realEndDt) : null,
           stoppingReason: treatment?.stoppingReason || null,
           hemorrhages: treatment?.hemorrhages ?? 0,
 
