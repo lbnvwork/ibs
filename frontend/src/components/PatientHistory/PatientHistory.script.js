@@ -127,14 +127,31 @@ export default {
           snils: patientData.snils || '—',
           hospital: hospitalName || '—',
           diagnosis: treatment?.diagnosis || '—',
+          comorbiditiesRaw: treatment?.comorbidities || '',
           additionalConditions: treatment?.comorbidities
             ? [treatment.comorbidities] 
             : ['Нет данных'],
+          mnoFrom: treatment?.mnoFrom ?? null,
+          mnoTo: treatment?.mnoTo ?? null,
+          drugName: drugName || '—',
+          drugId: treatment?.drug ? extractIdFromIri(treatment.drug) : null,
+          begDt: treatment?.begDt?.toISOString?.() ?? null,
+          planEndDt: treatment?.planEndDt?.toISOString?.() ?? null,
+          treatmentComment: treatment?.comment || '',
+          treatmentIri: treatment?.['@id'] || null,
           consentSigned: false,
           riskScores: null,
           pharmacogenetics: [],
           mutations: [],
           isActive: isActive,
+          realEndDt: treatment?.realEndDt?.toISOString?.() ?? null,
+          stoppingReason: treatment?.stoppingReason || null,
+          hemorrhages: treatment?.hemorrhages ?? 0,
+
+          consentSigned: false,
+          riskScores: null,
+          pharmacogenetics: [],
+          mutations: [],
         };
       } catch (err) {
         console.error('Ошибка загрузки истории:', err);
