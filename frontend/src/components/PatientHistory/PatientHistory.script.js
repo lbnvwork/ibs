@@ -21,6 +21,8 @@ export default {
       medicalData: [],
       editingPatient: false,
       editingTreatment: false,
+      originalTreatment: {},
+      editingTreatmentData: {},
     }
   },
   watch: {
@@ -36,6 +38,8 @@ export default {
       this.loading = true;
       this.error = null;
       this.medicalData = [];
+      this.editingTreatment = false;
+      this.editingPatient = false;
 
       try {
         const patientData = await patientApi.getOne(this.id);
@@ -160,6 +164,26 @@ export default {
       } finally {
         this.loading = false;
       }
-    }
+    },
+    startEditingTreatment() {
+        this.originalTreatment = {
+            diagnosis: this.patient.diagnosis,
+            comorbiditiesRaw: this.patient.comorbiditiesRaw,
+            mnoFrom: this.patient.mnoFrom,
+            mnoTo: this.patient.mnoTo,
+            drugId: this.patient.drugId,
+            begDt: this.patient.begDt,
+            planEndDt: this.patient.planEndDt,
+            treatmentComment: this.patient.treatmentComment,
+        };
+        this.editingTreatmentData = { ...this.originalTreatment };
+        this.editingTreatment = true;
+    },
+    cancelEditingTreatment() {
+        this.editingTreatment = false;
+    },
+    saveTreatment() {
+        
+    },
   }
 };

@@ -91,10 +91,15 @@
                 <div class="treatment-section-header">
                     <h3>Лечение</h3>
                     <button 
-                        v-if="patient.isActive"
+                        v-if="patient.isActive && !editingTreatment"
                         class="btn-edit-treatment"
                         title="Редактировать лечение"
+                        @click="startEditingTreatment"
                     >✎</button>
+                    <template v-if="editingTreatment">
+                        <button class="btn-save-treatment" @click="saveTreatment">Сохранить</button>
+                        <button class="btn-cancel-treatment" @click="cancelEditingTreatment">Отмена</button>
+                    </template>
                 </div>
                 <div class="section-content">
                     <div class="info-row">
