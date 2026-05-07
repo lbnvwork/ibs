@@ -62,13 +62,52 @@
 .info-group label {
   font-weight: 600;
   color: #2c3e50;
-  min-width: 100px;
-  flex-shrink: 0;
+  flex: 1 1 40%;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .info-group span {
-  flex: 1;
+  flex: 1 1 60%;
   word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.treatment-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-active {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.status-inactive {
+  color: #7f8c8d;
+  font-weight: 600;
+}
+
+.btn-edit-treatment {
+  background: transparent;
+  border: 1px solid #3498db;
+  color: #3498db;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit-treatment:hover {
+  background: #3498db;
+  color: white;
 }
 
 /* КОМПОНЕНТ СОГЛАСИЯ */
@@ -248,7 +287,24 @@
 }
 
 /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
+
+@media (max-width: 1200px) {
+  .patient-main-content {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
+  .info-group {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .info-group label {
+    flex: auto;
+  }
+  .info-group span {
+    flex: auto;
+  }
   .patient-main-content {
     grid-template-columns: 1fr;
     gap: 15px;
