@@ -286,6 +286,52 @@
   color: #666;
 }
 
+.treatment-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.treatment-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit-treatment,
+.btn-save-treatment,
+.btn-cancel-treatment {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-edit-treatment {
+  background: #3498db;
+  color: white;
+}
+.btn-edit-treatment:hover {
+  background: #2980b9;
+}
+
+.btn-save-treatment {
+  background: #27ae60;
+  color: white;
+}
+.btn-save-treatment:hover {
+  background: #219a52;
+}
+
+.btn-cancel-treatment {
+  background: #e0e0e0;
+  color: #333;
+}
+.btn-cancel-treatment:hover {
+  background: #bdbdbd;
+}
+
 /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
 
 @media (max-width: 1200px) {
