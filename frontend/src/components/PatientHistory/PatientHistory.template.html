@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-                <div class="consent-row">
+                <div v-if="false" class="consent-row">
                     <div class="consent-text">Информированное согласие на обработку данных и мониторинг</div>
                     <div class="status-container">
                         <span class="status-text">{{ patient.consentSigned ? 'Подписано' : 'Не подписано' }}</span>
@@ -84,11 +84,85 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="right-column">
             <div class="section">
-                <h3>Диагноз</h3>
+                <div class="treatment-section-header">
+                    <h3>Лечение</h3>
+                    <button 
+                        v-if="patient.isActive"
+                        class="btn-edit-treatment"
+                        title="Редактировать лечение"
+                    >✎</button>
+                </div>
                 <div class="section-content">
-                    <p>{{ patient.diagnosis }}</p>
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Диагноз:</label>
+                            <span>{{ patient.diagnosis }}</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Осложнения:</label>
+                            <span>{{ patient.comorbiditiesRaw || '—' }}</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Целевой диапазон МНО:</label>
+                            <span>{{ patient.mnoFrom }} – {{ patient.mnoTo }}</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Препарат:</label>
+                            <span>{{ patient.drugName }}</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Дата начала:</label>
+                            <span>{{ patient.begDt }}</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Плановая дата окончания:</label>
+                            <span>{{ patient.planEndDt || '—' }}</span>
+                        </div>
+                    </div>
+
+                    <template v-if="!patient.isActive">
+                        <div class="info-row">
+                            <div class="info-group">
+                                <label>Дата завершения:</label>
+                                <span>{{ patient.realEndDt || '—' }}</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-group">
+                                <label>Причина завершения:</label>
+                                <span>{{ patient.stoppingReason || '—' }}</span>
+                            </div>
+                        </div>
+                    </template> 
+                    
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Статус:</label>
+                            <span :class="patient.isActive ? 'status-active' : 'status-inactive'">
+                                {{ patient.isActive ? 'Активно' : 'Завершено' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Кровотечения:</label>
+                            <span>{{ patient.hemorrhages ? 'есть' : 'нет' }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -102,17 +176,14 @@
                     </ul>
                 </div>
             </div>
-        </div>
-
-        <div class="right-column">
-            <div class="section risk-scale-section">
+            <div v-if="false" class="section risk-scale-section">
                 <RiskScale v-if="patient.riskScores" :risk-scores="patient.riskScores" />
                 <div v-else class="section-content">
                     <p>Нет данных о рисках</p>
                 </div>
             </div>
 
-            <div class="section">
+            <div v-if="false" class="section">
                 <h3>Фармакогенетика</h3>
                 <div class="section-content pharmacogenetics-content">
                     <template v-if="patient.pharmacogenetics && patient.pharmacogenetics.length">
@@ -126,7 +197,7 @@
                 </div>
             </div>
 
-            <div class="section">
+            <div v-if="false" class="section">
                 <h3>Мутации/Полиморфизмы</h3>
                 <div class="section-content mutations-content">
                     <template v-if="patient.mutations && patient.mutations.length">

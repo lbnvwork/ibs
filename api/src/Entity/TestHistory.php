@@ -14,6 +14,7 @@ use App\State\TestHistoryLatestProvider;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource(
     operations: [
@@ -33,6 +34,7 @@ use ApiPlatform\Metadata\ApiFilter;
 #[ORM\Entity]
 #[ORM\Table(name: 'test_history')]
 #[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['creationDt'])]
 class TestHistory
 {
     #[ORM\Id]
