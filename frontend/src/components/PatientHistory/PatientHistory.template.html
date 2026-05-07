@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-                <div class="consent-row">
+                <div v-if="false" class="consent-row">
                     <div class="consent-text">Информированное согласие на обработку данных и мониторинг</div>
                     <div class="status-container">
                         <span class="status-text">{{ patient.consentSigned ? 'Подписано' : 'Не подписано' }}</span>
@@ -84,7 +84,9 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="right-column">
             <div class="section">
                 <div class="treatment-section-header">
                     <h3>Лечение</h3>
@@ -174,17 +176,14 @@
                     </ul>
                 </div>
             </div>
-        </div>
-
-        <div class="right-column">
-            <div class="section risk-scale-section">
+            <div v-if="false" class="section risk-scale-section">
                 <RiskScale v-if="patient.riskScores" :risk-scores="patient.riskScores" />
                 <div v-else class="section-content">
                     <p>Нет данных о рисках</p>
                 </div>
             </div>
 
-            <div class="section">
+            <div v-if="false" class="section">
                 <h3>Фармакогенетика</h3>
                 <div class="section-content pharmacogenetics-content">
                     <template v-if="patient.pharmacogenetics && patient.pharmacogenetics.length">
@@ -198,7 +197,7 @@
                 </div>
             </div>
 
-            <div class="section">
+            <div v-if="false" class="section">
                 <h3>Мутации/Полиморфизмы</h3>
                 <div class="section-content mutations-content">
                     <template v-if="patient.mutations && patient.mutations.length">
