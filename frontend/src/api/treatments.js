@@ -12,5 +12,8 @@ export const treatmentApi = {
     },
     create(data) {
         return apiClient.post('/treatments', data).then(res => res.data);
+    },
+    update(id, data) {
+        return apiClient.patch(`/treatments/${id}`, data).then(res => res.data);
     }
 };
