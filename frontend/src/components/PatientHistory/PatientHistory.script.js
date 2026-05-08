@@ -23,6 +23,7 @@ export default {
       editingTreatment: false,
       originalTreatment: {},
       editingTreatmentData: {},
+      allDrugs: [],
     }
   },
   watch: {
@@ -34,6 +35,8 @@ export default {
     if (this.id) this.loadPatientData();
   },
   methods: {
+    formatDate,
+
     async loadPatientData() {
       this.loading = true;
       this.error = null;
@@ -144,12 +147,12 @@ export default {
           mnoTo: treatment?.mnoTo ?? null,
           drugName: drugName || '—',
           drugId: treatment?.drug ? extractIdFromIri(treatment.drug) : null,
-          begDt: treatment?.begDt ? formatDate(treatment.begDt) : null,
-          planEndDt: treatment?.planEndDt ? formatDate(treatment.planEndDt) : null,
+          begDt: treatment?.begDt ?? null,
+          planEndDt: treatment?.planEndDt ?? null,
+          realEndDt: treatment?.realEndDt ?? null,
           treatmentComment: treatment?.comment || '',
           treatmentIri: treatment?.['@id'] || null,
           isActive: isActive,
-          realEndDt: treatment?.realEndDt ? formatDate(treatment.realEndDt) : null,
           stoppingReason: treatment?.stoppingReason || null,
           hemorrhages: treatment?.hemorrhages ?? 0,
 
@@ -165,7 +168,8 @@ export default {
         this.loading = false;
       }
     },
-    startEditingTreatment() {
+    async startEditingTreatment() {
+        await this.loadDrugsIfNeeded();
         this.originalTreatment = {
             diagnosis: this.patient.diagnosis,
             comorbiditiesRaw: this.patient.comorbiditiesRaw,
@@ -176,14 +180,29 @@ export default {
             planEndDt: this.patient.planEndDt,
             treatmentComment: this.patient.treatmentComment,
         };
-        this.editingTreatmentData = { ...this.originalTreatment };
+        this.editingTreatmentData = {
+          ...this.originalTreatment,
+          begDt: this.originalTreatment.begDt ? this.originalTreatment.begDt.substring(0, 10) : null,
+          planEndDt: this.originalTreatment.planEndDt ? this.originalTreatment.planEndDt.substring(0, 10) : null,
+        };
         this.editingTreatment = true;
     },
     cancelEditingTreatment() {
+        this.editingTreatmentData = { ...this.originalTreatment };
         this.editingTreatment = false;
     },
-    saveTreatment() {
+    async saveTreatment() {
         
     },
+    async loadDrugsIfNeeded(){
+        if (this.allDrugs.length === 0) {
+            try {
+                const resp = await drugApi.getAll();
+                this.allDrugs = resp.member || [];
+            } catch (err) {
+                console.error('Ошибка загрузки препаратов', err);
+            }
+        }
+    }
   }
 };
