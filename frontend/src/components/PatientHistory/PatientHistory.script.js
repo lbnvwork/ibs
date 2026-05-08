@@ -192,7 +192,45 @@ export default {
         this.editingTreatment = false;
     },
     async saveTreatment() {
-        
+        // 1. Тело запроса
+        const body = {
+            diagnosis: this.editingTreatmentData.diagnosis.trim(),
+            comorbidities: this.editingTreatmentData.comorbiditiesRaw.trim(),
+            mnoFrom: Number(this.editingTreatmentData.mnoFrom),
+            mnoTo: Number(this.editingTreatmentData.mnoTo),
+            drug: `/api/drugs/${this.editingTreatmentData.drugId}`,
+            begDt: this.editingTreatmentData.begDt,
+            planEndDt: this.editingTreatmentData.planEndDt || null,
+            comment: this.editingTreatmentData.treatmentComment.trim() || null,
+        };
+
+        try {
+            const treatmentId = extractIdFromIri(this.patient.treatmentIri);
+            await treatmentApi.update(treatmentId, body);
+
+            this.patient.diagnosis = body.diagnosis;
+            this.patient.comorbiditiesRaw = body.comorbidities;
+            this.patient.additionalConditions = body.comorbidities
+                ? [body.comorbidities]
+                : ['Нет данных'];
+            this.patient.mnoFrom = body.mnoFrom;
+            this.patient.mnoTo = body.mnoTo;
+            this.patient.drugId = this.editingTreatmentData.drugId;
+
+            const selectedDrug = this.allDrugs.find(d => d.id == this.editingTreatmentData.drugId);
+            if (selectedDrug) {
+                this.patient.drugName = selectedDrug.nominative;
+            }
+
+            this.patient.begDt = body.begDt;
+            this.patient.planEndDt = body.planEndDt;
+            this.patient.treatmentComment = body.comment;
+
+            this.editingTreatment = false;
+        } catch (err) {
+            console.error('Ошибка сохранения лечения:', err);
+            alert('Не удалось сохранить изменения. Проверьте данные.');
+        }
     },
     async loadDrugsIfNeeded(){
         if (this.allDrugs.length === 0) {
