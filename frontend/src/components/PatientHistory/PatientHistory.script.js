@@ -6,6 +6,7 @@ import { calculateAge, formatAge, formatDate } from '@/utils/formatters';
 import RiskScale from '@/components/RiskScale/RiskScale.vue';
 import apiClient from '@/api/client';
 import { testHistoryApi } from '@/api/testHistory';
+import { validateForm } from '@/utils/validationHelper';
 
 export default {
   name: 'PatientHistory',
@@ -24,6 +25,7 @@ export default {
       originalTreatment: {},
       editingTreatmentData: {},
       allDrugs: [],
+      treatmentFormError: '',
     }
   },
   watch: {
@@ -169,6 +171,7 @@ export default {
       }
     },
     async startEditingTreatment() {
+        this.treatmentFormError = '';
         await this.loadDrugsIfNeeded();
         this.originalTreatment = {
             diagnosis: this.patient.diagnosis,
@@ -184,15 +187,20 @@ export default {
           ...this.originalTreatment,
           begDt: this.originalTreatment.begDt ? this.originalTreatment.begDt.substring(0, 10) : null,
           planEndDt: this.originalTreatment.planEndDt ? this.originalTreatment.planEndDt.substring(0, 10) : null,
+          treatmentComment: this.originalTreatment.treatmentComment || ''  // ← добавили
         };
         this.editingTreatment = true;
     },
     cancelEditingTreatment() {
+        this.treatmentFormError = '';
         this.editingTreatmentData = { ...this.originalTreatment };
         this.editingTreatment = false;
     },
     async saveTreatment() {
-        // 1. Тело запроса
+        if (this.validateTreatmentForm()) {
+            return;
+        }
+
         const body = {
             diagnosis: this.editingTreatmentData.diagnosis.trim(),
             comorbidities: this.editingTreatmentData.comorbiditiesRaw.trim(),
@@ -201,7 +209,7 @@ export default {
             drug: `/api/drugs/${this.editingTreatmentData.drugId}`,
             begDt: this.editingTreatmentData.begDt,
             planEndDt: this.editingTreatmentData.planEndDt || null,
-            comment: this.editingTreatmentData.treatmentComment.trim() || null,
+            comment: (this.editingTreatmentData.treatmentComment || '').trim() || null,
         };
 
         try {
@@ -224,12 +232,23 @@ export default {
 
             this.patient.begDt = body.begDt;
             this.patient.planEndDt = body.planEndDt;
-            this.patient.treatmentComment = body.comment;
+            this.patient.treatmentComment = body.comment || '';
 
             this.editingTreatment = false;
         } catch (err) {
             console.error('Ошибка сохранения лечения:', err);
-            alert('Не удалось сохранить изменения. Проверьте данные.');
+            const parsed = parseApiError(err);
+            if (parsed.violations) {
+                const messages = parsed.violations.map(v => {
+                    let msg = v.message;
+                    const prefix = `${v.propertyPath}: `;
+                    if (msg.startsWith(prefix)) msg = msg.slice(prefix.length);
+                    return `• ${v.propertyPath}: ${msg}`;
+                });
+                this.treatmentFormError = messages.join('\n');
+            } else {
+                this.treatmentFormError = parsed.generalError || 'Не удалось сохранить изменения.';
+            }
         }
     },
     async loadDrugsIfNeeded(){
@@ -241,6 +260,52 @@ export default {
                 console.error('Ошибка загрузки препаратов', err);
             }
         }
-    }
+    },
+    validateTreatmentForm() {
+        const rules = {
+            diagnosis: {
+                required: true,
+                message: 'Диагноз обязателен',
+                validator: (val) => val && val.trim().length > 0,
+                errorMsg: 'Введите диагноз',
+            },
+            drugId: {
+                required: true,
+                message: 'Выберите препарат',
+            },
+            begDt: {
+                required: true,
+                message: 'Дата госпитализации обязательна',
+            },
+            mnoFrom: {
+                required: true,
+                message: 'Нижняя граница МНО обязательна',
+            },
+            mnoTo: {
+                required: true,
+                message: 'Верхняя граница МНО обязательна',
+            },
+        };
+
+        const extraChecks = (errors, data) => {
+            const from = parseFloat(data.mnoFrom);
+            const to = parseFloat(data.mnoTo);
+            if (!isNaN(from) && !isNaN(to) && from >= to) {
+                errors.mnoRange = 'Нижняя граница должна быть меньше верхней';
+            }
+            if (data.planEndDt && data.begDt &&
+                new Date(data.planEndDt) < new Date(data.begDt)) {
+                errors.planEndDt = 'Плановая дата не может быть раньше даты госпитализации';
+            }
+        };
+
+        const errors = validateForm(this.editingTreatmentData, rules, extraChecks);
+        if (Object.keys(errors).length > 0) {
+            this.treatmentFormError = Object.values(errors).join('\n');
+            return true;
+        }
+        this.treatmentFormError = '';
+        return false;
+    },
   }
 };
