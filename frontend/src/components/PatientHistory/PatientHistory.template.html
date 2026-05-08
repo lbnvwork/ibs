@@ -88,6 +88,7 @@
 
         <div class="right-column">
             <div class="section">
+                <div v-if="treatmentFormError" class="treatment-form-error">{{ treatmentFormError }}</div>
                 <div class="treatment-section-header">
                     <h3>Лечение</h3>
                     <div class="treatment-actions">
@@ -145,9 +146,7 @@
                             <label>Препарат:</label>
                             <span v-if="!editingTreatment">{{ patient.drugName }}</span>
                             <select v-else v-model.number="editingTreatmentData.drugId" class="edit-input">
-                                <option v-for="drug in allDrugs" :key="drug.id" :value="drug.id">
-                                    {{ drug.nominative }}
-                                </option>
+                                <option v-for="drug in allDrugs" :key="drug.id" :value="drug.id">{{ drug.nominative }}</option>
                             </select>
                         </div>
                     </div>

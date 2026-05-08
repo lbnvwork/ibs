@@ -359,6 +359,36 @@
     min-height: 60px;
 }
 
+.range-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+    flex: 0 0 auto;
+}
+
+.range-edit input[type="number"] {
+    width: 60px;
+    flex: none;
+}
+
+.range-edit span {
+    flex: none;
+}
+
+
+.treatment-form-error {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+    white-space: pre-line;
+}
+
+
 /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
 
 @media (max-width: 1200px) {
