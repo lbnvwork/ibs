@@ -90,60 +90,101 @@
             <div class="section">
                 <div class="treatment-section-header">
                     <h3>Лечение</h3>
-                    <button 
-                        v-if="patient.isActive && !editingTreatment"
-                        class="btn-edit-treatment"
-                        title="Редактировать лечение"
-                        @click="startEditingTreatment"
-                    >✎</button>
-                    <template v-if="editingTreatment">
-                        <button class="btn-save-treatment" @click="saveTreatment">Сохранить</button>
-                        <button class="btn-cancel-treatment" @click="cancelEditingTreatment">Отмена</button>
-                    </template>
+                    <div class="treatment-actions">
+                        <button 
+                            v-if="patient.isActive && !editingTreatment"
+                            class="btn-edit-treatment"
+                            title="Редактировать лечение"
+                            @click="startEditingTreatment"
+                        >✎</button>
+                        <template v-if="editingTreatment">
+                            <button class="btn-save-treatment" @click="saveTreatment">Сохранить</button>
+                            <button class="btn-cancel-treatment" @click="cancelEditingTreatment">Отмена</button>
+                        </template>
+                    </div>
                 </div>
                 <div class="section-content">
+                    <!-- Диагноз -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Диагноз:</label>
-                            <span>{{ patient.diagnosis }}</span>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-group">
-                            <label>Осложнения:</label>
-                            <span>{{ patient.comorbiditiesRaw || '—' }}</span>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-group">
-                            <label>Целевой диапазон МНО:</label>
-                            <span>{{ patient.mnoFrom }} – {{ patient.mnoTo }}</span>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-group">
-                            <label>Препарат:</label>
-                            <span>{{ patient.drugName }}</span>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-group">
-                            <label>Дата начала:</label>
-                            <span>{{ patient.begDt }}</span>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-group">
-                            <label>Плановая дата окончания:</label>
-                            <span>{{ patient.planEndDt || '—' }}</span>
+                            <span v-if="!editingTreatment">{{ patient.diagnosis }}</span>
+                            <input v-else type="text" v-model="editingTreatmentData.diagnosis" class="edit-input" />
                         </div>
                     </div>
 
+                    <!-- Осложнения -->
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Осложнения:</label>
+                            <span v-if="!editingTreatment">{{ patient.comorbiditiesRaw || '—' }}</span>
+                            <input v-else type="text" v-model="editingTreatmentData.comorbiditiesRaw" class="edit-input" />
+                        </div>
+                    </div>
+
+                    <!-- Целевой диапазон МНО -->
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Целевой диапазон МНО:</label>
+                            <template v-if="!editingTreatment">
+                                <span>{{ patient.mnoFrom }} – {{ patient.mnoTo }}</span>
+                            </template>
+                            <template v-else>
+                                <span class="range-edit">
+                                    <input type="number" step="0.1" v-model.number="editingTreatmentData.mnoFrom" class="edit-input small" />
+                                    <span> – </span>
+                                    <input type="number" step="0.1" v-model.number="editingTreatmentData.mnoTo" class="edit-input small" />
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Препарат -->
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Препарат:</label>
+                            <span v-if="!editingTreatment">{{ patient.drugName }}</span>
+                            <select v-else v-model.number="editingTreatmentData.drugId" class="edit-input">
+                                <option v-for="drug in allDrugs" :key="drug.id" :value="drug.id">
+                                    {{ drug.nominative }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Дата госпитализации -->
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Дата госпитализации:</label>
+                            <span v-if="!editingTreatment">{{ formatDate(patient.begDt) }}</span>
+                            <input v-else type="date" v-model="editingTreatmentData.begDt" class="edit-input" />
+                        </div>
+                    </div>
+
+                    <!-- Плановая дата окончания -->
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Плановая дата окончания:</label>
+                            <span v-if="!editingTreatment">{{ formatDate(patient.planEndDt) }}</span>
+                            <input v-else type="date" v-model="editingTreatmentData.planEndDt" class="edit-input" />
+                        </div>
+                    </div>
+
+                    <!-- Комментарий к лечению -->
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Комментарий:</label>
+                            <span v-if="!editingTreatment">{{ patient.treatmentComment || '—' }}</span>
+                            <textarea v-else v-model="editingTreatmentData.treatmentComment" class="edit-textarea" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Завершённое лечение (только чтение) -->
                     <template v-if="!patient.isActive">
                         <div class="info-row">
                             <div class="info-group">
                                 <label>Дата завершения:</label>
-                                <span>{{ patient.realEndDt || '—' }}</span>
+                                <span>{{ formatDate(patient.realEndDt) }}</span>
                             </div>
                         </div>
                         <div class="info-row">
@@ -152,8 +193,9 @@
                                 <span>{{ patient.stoppingReason || '—' }}</span>
                             </div>
                         </div>
-                    </template> 
-                    
+                    </template>
+
+                    <!-- Статус (всегда статика) -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Статус:</label>
@@ -162,6 +204,8 @@
                             </span>
                         </div>
                     </div>
+
+                    <!-- Кровотечения (всегда статика) -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Кровотечения:</label>
@@ -171,16 +215,6 @@
                 </div>
             </div>
 
-            <div class="section">
-                <h3>Осложнения</h3>
-                <div class="section-content">
-                    <ul>
-                        <li v-for="(condition, index) in patient.additionalConditions" :key="index">
-                            {{ condition }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
             <div v-if="false" class="section risk-scale-section">
                 <RiskScale v-if="patient.riskScores" :risk-scores="patient.riskScores" />
                 <div v-else class="section-content">

@@ -25,7 +25,7 @@ export function formatPhone(value) {
 }
 
 export function formatDate(dateStr) {
-    if (!dateStr) return '';
+    if (!dateStr) return '—';
     try {
         return new Date(dateStr).toLocaleDateString('ru-RU');
     } catch {
