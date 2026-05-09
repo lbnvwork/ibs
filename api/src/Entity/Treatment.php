@@ -62,15 +62,14 @@ class Treatment
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comorbidities = null;
 
-    #[Assert\NotBlank(message: 'treatment.mnoFrom.not_blank')]
+    #[Assert\GreaterThan(0, message: 'treatment.mnoFrom.greater_than_zero')]
     #[ORM\Column(type: 'float', nullable: false)]
     private float $mnoFrom;
 
-    #[Assert\NotBlank(message: 'treatment.mnoTo.not_blank')]
+    #[Assert\GreaterThan(0, message: 'treatment.mnoTo.greater_than_zero')]
     #[ORM\Column(type: 'float', nullable: false)]
     private float $mnoTo;
 
-    #[Assert\NotBlank(message: 'treatment.begDt.not_blank')]
     #[Assert\Type(\DateTimeInterface::class, message: 'treatment.begDt.type')]
     #[ORM\Column(type: 'datetime', nullable: false)]
     private \DateTimeInterface $begDt;
@@ -315,5 +314,23 @@ class Treatment
     {
         $this->mkb10 = $mkb10;
         return $this;
+    }
+
+    #[Assert\Callback]
+    public function validate(\Symfony\Component\Validator\Context\ExecutionContextInterface $context): void
+    {
+        if ($this->mnoFrom >= $this->mnoTo) {
+            $context->buildViolation('treatment.mno_range.invalid')
+                ->atPath('mnoFrom')
+                ->addViolation();
+        }
+
+        if ($this->planEndDt !== null && $this->begDt !== null) {
+            if ($this->planEndDt < $this->begDt) {
+                $context->buildViolation('treatment.plan_end_dt.invalid')
+                    ->atPath('planEndDt')
+                    ->addViolation();
+            }
+        }
     }
 }
