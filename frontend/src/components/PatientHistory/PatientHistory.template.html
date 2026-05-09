@@ -105,7 +105,6 @@
                     </div>
                 </div>
                 <div class="section-content">
-                    <!-- Диагноз -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Диагноз:</label>
@@ -114,7 +113,14 @@
                         </div>
                     </div>
 
-                    <!-- Осложнения -->
+                    <div class="info-row">
+                        <div class="info-group">
+                            <label>Код диагноза (МКБ-10):</label>
+                            <span v-if="!editingTreatment">{{ patient.diagnosisCode || '—' }}</span>
+                            <input v-else type="text" v-model="editingTreatmentData.diagnosisCode" class="edit-input" />
+                        </div>
+                    </div>
+
                     <div class="info-row">
                         <div class="info-group">
                             <label>Осложнения:</label>
@@ -123,7 +129,6 @@
                         </div>
                     </div>
 
-                    <!-- Целевой диапазон МНО -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Целевой диапазон МНО:</label>
@@ -140,7 +145,6 @@
                         </div>
                     </div>
 
-                    <!-- Препарат -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Препарат:</label>
@@ -151,7 +155,6 @@
                         </div>
                     </div>
 
-                    <!-- Дата госпитализации -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Дата госпитализации:</label>
@@ -160,7 +163,6 @@
                         </div>
                     </div>
 
-                    <!-- Плановая дата окончания -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Плановая дата окончания:</label>
@@ -169,7 +171,6 @@
                         </div>
                     </div>
 
-                    <!-- Комментарий к лечению -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Комментарий:</label>
@@ -178,7 +179,6 @@
                         </div>
                     </div>
 
-                    <!-- Завершённое лечение (только чтение) -->
                     <template v-if="!patient.isActive">
                         <div class="info-row">
                             <div class="info-group">
@@ -194,7 +194,6 @@
                         </div>
                     </template>
 
-                    <!-- Статус (всегда статика) -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Статус:</label>
@@ -204,7 +203,6 @@
                         </div>
                     </div>
 
-                    <!-- Кровотечения (всегда статика) -->
                     <div class="info-row">
                         <div class="info-group">
                             <label>Кровотечения:</label>
