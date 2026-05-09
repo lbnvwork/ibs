@@ -140,6 +140,7 @@ export default {
               hospital: hospitalName || '—',
 
               diagnosis: treatment?.diagnosis || '—',
+              diagnosisCode: treatment?.diagnosisCode || '',
               comorbiditiesRaw: treatment?.comorbidities || '',
               additionalConditions: treatment?.comorbidities
                 ? [treatment.comorbidities]
@@ -175,6 +176,7 @@ export default {
             await this.loadDrugsIfNeeded();
             this.editingTreatmentData = {
                 diagnosis: this.patient.diagnosis,
+                diagnosisCode: this.patient.diagnosisCode || '',
                 comorbiditiesRaw: this.patient.comorbiditiesRaw,
                 mnoFrom: this.patient.mnoFrom,
                 mnoTo: this.patient.mnoTo,
