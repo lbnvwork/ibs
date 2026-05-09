@@ -73,54 +73,26 @@ export default {
         },
         validateFormAndSetErrors() {
             const rules = {
-                drugId: {
-                    required: true,
-                    message: 'Выберите препарат',
-                },
-                begDt: {
-                    required: true,
-                    message: 'Укажите дату начала лечения',
-                },
+                drugId: { required: true, message: 'Выберите препарат' },
+                begDt: { required: true, message: 'Укажите дату начала лечения' },
                 diagnosis: {
                     required: true,
-                    message: 'Введите диагноз (текст)',
+                    message: 'Введите диагноз',
                     validator: (val) => val && val.trim().length > 0,
                     errorMsg: 'Введите диагноз (текст)',
                 },
-                mnoFrom: {
-                    required: true,
-                    message: 'Целевой диапазон МНО (от) обязателен',
-                },
-                mnoTo: {
-                    required: true,
-                    message: 'Целевой диапазон МНО (до) обязателен',
-                },
+                mnoFrom: { required: true, message: 'Целевой диапазон МНО (от) обязателен' },
+                mnoTo: { required: true, message: 'Целевой диапазон МНО (до) обязателен' },
             };
 
-            const newErrors = {};
-            let hasError = false;
-
-            for (const [field, rule] of Object.entries(rules)) {
-                const value = this.treatment[field];
-                if (rule.required && (value === null || value === undefined || value === '')) {
-                    newErrors[field] = rule.message;
-                    hasError = true;
-                } else if (rule.validator && !rule.validator(value)) {
-                    newErrors[field] = rule.errorMsg;
-                    hasError = true;
+            const extraChecks = (errors, data) => {
+                if (data.mnoFrom && data.mnoTo && data.mnoFrom > data.mnoTo) {
+                    errors.mnoFrom = 'МНО «от» не может быть больше МНО «до»';
                 }
-            }
+            };
 
-            if (this.treatment.mnoFrom !== null && this.treatment.mnoFrom !== undefined && this.treatment.mnoFrom !== '' &&
-                this.treatment.mnoTo !== null && this.treatment.mnoTo !== undefined && this.treatment.mnoTo !== '') {
-                if (this.treatment.mnoFrom > this.treatment.mnoTo) {
-                    newErrors.mnoFrom = 'МНО «от» не может быть больше МНО «до»';
-                    hasError = true;
-                }
-            }
-
-            this.fieldErrors = newErrors;
-            return hasError;
+            this.fieldErrors = validateForm(this.treatment, rules, extraChecks);
+            return Object.keys(this.fieldErrors).length > 0;
         },
         async submitForm() {
             if (this.validateFormAndSetErrors()) {
