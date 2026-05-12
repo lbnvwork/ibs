@@ -288,4 +288,12 @@
             </table>
         </div>
     </div>
+    <AppointmentAdd
+        v-if="showAppointmentModal"
+        :treatment="patient.treatmentIri"
+        :drug-id="patient.drugId"
+        :treatment-id="patient.treatmentIri ? extractIdFromIri(patient.treatmentIri) : null"
+        @close="closeAppointmentModal"
+        @saved="onAppointmentSaved"
+    />
 </div>

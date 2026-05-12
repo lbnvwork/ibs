@@ -8,10 +8,12 @@ import apiClient from '@/api/client';
 import { testHistoryApi } from '@/api/testHistory';
 import { validateForm } from '@/utils/validationHelper';
 import { parseApiError } from '@/utils/apiErrorHandler';
+import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
+import AppointmentAdd from '@/components/PatientHistory/AppointmentAdd/AppointmentAdd.vue';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale },
+    components: { RiskScale, AppointmentAdd },
     props: {
         id: { type: String, default: null }
     },
@@ -34,11 +36,17 @@ export default {
             if (newId) this.loadPatientData();
         }
     },
+    computed: {
+        showAppointmentModal() {
+            return useAppointmentAddStore().isModalOpen;
+        },
+    },
     created() {
         if (this.id) this.loadPatientData();
     },
     methods: {
         formatDate,
+        extractIdFromIri,
 
         async loadPatientData() {
           this.loading = true;
@@ -322,6 +330,13 @@ export default {
 
         isTreatmentDataChanged() {
             return JSON.stringify(this.editingTreatmentData) !== this.originalTreatmentJson;
+        },
+        closeAppointmentModal() {
+            useAppointmentAddStore().closeModal();
+        },
+        onAppointmentSaved() {
+            this.loadPatientData();
+            useAppointmentAddStore().closeModal();
         },
     }
 };
