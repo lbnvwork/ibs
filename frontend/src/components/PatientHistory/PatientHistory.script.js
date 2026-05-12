@@ -31,6 +31,7 @@ export default {
           allDrugs: [],
           treatmentFormError: '',
           showTestModal: false,
+          showAppointmentInlineModal: false,
         }
     },
     watch: {
@@ -390,6 +391,13 @@ export default {
         onTestSaved() {
             this.loadPatientData();
             this.showTestModal = false;
+        },
+        openAppointmentInlineModal() {
+            this.showAppointmentInlineModal = true;
+        },
+        onAppointmentInlineSaved() {
+            this.loadPatientData();
+            this.showAppointmentInlineModal = false;
         },
     }
 };

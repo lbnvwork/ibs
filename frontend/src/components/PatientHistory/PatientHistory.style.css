@@ -411,6 +411,38 @@
     overflow: auto;
 }
 
+.medical-data-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-add-test,
+.btn-add-appointment {
+    border: none;
+    padding: 0 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    background: #3498db;
+    line-height: 1.2;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.btn-add-appointment {
+    background: #2980b9;
+}
+
+.btn-add-test,
+.btn-add-appointment {
+    margin-bottom: 0; /* Явно и жирно убираем все отступы снизу */
+}
+
 /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
 
 @media (max-width: 1200px) {
@@ -445,5 +477,4 @@
     font-size: 13px;
     padding: 6px 10px;
   }
-  
 }
