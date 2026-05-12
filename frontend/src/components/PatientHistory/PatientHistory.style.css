@@ -388,6 +388,28 @@
     white-space: pre-line;
 }
 
+.btn-add-test {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+.btn-add-test:hover {
+    background: #2980b9;
+}
+
+.medical-data-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    overflow: auto;
+}
 
 /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
 
@@ -423,4 +445,5 @@
     font-size: 13px;
     padding: 6px 10px;
   }
+  
 }
