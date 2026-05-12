@@ -15,6 +15,8 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Treatment\State\AppointmentSaveProcessor;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PrePersist;
+use Doctrine\ORM\Mapping\PreUpdate;
 
 #[ApiResource(
     operations: [
@@ -182,5 +184,20 @@ class Appointment
     {
         $this->drug = $drug;
         return $this;
+    }
+
+    #[PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        if ($this->creationDt === null) {
+            $this->creationDt = new \DateTime();
+        }
+        $this->modDt = new \DateTime();
+    }
+
+    #[PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->modDt = new \DateTime();
     }
 }
