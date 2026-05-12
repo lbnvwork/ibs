@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -12,9 +15,9 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\State\TestHistoryLatestProvider;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use Doctrine\ORM\Mapping\PrePersist;
+use Doctrine\ORM\Mapping\PreUpdate;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -52,6 +55,9 @@ class TestHistory
     private ?\DateTimeInterface $creationDt = null;
 
     #[ORM\Column(type: 'float', nullable: false)]
+    #[Assert\NotBlank(message: 'Значение МНО обязательно')]
+    #[Assert\GreaterThanOrEqual(value: 0.8, message: 'МНО должно быть не менее 0.8')]
+    #[Assert\LessThanOrEqual(value: 10.0, message: 'МНО должно быть не более 10.0')]
     private float $mno = 0.0;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class, cascade: ['persist'])]
@@ -63,6 +69,8 @@ class TestHistory
     private ?Drug $drug = null;
 
     #[ORM\Column(type: 'float', nullable: false)]
+    #[Assert\NotBlank(message: 'Доза обязательна')]
+    #[Assert\Positive(message: 'Доза должна быть положительной')]
     private float $doze = 0.0;
 
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1])]
@@ -70,6 +78,29 @@ class TestHistory
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
+
+    // ----- lifecycle callbacks -----
+
+    #[PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        if ($this->creationDt === null) {
+            $this->creationDt = new \DateTime();
+        }
+        if ($this->modDt === null) {
+            $this->modDt = new \DateTime();
+        }
+        // Гарантируем, что doze2 всегда -1, если не задан явно
+        if ($this->doze2 === 0 || $this->doze2 === null) {
+            $this->doze2 = -1;
+        }
+    }
+
+    #[PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->modDt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
