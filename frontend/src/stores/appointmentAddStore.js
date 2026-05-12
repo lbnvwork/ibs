@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 export const useAppointmentAddStore = defineStore('appointmentAdd', {
   state: () => ({
     isModalOpen: false,
+    isTreatmentActive: false,
   }),
   actions: {
     openModal() {
@@ -10,6 +11,9 @@ export const useAppointmentAddStore = defineStore('appointmentAdd', {
     },
     closeModal() {
       this.isModalOpen = false;
+    },
+    setTreatmentActive(value) {
+      this.isTreatmentActive = value;
     },
   },
 });
