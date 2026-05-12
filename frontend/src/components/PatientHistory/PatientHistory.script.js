@@ -50,6 +50,7 @@ export default {
 
         async loadPatientData() {
           this.loading = true;
+          useAppointmentAddStore().setTreatmentActive(false);
           this.error = null;
           this.medicalData = [];
           this.editingTreatment = false;
@@ -66,6 +67,8 @@ export default {
             const treatment = treatments.length > 0 ? treatments[0] : null;
 
             const isActive = treatment ? (treatment.realEndDt === null || treatment.realEndDt === undefined) : false;
+
+            useAppointmentAddStore().setTreatmentActive(isActive);
 
             let hospitalName = '';
             if (patientData.hospital) {

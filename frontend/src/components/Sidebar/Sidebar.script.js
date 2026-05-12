@@ -86,7 +86,11 @@ export default {
             return this.sidebarItemDefinitions.map(item => {
                 let disabled = false;
                 if (item.name === 'recommendations') {
-                    disabled = this.$route.name !== 'PatientHistory';
+                    if (this.$route.name === 'PatientHistory') {
+                        disabled = !useAppointmentAddStore().isTreatmentActive;
+                    } else {
+                        disabled = true;
+                    }
                 }
                 return { ...item, disabled };
             });
@@ -114,7 +118,7 @@ export default {
                     this.$router.push(PATIENT_ADD_PATH);
                     break;
                 case 'recommendations':
-                    if (this.$route.name === 'PatientHistory') {
+                    if (this.$route.name === 'PatientHistory' && useAppointmentAddStore().isTreatmentActive) {
                         useAppointmentAddStore().openModal();
                     }
                     break;
