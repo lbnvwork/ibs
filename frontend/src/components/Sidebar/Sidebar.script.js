@@ -1,10 +1,11 @@
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths';
+import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
 
 export default {
     name: 'Sidebar',
     data() {
         return {
-            sidebarItems: [
+            sidebarItemDefinitions: [
                 {
                     name: 'patientAdd',
                     title: "Добавить в систему пациента или ЛПУ",
@@ -81,6 +82,15 @@ export default {
         }
     },
     computed: {
+        sidebarItems() {
+            return this.sidebarItemDefinitions.map(item => {
+                let disabled = false;
+                if (item.name === 'recommendations') {
+                    disabled = this.$route.name !== 'PatientHistory';
+                }
+                return { ...item, disabled };
+            });
+        },
         isBackButtonActive() {
             return this.$route && this.$route.path !== HOME_PATH;
         },
@@ -102,6 +112,11 @@ export default {
             switch (item.name) {
                 case 'patientAdd':
                     this.$router.push(PATIENT_ADD_PATH);
+                    break;
+                case 'recommendations':
+                    if (this.$route.name === 'PatientHistory') {
+                        useAppointmentAddStore().openModal();
+                    }
                     break;
                 default:
                     console.log('Not implemented yet');
