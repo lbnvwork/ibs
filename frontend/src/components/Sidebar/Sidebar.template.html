@@ -14,6 +14,7 @@
                 v-if="item.type === 'button'"
                 :title="item.title"
                 @click="handleButtonClick(item)"
+                :class="{ 'disabled-button': item.disabled }"
         >
             <svg class="icon" viewBox="0 0 24 24" v-html="item.icon"></svg>
         </button>

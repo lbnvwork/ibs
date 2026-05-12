@@ -388,6 +388,60 @@
     white-space: pre-line;
 }
 
+.btn-add-test {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+.btn-add-test:hover {
+    background: #2980b9;
+}
+
+.medical-data-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    overflow: auto;
+}
+
+.medical-data-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-add-test,
+.btn-add-appointment {
+    border: none;
+    padding: 0 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    background: #3498db;
+    line-height: 1.2;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.btn-add-appointment {
+    background: #2980b9;
+}
+
+.btn-add-test,
+.btn-add-appointment {
+    margin-bottom: 0; /* Явно и жирно убираем все отступы снизу */
+}
 
 /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
 
