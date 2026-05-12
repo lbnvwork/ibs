@@ -17,49 +17,46 @@ class DosageRecommendationEngine
 
     public function recommend(int $treatmentId): array
     {
-        /** @var Treatment|null $treatment */
         $treatment = $this->entityManager->getRepository(Treatment::class)->find($treatmentId);
-
         if (!$treatment) {
-            return [
-                'variants' => [],
-                'explanation' => 'Лечение не найдено'
-            ];
+            return ['variants' => [], 'explanation' => 'Лечение не найдено'];
         }
 
-        // 1. Получить последнее МНО
         $lastTestHistory = $this->entityManager->getRepository(TestHistory::class)
-            ->findOneBy(
-                ['treatment' => $treatment],
-                ['creationDt' => 'DESC']
-            );
-
+            ->findOneBy(['treatment' => $treatment], ['creationDt' => 'DESC']);
         if (!$lastTestHistory) {
-            return [
-                'variants' => [],
-                'explanation' => 'Нет данных МНО для расчёта'
-            ];
+            return ['variants' => [], 'explanation' => 'Нет данных МНО для расчёта'];
         }
 
         $lastMno = $lastTestHistory->getMno();
         $mnoFrom = $treatment->getMnoFrom();
-        $mnoTo = $treatment->getMnoTo();
+        $mnoTo   = $treatment->getMnoTo();
 
-        // 2. Получить текущую дозу (в таблетках)
-        $currentDose = $this->getCurrentDose($treatment);
-        if ($currentDose === null) {
+        // Особые случаи
+        if ($lastMno > 5.0) {
             return [
                 'variants' => [],
-                'explanation' => 'Не удалось определить текущую дозу'
+                'explanation' => 'МНО превышает 5.0. Рекомендуется пропустить приём и связаться с врачом.',
+            ];
+        }
+        if ($lastMno < 1.5) {
+            // Заглушка: проверка механического клапана будет позже
+            return [
+                'variants' => [],
+                'explanation' => 'МНО ниже 1.5. Требуется срочная консультация врача.',
             ];
         }
 
-        // 3. Применить правило коррекции
+        // Получить текущую дозу (в таблетках)
+        $currentDose = $this->getCurrentDose($treatment);
+        if ($currentDose === null) {
+            return ['variants' => [], 'explanation' => 'Не удалось определить текущую дозу'];
+        }
+
         $newDose = $currentDose;
         $explanation = '';
 
         if ($lastMno < $mnoFrom) {
-            // Увеличить на 10%, но не более чем на 0.5 таб
             $increase = min($currentDose * 0.1, 0.5);
             $newDose = round($currentDose + $increase, 2);
             $explanation = sprintf(
@@ -67,7 +64,6 @@ class DosageRecommendationEngine
                 $lastMno, $mnoFrom, $mnoTo, $newDose - $currentDose
             );
         } elseif ($lastMno > $mnoTo) {
-            // Уменьшить на 10%, но не менее чем на 0.5 таб
             $decrease = min($currentDose * 0.1, 0.5);
             $newDose = round($currentDose - $decrease, 2);
             $explanation = sprintf(
@@ -82,29 +78,15 @@ class DosageRecommendationEngine
             );
         }
 
-        // 4. Пересчитать в таблетки с шагом 0.25
         $newDose = round($newDose * 4) / 4; // округление до 0.25
 
-        // 5. Сформировать три варианта
         $variants = [
-            [
-                'dose' => max(0, round($newDose, 2)),
-                'label' => 'Основной'
-            ],
-            [
-                'dose' => max(0, round($newDose - 0.25, 2)),
-                'label' => 'Сниженный'
-            ],
-            [
-                'dose' => round($newDose + 0.25, 2),
-                'label' => 'Повышенный'
-            ]
+            ['dose' => max(0, $newDose), 'label' => 'Основной'],
+            ['dose' => max(0, $newDose - 0.25), 'label' => 'Сниженный'],
+            ['dose' => $newDose + 0.25, 'label' => 'Повышенный'],
         ];
 
-        return [
-            'variants' => $variants,
-            'explanation' => $explanation
-        ];
+        return ['variants' => $variants, 'explanation' => $explanation];
     }
 
     private function getCurrentDose(Treatment $treatment): ?float
