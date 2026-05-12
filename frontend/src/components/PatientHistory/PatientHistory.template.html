@@ -293,6 +293,12 @@
                 </tbody>
             </table>
         </div>
+        <MnoChart
+            v-if="medicalData.length > 0"
+            :data="medicalData"
+            :mno-from="patient.mnoFrom"
+            :mno-to="patient.mnoTo"
+        />
     </div>
     <TestAddModal
         v-if="showTestModal"

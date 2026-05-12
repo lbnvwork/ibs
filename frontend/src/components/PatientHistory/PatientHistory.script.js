@@ -11,10 +11,11 @@ import { parseApiError } from '@/utils/apiErrorHandler';
 import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
 import AppointmentAdd from '@/components/PatientHistory/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/components/PatientHistory/TestAddModal/TestAddModal.vue';
+import MnoChart from '@/components/PatientHistory/MnoChart/MnoChart.vue';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale, AppointmentAdd, TestAddModal },
+    components: { RiskScale, AppointmentAdd, TestAddModal, MnoChart },
     props: {
         id: { type: String, default: null }
     },
