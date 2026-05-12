@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -14,8 +15,9 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Filter\ActiveTreatmentFilter;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PrePersist;
+use Doctrine\ORM\Mapping\PreUpdate;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource(
     operations: [
@@ -332,5 +334,12 @@ class Treatment
                     ->addViolation();
             }
         }
+    }
+
+    #[PrePersist]
+    #[PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->modDt = new \DateTime();
     }
 }
