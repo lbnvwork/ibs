@@ -1,32 +1,47 @@
-<div class="modal-overlay" @click.self="$emit('close')">
+<div class="modal-overlay">
     <div class="modal-content">
         <h2>Новое назначение</h2>
-
         <div class="form-group">
-        <label>Дата назначения:</label>
-        <input type="date" v-model="appointmentDt" class="form-control" />
+            <label>Дата назначения:</label>
+            <input type="date" v-model="appointmentDt" class="form-control" />
         </div>
-
         <div class="form-group">
-        <label>Комментарий:</label>
-        <textarea v-model="comment" rows="3" class="form-control"></textarea>
+            <label>Доза для назначения (таб./сут):</label>
+            <input 
+                type="number" 
+                step="0.25" 
+                v-model.number="dose" 
+                class="form-control"
+                @input="onDoseManualChange"
+                min="0.25"
+                max="10"
+            />
+            <small v-if="showDoseWarning" class="dose-warning-inline">
+                Доза изменена более чем на 50% по сравнению с предыдущим назначением.
+            </small>
         </div>
-
         <div class="form-group">
-        <label>Доза для назначения (таб./сут):</label>
-        <input 
-            type="number" 
-            step="0.25" 
-            v-model.number="dose" 
-            class="form-control"
-            @input="onDoseManualChange"
-        />
+            <label class="checkbox-label">
+                <input type="checkbox" v-model="enableAlternation" @change="onAlternationToggle" />
+                Чередование (разные дозы по дням)
+            </label>
         </div>
-
+        <div class="form-group" v-if="enableAlternation">
+            <label>Вторая доза (таб./сут):</label>
+            <input 
+                type="number" 
+                step="0.25" 
+                v-model.number="dose2" 
+                class="form-control"
+                @input="onDose2Change"
+                min="0.25"
+                max="10"
+            />
+        </div>
         <button 
-        class="btn-calculate" 
-        @click="calculateDose" 
-        :disabled="isLoading"
+            class="btn-calculate" 
+            @click="calculateDose" 
+            :disabled="isLoading"
         >
             <svg v-if="!isLoading" class="ai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"/>
@@ -35,45 +50,43 @@
             <span v-if="isLoading">Расчёт выполняется...</span>
             <span v-else>Рассчитать дозу (AI)</span>
         </button>
-
         <div v-if="error" class="error-message">{{ error }}</div>
-
         <div v-if="variants.length > 0" class="variants-block">
-        <table class="variants-table">
-            <thead>
-            <tr>
-                <th>Вариант</th>
-                <th>Доза (таб./сут)</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr 
-                    v-for="(v, idx) in variants" 
-                    :key="idx"
-                    :class="{ selected: selectedVariant === idx }"
-                    class="variant-row"
-                    @click="selectVariant(idx)"
-                >
-                    <td>{{ v.label }}</td>
-                    <td>{{ v.dose }}</td>
-                    <td>
-                        <input 
-                            type="radio" 
-                            :value="idx" 
-                            v-model="selectedVariant"
-                            @click.stop
-                        />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p class="explanation">{{ explanation }}</p>
+            <table class="variants-table">
+                <thead>
+                    <tr>
+                        <th>Вариант</th>
+                        <th>Доза (таб./сут)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr 
+                        v-for="(v, idx) in variants" 
+                        :key="idx"
+                        :class="{ selected: selectedVariant === idx }"
+                        class="variant-row"
+                        @click="selectVariant(idx)"
+                    >
+                        <td>{{ v.label }}</td>
+                        <td>{{ v.dose }}</td>
+                        <td>
+                            <input 
+                                type="radio" 
+                                :value="idx" 
+                                v-model="selectedVariant"
+                                @click.stop
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="explanation">{{ explanation }}</p>
         </div>
-
+        <div v-if="showDoseWarning" class="warning-message">
+            Доза изменена более чем на 50% по сравнению с предыдущим назначением. Нажмите «Сохранить» ещё раз для подтверждения.
+        </div>
         <div v-if="saveError" class="save-error">{{ saveError }}</div>
-
         <div class="modal-actions">
             <button class="btn-save" @click="save" :disabled="!canSave">Сохранить</button>
             <button class="btn-cancel" @click="$emit('close')">Отмена</button>
