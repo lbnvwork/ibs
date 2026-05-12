@@ -30,6 +30,17 @@ export const useAuthStore = defineStore('auth', {
                 return null;
             }
         },
+
+        async fetchUserProfile() {
+            if (!this.user || !this.user.id) return;
+            try {
+                const response = await apiClient.get(`/users/${this.user.id}`);
+                this.user = { ...this.user, ...response.data };
+            } catch (err) {
+                console.error('Failed to fetch user profile', err);
+            }
+        },
+
         async login(credentials) {
             this.loading = true;
             this.error = null;
@@ -40,6 +51,7 @@ export const useAuthStore = defineStore('auth', {
                 localStorage.setItem('token', token);
 
                 this.user = this.decodeToken(token);
+                await this.fetchUserProfile();
 
                 router.push('/');
             } catch (err) {
@@ -57,13 +69,14 @@ export const useAuthStore = defineStore('auth', {
             router.push('/login');
         },
 
-        initAuth() {
+        async initAuth() {
             const token = localStorage.getItem('token');
             if (token) {
                 this.token = token;
                 const payload = this.decodeToken(token);
                 if (payload) {
                     this.user = payload;
+                    await this.fetchUserProfile();
                 } else {
                     this.logout();
                 }
