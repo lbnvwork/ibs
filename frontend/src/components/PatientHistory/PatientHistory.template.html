@@ -255,6 +255,7 @@
 
     <div v-if="patient" class="medical-data">
         <h3>Медицинские данные</h3>
+        <button class="btn-add-test" @click="openTestModal">+ Добавить анализ</button>
         <div class="table-container">
             <table>
                 <thead>
@@ -288,6 +289,13 @@
             </table>
         </div>
     </div>
+    <TestAddModal
+        v-if="showTestModal"
+        :treatment="patient.treatmentIri"
+        :drug-id="patient.drugId"
+        @close="showTestModal = false"
+        @saved="onTestSaved"
+    />
     <AppointmentAdd
         v-if="showAppointmentModal"
         :treatment="patient.treatmentIri"

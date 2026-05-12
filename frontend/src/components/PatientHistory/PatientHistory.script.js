@@ -10,10 +10,11 @@ import { validateForm } from '@/utils/validationHelper';
 import { parseApiError } from '@/utils/apiErrorHandler';
 import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
 import AppointmentAdd from '@/components/PatientHistory/AppointmentAdd/AppointmentAdd.vue';
+import TestAddModal from '@/components/PatientHistory/TestAddModal/TestAddModal.vue';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale, AppointmentAdd },
+    components: { RiskScale, AppointmentAdd, TestAddModal },
     props: {
         id: { type: String, default: null }
     },
@@ -29,6 +30,7 @@ export default {
           editingTreatmentData: {},
           allDrugs: [],
           treatmentFormError: '',
+          showTestModal: false,
         }
     },
     watch: {
@@ -381,6 +383,13 @@ export default {
         onAppointmentSaved() {
             this.loadPatientData();
             useAppointmentAddStore().closeModal();
+        },
+        openTestModal() {
+            this.showTestModal = true;
+        },
+        onTestSaved() {
+            this.loadPatientData();
+            this.showTestModal = false;
         },
     }
 };
