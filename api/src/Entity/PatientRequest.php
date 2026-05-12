@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PatientRequest
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $id = null;
 

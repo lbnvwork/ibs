@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Patient
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $id = null;
 

@@ -4,13 +4,27 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\Treatment\State\AppointmentSaveProcessor;
+use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(processor: AppointmentSaveProcessor::class),
+        new Get(),
+        new Patch(),
+        new Delete(),
+    ],
+)]
 #[ORM\Entity]
 #[ORM\Table(name: 'appointments')]
 #[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
@@ -18,7 +32,7 @@ use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 class Appointment
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $id = null;
 

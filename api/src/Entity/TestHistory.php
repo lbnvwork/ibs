@@ -38,7 +38,7 @@ use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 class TestHistory
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $id = null;
 
