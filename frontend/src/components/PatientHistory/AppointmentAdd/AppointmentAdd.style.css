@@ -1,0 +1,245 @@
+/* ОВЕРЛЕЙ (ЗАТЕМНЕНИЕ ФОНА) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* КОНТЕЙНЕР МОДАЛЬНОГО ОКНА */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* ЗАГОЛОВОК */
+.modal-content h2 {
+    margin-top: 0;
+    color: #10345c;
+    font-size: 18px;
+}
+
+/* ГРУППА ПОЛЕЙ ФОРМЫ */
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #2c3e50;
+}
+
+.form-control {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* КНОПКА "РАССЧИТАТЬ ДОЗУ" (AI-СТИЛИЗАЦИЯ) */
+.btn-calculate {
+    background: linear-gradient(135deg, #3498db 0%, #8e44ad 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    margin: 30px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(142, 68, 173, 0.3);
+    width: fit-content;
+}
+
+.btn-calculate:hover {
+    box-shadow: 0 4px 16px rgba(142, 68, 173, 0.5);
+    transform: translateY(-1px);
+}
+
+.btn-calculate:active {
+    transform: translateY(0);
+}
+
+.btn-calculate:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-calculate .ai-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* СООБЩЕНИЕ ОБ ОШИБКЕ */
+/* ОБЩИЙ СТИЛЬ ДЛЯ СООБЩЕНИЙ ОБ ОШИБКАХ */
+.error-message,
+.save-error {
+    color: #e74c3c;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* ОШИБКА НЕЙРОСЕТИ – ФИОЛЕТОВЫЙ АКЦЕНТ */
+.error-message {
+    color: #8e44ad;
+    background: #faf5fc;
+    border-left-color: #8e44ad;
+}
+
+/* БЛОК ВАРИАНТОВ ДОЗИРОВКИ */
+.variants-block {
+    margin-top: 12px;
+}
+
+/* ТАБЛИЦА ВАРИАНТОВ */
+.variants-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+
+.variants-table th,
+.variants-table td {
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.variants-table th {
+    background: #f2f2f2;
+}
+
+.variants-table tr.selected {
+    background: #e8f0fe;
+}
+
+/* ПОДПИСЬ ПОД ТАБЛИЦЕЙ */
+.explanation {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 12px;
+    font-style: italic;
+}
+
+/* НИЖНИЕ КНОПКИ */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.btn-save {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-save:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.variant-row {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.variant-row:hover {
+    background: #e8f0fe;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  color: #2c3e50;
+  cursor: pointer;
+}
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+/* ЖЁЛТОЕ ПРЕДУПРЕЖДЕНИЕ (ворнинг) */
+.warning-message {
+    color: #e67e22;
+    background: #fff8e1;
+    border-left: 3px solid #e67e22;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* КРАСНАЯ ОШИБКА (уже есть, м.б. не трогаем) */
+.save-error {
+    color: #e74c3c;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    /* ... прежние стили ... */
+}
+
+/* Подсказка под полем дозы (маленький текст) */
+.dose-warning-inline {
+    display: block;
+    color: #e67e22;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Чекбокс */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+    color: #2c3e50;
+    cursor: pointer;
+}
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}

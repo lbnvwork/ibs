@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Hospital
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $id = null;
 

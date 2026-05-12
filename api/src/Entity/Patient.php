@@ -12,6 +12,8 @@ use App\Filter\PatientDiagnosisFilter;
 use App\Filter\PatientDrugFilter;
 use App\Filter\PatientGroupFilter;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PrePersist;
+use Doctrine\ORM\Mapping\PreUpdate;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource]
@@ -28,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Patient
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $id = null;
 
@@ -252,5 +254,13 @@ class Patient
     {
         $this->hospital = $hospital;
         return $this;
+    }
+
+
+    #[PrePersist]
+    #[PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->modDt = new \DateTime();
     }
 }

@@ -1,0 +1,35 @@
+<div class="modal-overlay">
+    <div class="modal-content">
+        <h2>Добавить анализ</h2>
+
+        <div class="form-group">
+            <label>Дата анализа:</label>
+            <input type="date" v-model="creationDt" class="form-control" />
+            <span v-if="fieldErrors.creationDt" class="field-error">{{ fieldErrors.creationDt }}</span>
+        </div>
+
+        <div class="form-group">
+            <label>МНО (0.8–10.0):</label>
+            <input type="number" step="0.1" v-model.number="mno" class="form-control" />
+            <span v-if="fieldErrors.mno" class="field-error">{{ fieldErrors.mno }}</span>
+        </div>
+
+        <div class="form-group">
+            <label>Принимаемая доза (таб./сут):</label>
+            <input type="number" step="0.25" v-model.number="doze" class="form-control" max="10" />
+            <span v-if="fieldErrors.doze" class="field-error">{{ fieldErrors.doze }}</span>
+        </div>
+
+        <div class="form-group">
+            <label>Комментарий:</label>
+            <textarea v-model="comment" rows="3" class="form-control"></textarea>
+        </div>
+
+        <div v-if="saveError" class="save-error">{{ saveError }}</div>
+
+        <div class="modal-actions">
+            <button class="btn-save" @click="save">Сохранить</button>
+            <button class="btn-cancel" @click="$emit('close')">Отмена</button>
+        </div>
+    </div>
+</div>
