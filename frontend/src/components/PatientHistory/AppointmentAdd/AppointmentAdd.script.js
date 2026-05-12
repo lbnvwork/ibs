@@ -17,7 +17,8 @@ export default {
       variants: [],
       explanation: '',
       isLoading: false,
-      error: null
+      error: null,
+      saveError: null,
     };
   },
   computed: {
@@ -41,10 +42,13 @@ export default {
         this.variants = data.variants || [];
         this.explanation = data.explanation || '';
 
-        if (this.variants.length > 0) {
-          this.selectedVariant = 0;
-          this.dose = this.variants[0].dose;
+        if (this.variants.length === 0) {
+            this.error = this.explanation || 'Не удалось рассчитать дозу.';
+            return;
         }
+
+        this.selectedVariant = 0;
+        this.dose = this.variants[0].dose;
       } catch (err) {
         console.error('Ошибка расчёта дозы:', err);
         this.error = 'Не удалось рассчитать дозу. Проверьте соединение или повторите позже.';
@@ -79,8 +83,12 @@ export default {
         this.$emit('saved');
       } catch (err) {
         console.error('Ошибка сохранения назначения:', err);
-        this.error = 'Не удалось сохранить назначение.';
+        this.saveError = 'Не удалось сохранить назначение.';
       }
-    }
+    },
+    selectVariant(idx) {
+        this.selectedVariant = idx;
+        this.dose = this.variants[idx].dose;
+    },
   }
 };

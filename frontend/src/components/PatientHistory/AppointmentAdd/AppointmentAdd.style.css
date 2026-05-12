@@ -92,9 +92,23 @@
 }
 
 /* СООБЩЕНИЕ ОБ ОШИБКЕ */
-.error-message {
+/* ОБЩИЙ СТИЛЬ ДЛЯ СООБЩЕНИЙ ОБ ОШИБКАХ */
+.error-message,
+.save-error {
     color: #e74c3c;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* ОШИБКА НЕЙРОСЕТИ – ФИОЛЕТОВЫЙ АКЦЕНТ */
+.error-message {
+    color: #8e44ad;
+    background: #faf5fc;
+    border-left-color: #8e44ad;
 }
 
 /* БЛОК ВАРИАНТОВ ДОЗИРОВКИ */
@@ -164,4 +178,12 @@
     border-radius: 4px;
     cursor: pointer;
     font-weight: 500;
+}
+
+.variant-row {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.variant-row:hover {
+    background: #e8f0fe;
 }
