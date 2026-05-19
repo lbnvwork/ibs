@@ -22,4 +22,7 @@ export const patientApi = {
     create(data) {
         return apiClient.post('/patients', data).then(res => res.data);
     },
+    update(id, data) {
+        return apiClient.patch(`/patients/${id}`, data).then(res => res.data);
+    },
 }

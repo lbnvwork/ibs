@@ -2,7 +2,7 @@ import { patientApi } from '@/api/patients';
 import { treatmentApi } from '@/api/treatments';
 import { drugApi } from '@/api/drug';
 import { extractIdFromIri } from '@/utils/apiHelpers';
-import { calculateAge, formatAge, formatDate } from '@/utils/formatters';
+import { calculateAge, formatAge, formatDate, formatPhone, formatPassport, formatSnils } from '@/utils/formatters';
 import RiskScale from '@/components/RiskScale/RiskScale.vue';
 import apiClient from '@/api/client';
 import { testHistoryApi } from '@/api/testHistory';
@@ -12,6 +12,7 @@ import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
 import AppointmentAdd from '@/components/PatientHistory/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/components/PatientHistory/TestAddModal/TestAddModal.vue';
 import MnoChart from '@/components/PatientHistory/MnoChart/MnoChart.vue';
+import { isValidPhone, isValidSnils, isValidPassport } from '@/utils/validators';
 
 export default {
     name: 'PatientHistory',
@@ -21,18 +22,22 @@ export default {
     },
     data() {
         return {
-          patient: null,
-          loading: true,
-          error: null,
-          medicalData: [],
-          editingPatient: false,
-          editingTreatment: false,
-          originalTreatmentJson: '',
-          editingTreatmentData: {},
-          allDrugs: [],
-          treatmentFormError: '',
-          showTestModal: false,
-          showAppointmentInlineModal: false,
+            patient: null,
+            loading: true,
+            error: null,
+            medicalData: [],
+            editingPatient: false,
+            editingTreatment: false,
+            originalTreatmentJson: '',
+            editingTreatmentData: {},
+            allDrugs: [],
+            treatmentFormError: '',
+            showTestModal: false,
+            showAppointmentInlineModal: false,
+            editingPatient: false,
+            originalPatientJson: '',  
+            editingPatientData: {},
+            patientFormError: '',
         }
     },
     watch: {
@@ -399,6 +404,116 @@ export default {
         onAppointmentInlineSaved() {
             this.loadPatientData();
             this.showAppointmentInlineModal = false;
+        },
+
+        startEditingPatient() {
+            this.patientFormError = '';
+            this.editingPatientData = {
+                address: this.patient.address || '',
+                phone: formatPhone(this.patient.phone) || this.patient.phone || '',
+                passport: formatPassport(this.patient.passport) || this.patient.passport || '',
+                insurance: this.patient.insurance || '',
+                snils: formatSnils(this.patient.snils) || this.patient.snils || '',
+                comment: this.patient.comment || '',
+            };
+            this.originalPatientJson = JSON.stringify(this.editingPatientData);
+            this.editingPatient = true;
+        },
+
+        cancelEditingPatient() {
+            if (this.originalPatientJson) {
+                this.editingPatientData = JSON.parse(this.originalPatientJson);
+            }
+            this.editingPatient = false;
+            this.patientFormError = '';
+        },
+
+        validatePatientForm() {
+            const rules = {
+                address: {
+                    required: true,
+                    message: 'Адрес обязателен',
+                },
+                phone: {
+                    required: true,
+                    message: 'Телефон обязателен',
+                    validator: isValidPhone,
+                    errorMsg: 'Формат: 8(XXX)XXX-XX-XX',
+                },
+                passport: {
+                    required: true,
+                    message: 'Паспорт обязателен',
+                    validator: isValidPassport,
+                    errorMsg: 'Формат: XXXX XXXXXX',
+                },
+                snils: {
+                    required: true,
+                    message: 'СНИЛС обязателен',
+                    validator: isValidSnils,
+                    errorMsg: 'Формат: XXX-XXX-XXX XX',
+                },
+            };
+
+            const errors = validateForm(this.editingPatientData, rules);
+            if (Object.keys(errors).length > 0) {
+                this.patientFormError = Object.values(errors).join('\n');
+                return true;
+            }
+            this.patientFormError = '';
+            return false;
+        },
+
+        async savePatient() {
+            if (this.validatePatientForm()) return;
+
+            const body = {
+                address: this.editingPatientData.address.trim(),
+                smsPhone: formatPhone(this.editingPatientData.phone),
+                passport: formatPassport(this.editingPatientData.passport),
+                healthInsurance: this.editingPatientData.insurance.trim(),
+                snils: formatSnils(this.editingPatientData.snils),
+                comment: this.editingPatientData.comment.trim() || null,
+            };
+
+            try {
+                await patientApi.update(this.id, body);
+
+                this.patient.address = body.address;
+                this.patient.phone = body.smsPhone;
+                this.patient.passport = body.passport;
+                this.patient.insurance = body.healthInsurance;
+                this.patient.snils = body.snils;
+                this.patient.comment = body.comment;
+
+                this.editingPatient = false;
+            } catch (err) {
+                console.error('Ошибка сохранения данных пациента:', err);
+                if (err.response?.status === 422) {
+                    const parsed = parseApiError(err);
+                    if (parsed.violations) {
+                        const messages = parsed.violations.map(v => {
+                            let msg = v.message;
+                            const prefix = `${v.propertyPath}: `;
+                            if (msg.startsWith(prefix)) msg = msg.slice(prefix.length);
+                            return `• ${v.propertyPath}: ${msg}`;
+                        });
+                        this.patientFormError = messages.join('\n');
+                    } else {
+                        this.patientFormError = parsed.generalError || 'Ошибка сохранения';
+                    }
+                } else {
+                    this.patientFormError = 'Не удалось сохранить данные. Проверьте соединение.';
+                }
+            }
+        },
+        onPhoneInput() {
+            this.editingPatientData.phone = formatPhone(this.editingPatientData.phone);
+        },
+        onPassportInput() {
+            this.editingPatientData.passport = formatPassport(this.editingPatientData.passport);
+        },
+        onSnilsInput() {
+            this.editingPatientData.snils = formatSnils(this.editingPatientData.snils);
         },
     }
 };
