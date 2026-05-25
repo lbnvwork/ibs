@@ -12,6 +12,24 @@
     <div v-if="patient" class="patient-main-content">
         <div class="left-column">
             <div class="patient-info-compact">
+                <div class="treatment-section-header">
+                    <h3>Персональные данные</h3>
+                    <div class="treatment-actions">
+                        <button 
+                            v-if="!editingPatient"
+                            class="btn-edit-treatment"
+                            title="Редактировать данные"
+                            @click="startEditingPatient"
+                        >✎</button>
+                        <template v-if="editingPatient">
+                            <button class="btn-save-treatment" @click="savePatient">Сохранить</button>
+                            <button class="btn-cancel-treatment" @click="cancelEditingPatient">Отмена</button>
+                        </template>
+                    </div>
+                </div>
+
+                <div v-if="patientFormError" class="treatment-form-error">{{ patientFormError }}</div>
+
                 <div class="info-row">
                     <div class="info-group">
                         <label>ФИО:</label>
@@ -22,14 +40,21 @@
                 <div class="info-row">
                     <div class="info-group">
                         <label>Проживание:</label>
-                        <span>{{ patient.address }}</span>
+                        <span v-if="!editingPatient">{{ patient.address }}</span>
+                        <input v-else type="text" v-model="editingPatientData.address" class="edit-input" />
                     </div>
                 </div>
 
                 <div class="info-row">
                     <div class="info-group">
                         <label>Телефон:</label>
-                        <span>{{ patient.phone }}</span>
+                        <span v-if="!editingPatient">{{ patient.phone }}</span>
+                        <input v-else type="text" 
+                            v-model="editingPatientData.phone" 
+                            class="edit-input"
+                            @input="onPhoneInput"
+                            maxlength="15"
+                            placeholder="8(XXX)XXX-XX-XX" />
                     </div>
                 </div>
 
@@ -43,21 +68,35 @@
                 <div class="info-row">
                     <div class="info-group">
                         <label>Паспорт:</label>
-                        <span>{{ patient.passport }}</span>
+                        <span v-if="!editingPatient">{{ patient.passport }}</span>
+                        <input v-else type="text" 
+                            v-model="editingPatientData.passport" 
+                            class="edit-input"
+                            @input="onPassportInput"
+                            maxlength="11"
+                            placeholder="XXXX XXXXXX" />
                     </div>
                 </div>
 
+                <!-- Полис -->
                 <div class="info-row">
                     <div class="info-group">
                         <label>Полис:</label>
-                        <span>{{ patient.insurance }}</span>
+                        <span v-if="!editingPatient">{{ patient.insurance }}</span>
+                        <input v-else type="text" v-model="editingPatientData.insurance" class="edit-input" />
                     </div>
                 </div>
 
                 <div class="info-row">
                     <div class="info-group">
                         <label>СНИЛС:</label>
-                        <span>{{ patient.snils }}</span>
+                        <span v-if="!editingPatient">{{ patient.snils }}</span>
+                        <input v-else type="text" 
+                            v-model="editingPatientData.snils" 
+                            class="edit-input"
+                            @input="onSnilsInput"
+                            maxlength="14"
+                            placeholder="XXX-XXX-XXX XX" />
                     </div>
                 </div>
 
@@ -65,6 +104,14 @@
                     <div class="info-group">
                         <label>ЛПУ:</label>
                         <span>{{ patient.hospital }}</span>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-group">
+                        <label>Комментарий:</label>
+                        <span v-if="!editingPatient">{{ patient.comment || '—' }}</span>
+                        <input v-else type="text" v-model="editingPatientData.comment" class="edit-input" />
                     </div>
                 </div>
 
