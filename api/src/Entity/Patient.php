@@ -103,6 +103,10 @@ class Patient
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $snils = null;
 
+    #[ORM\Column(type: 'string', length: 180, nullable: true)]
+    #[Assert\Email(message: 'patient.email.invalid')]
+    private ?string $email = null;
+
     #[Assert\NotBlank(message: 'patient.hospital.not_blank')]
     #[ORM\ManyToOne(targetEntity: Hospital::class)]
     #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', nullable: true)]
@@ -256,6 +260,16 @@ class Patient
         return $this;
     }
 
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+        return $this;
+    }
 
     #[PrePersist]
     #[PreUpdate]
