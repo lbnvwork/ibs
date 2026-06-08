@@ -1,7 +1,7 @@
 import { hospitalApi } from '@/api/hospitals';
 import { patientApi } from '@/api/patients';
 import { formatPhone, formatPassport, formatSnils } from '@/utils/formatters';
-import { isValidPhone, isValidPassport, isValidSnils } from '@/utils/validators';
+import { isValidPhone, isValidPassport, isValidSnils, isValidEmail } from '@/utils/validators';
 import { parseApiError } from '@/utils/apiErrorHandler';
 
 export default {
@@ -19,6 +19,7 @@ export default {
                 passport: '',
                 snils: '',
                 healthInsurance: '',
+                email: '',
                 comment: '',
                 hospitalId: null,
             },
@@ -91,6 +92,10 @@ export default {
                     validator: (val) => isValidSnils(val),
                     errorMsg: 'СНИЛС должен содержать 11 цифр в формате XXX-XXX-XXX XX'
                 },
+                email: {
+                    validator: isValidEmail,
+                    errorMsg: 'Неверный формат email',
+                },
             };
 
             const newErrors = {};
@@ -132,6 +137,7 @@ export default {
                     passport: this.patient.passport,
                     snils: this.patient.snils,
                     healthInsurance: this.patient.healthInsurance,
+                    email: this.patient.email.trim() || null,
                     comment: this.patient.comment,
                     hospital: `/api/hospitals/${this.patient.hospitalId}`,
                 };

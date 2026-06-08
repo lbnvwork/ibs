@@ -12,7 +12,7 @@ import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
 import AppointmentAdd from '@/components/PatientHistory/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/components/PatientHistory/TestAddModal/TestAddModal.vue';
 import MnoChart from '@/components/PatientHistory/MnoChart/MnoChart.vue';
-import { isValidPhone, isValidSnils, isValidPassport } from '@/utils/validators';
+import { isValidPhone, isValidSnils, isValidPassport, isValidEmail } from '@/utils/validators';
 
 export default {
     name: 'PatientHistory',
@@ -34,7 +34,6 @@ export default {
             treatmentFormError: '',
             showTestModal: false,
             showAppointmentInlineModal: false,
-            editingPatient: false,
             originalPatientJson: '',  
             editingPatientData: {},
             patientFormError: '',
@@ -415,6 +414,7 @@ export default {
                 insurance: this.patient.insurance || '',
                 snils: formatSnils(this.patient.snils) || this.patient.snils || '',
                 comment: this.patient.comment || '',
+                email: this.patient.email || '',
             };
             this.originalPatientJson = JSON.stringify(this.editingPatientData);
             this.editingPatient = true;
@@ -452,6 +452,10 @@ export default {
                     validator: isValidSnils,
                     errorMsg: 'Формат: XXX-XXX-XXX XX',
                 },
+                email: {
+                    validator: isValidEmail,
+                    errorMsg: 'Неверный формат email',
+                },
             };
 
             const errors = validateForm(this.editingPatientData, rules);
@@ -473,6 +477,7 @@ export default {
                 healthInsurance: this.editingPatientData.insurance.trim(),
                 snils: formatSnils(this.editingPatientData.snils),
                 comment: this.editingPatientData.comment.trim() || null,
+                email: this.editingPatientData.email.trim() || null,
             };
 
             try {
@@ -484,7 +489,7 @@ export default {
                 this.patient.insurance = body.healthInsurance;
                 this.patient.snils = body.snils;
                 this.patient.comment = body.comment;
-
+                this.patient.email = body.email;
                 this.editingPatient = false;
             } catch (err) {
                 console.error('Ошибка сохранения данных пациента:', err);
