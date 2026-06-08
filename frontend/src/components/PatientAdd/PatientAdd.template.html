@@ -77,6 +77,13 @@
                 <span v-if="fieldErrors.healthInsurance" class="field-error">{{ fieldErrors.healthInsurance }}</span>
             </div>
 
+            <div class="form-group">
+                <label>Email (необязательно):</label>
+                <input type="email" v-model="patient.email" class="form-control" 
+                    :class="{ 'has-error': fieldErrors.email }" />
+                <span v-if="fieldErrors.email" class="field-error">{{ fieldErrors.email }}</span>
+            </div>
+
             <div class="form-group full-width" :class="{ 'has-error': fieldErrors.comment }">
                 <label for="comment">Комментарий</label>
                 <textarea id="comment" v-model="patient.comment" rows="3"></textarea>

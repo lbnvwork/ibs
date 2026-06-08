@@ -15,3 +15,8 @@ export function isValidPassport(passport) {
     const number = parts[1].replace(/\D/g, '');
     return series.length === 4 && number.length === 6;
 }
+
+export function isValidEmail(email) {
+    if (!email) return true; // необязательное поле
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
