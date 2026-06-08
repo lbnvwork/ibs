@@ -61,7 +61,12 @@
                 <div class="info-row">
                     <div class="info-group">
                         <label>Email:</label>
-                        <span>{{ patient.email }}</span>
+                        <span v-if="!editingPatient">{{ patient.email || '—'}}</span>
+                        <input v-else type="email"
+                            v-model="editingPatientData.email"
+                            class="edit-input"
+                            placeholder="example@mail.ru" />
+                        <span v-if="patientFormError.email" class="field-error">{{ patientFormError.email }}</span>
                     </div>
                 </div>
 
