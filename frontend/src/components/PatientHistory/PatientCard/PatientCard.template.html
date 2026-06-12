@@ -1,0 +1,129 @@
+<div class="patient-info-compact">
+    <!-- Заголовок с кнопками -->
+    <div class="treatment-section-header">
+        <h3>Персональные данные</h3>
+        <div class="treatment-actions">
+            <button 
+                v-if="!store.editingPatient"
+                class="btn-edit-treatment"
+                title="Редактировать данные"
+                @click="store.startEditingPatient"
+            >✎</button>
+            <template v-if="store.editingPatient">
+                <button class="btn-save-treatment" @click="savePatient">Сохранить</button>
+                <button class="btn-cancel-treatment" @click="store.cancelEditingPatient">Отмена</button>
+            </template>
+        </div>
+    </div>
+
+    <!-- Ошибка валидации (если есть) -->
+    <div v-if="store.patientFormError" class="treatment-form-error">{{ store.patientFormError }}</div>
+
+    <!-- ФИО – не редактируется -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>ФИО:</label>
+            <span><strong>{{ store.patient.name }}</strong>, {{ store.patient.age || '—' }} ({{ store.patient.birthDate || '—' }})</span>
+        </div>
+    </div>
+
+    <!-- Адрес -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>Проживание:</label>
+            <span v-if="!store.editingPatient">{{ store.patient.address }}</span>
+            <input v-else type="text" v-model="store.editingPatientData.address" class="edit-input" />
+        </div>
+    </div>
+
+    <!-- Телефон с маской -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>Телефон:</label>
+            <span v-if="!store.editingPatient">{{ store.patient.phone }}</span>
+            <input v-else type="text" 
+                v-model="store.editingPatientData.phone" 
+                class="edit-input"
+                @input="store.editingPatientData.phone = formatPhone(store.editingPatientData.phone)"
+                placeholder="8(XXX)XXX-XX-XX" />
+        </div>
+    </div>
+
+    <!-- Email -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>Email:</label>
+            <span v-if="!store.editingPatient">{{ store.patient.email || '—' }}</span>
+            <input v-else type="email" v-model="store.editingPatientData.email" class="edit-input" placeholder="example@mail.ru" />
+        </div>
+    </div>
+
+    <!-- Паспорт с маской -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>Паспорт:</label>
+            <span v-if="!store.editingPatient">{{ store.patient.passport }}</span>
+            <input v-else type="text" 
+                v-model="store.editingPatientData.passport" 
+                class="edit-input"
+                @input="store.editingPatientData.passport = formatPassport(store.editingPatientData.passport)"
+                placeholder="XXXX XXXXXX" />
+        </div>
+    </div>
+
+    <!-- Полис -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>Полис:</label>
+            <span v-if="!store.editingPatient">{{ store.patient.insurance }}</span>
+            <input v-else type="text" v-model="store.editingPatientData.insurance" class="edit-input" />
+        </div>
+    </div>
+
+    <!-- СНИЛС с маской -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>СНИЛС:</label>
+            <span v-if="!store.editingPatient">{{ store.patient.snils }}</span>
+            <input v-else type="text" 
+                v-model="store.editingPatientData.snils" 
+                class="edit-input"
+                @input="store.editingPatientData.snils = formatSnils(store.editingPatientData.snils)"
+                placeholder="XXX-XXX-XXX XX" />
+        </div>
+    </div>
+
+    <!-- ЛПУ – не редактируется -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>ЛПУ:</label>
+            <span>{{ store.patient.hospital }}</span>
+        </div>
+    </div>
+
+    <!-- Комментарий -->
+    <div class="info-row">
+        <div class="info-group">
+            <label>Комментарий:</label>
+            <span v-if="!store.editingPatient">{{ store.patient.comment || '—' }}</span>
+            <input v-else type="text" v-model="store.editingPatientData.comment" class="edit-input" />
+        </div>
+    </div>
+
+    <!-- Согласие (скрыто) -->
+    <div v-if="false" class="consent-row">
+        <div class="consent-text">Информированное согласие на обработку данных и мониторинг</div>
+        <div class="status-container">
+            <span class="status-text">{{ patient.consentSigned ? 'Подписано' : 'Не подписано' }}</span>
+            <div class="status-indicator" :class="patient.consentSigned ? 'signed' : 'not-signed'">
+                <svg v-if="patient.consentSigned" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg v-else width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>

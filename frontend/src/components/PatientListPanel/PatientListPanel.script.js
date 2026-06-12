@@ -1,5 +1,5 @@
 import { mapState, mapActions } from 'pinia'
-import { usePatientStore } from '@/stores/patientStore'
+import { usePatientListStore } from '@/stores/patientStore'
 import { useHospitalStore } from '@/stores/hospitalStore'
 import { calculateAge, formatAge } from '@/utils/formatters'
 import debounce from 'lodash/debounce'
@@ -21,7 +21,7 @@ export default {
       drugGroupError: 'error',
     }),
 
-    ...mapState(usePatientStore, {
+    ...mapState(usePatientListStore, {
       rawPatients: 'rawPatients',
       allPatientIds: 'allPatientIds',
       displayedPatients: 'displayedPatients',
@@ -69,7 +69,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(usePatientStore, [
+    ...mapActions(usePatientListStore, [
       'loadMore',
       'selectPatient',
       'searchPatients',

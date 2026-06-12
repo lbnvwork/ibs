@@ -1,8 +1,7 @@
-import { patientApi } from '@/api/patients';
 import { treatmentApi } from '@/api/treatments';
 import { drugApi } from '@/api/drug';
 import { extractIdFromIri } from '@/utils/apiHelpers';
-import { calculateAge, formatAge, formatDate, formatPhone, formatPassport, formatSnils } from '@/utils/formatters';
+import { calculateAge, formatAge, formatDate } from '@/utils/formatters';
 import RiskScale from '@/components/RiskScale/RiskScale.vue';
 import apiClient from '@/api/client';
 import { testHistoryApi } from '@/api/testHistory';
@@ -12,45 +11,44 @@ import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
 import AppointmentAdd from '@/components/PatientHistory/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/components/PatientHistory/TestAddModal/TestAddModal.vue';
 import MnoChart from '@/components/PatientHistory/MnoChart/MnoChart.vue';
-import { isValidPhone, isValidSnils, isValidPassport, isValidEmail } from '@/utils/validators';
+import PatientCard from '@/components/PatientHistory/PatientCard/PatientCard.vue';
+import { usePatientCardStore } from '@/stores/patientCardStore';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale, AppointmentAdd, TestAddModal, MnoChart },
+    components: { RiskScale, AppointmentAdd, TestAddModal, MnoChart, PatientCard },
     props: {
         id: { type: String, default: null }
     },
     data() {
         return {
-            patient: null,
             loading: true,
             error: null,
             medicalData: [],
-            editingPatient: false,
             editingTreatment: false,
             originalTreatmentJson: '',
             editingTreatmentData: {},
             allDrugs: [],
             treatmentFormError: '',
             showTestModal: false,
-            showAppointmentInlineModal: false,
-            originalPatientJson: '',  
-            editingPatientData: {},
-            patientFormError: '',
-        }
-    },
-    watch: {
-        id(newId) {
-            if (newId) this.loadPatientData();
+            showAppointmentInlineModal: false
         }
     },
     computed: {
         showAppointmentModal() {
             return useAppointmentAddStore().isModalOpen;
-        },
+        }
     },
-    created() {
-        if (this.id) this.loadPatientData();
+    watch: {
+        id: {
+            immediate: true,
+            handler(newId) {
+                if (newId) {
+                    this.loadPatientData();
+                    usePatientCardStore().fetchPatient(newId);
+                }
+            }
+        }
     },
     methods: {
         formatDate,
@@ -62,10 +60,8 @@ export default {
             this.error = null;
             this.medicalData = [];
             this.editingTreatment = false;
-            this.editingPatient = false;
 
             try {
-                const patientData = await patientApi.getOne(this.id);
                 const treatmentResp = await treatmentApi.getAll({
                     patient: `/api/patients/${this.id}`,
                     itemsPerPage: 1,
@@ -75,17 +71,7 @@ export default {
                 const treatment = treatments.length > 0 ? treatments[0] : null;
 
                 const isActive = treatment ? (treatment.realEndDt === null || treatment.realEndDt === undefined) : false;
-
                 useAppointmentAddStore().setTreatmentActive(isActive);
-
-                let hospitalName = '';
-                if (patientData.hospital) {
-                    const hospitalId = extractIdFromIri(patientData.hospital);
-                    if (hospitalId) {
-                        const hospResp = await apiClient.get(`/hospitals/${hospitalId}`);
-                        hospitalName = hospResp.data.name || '';
-                    }
-                }
 
                 let drugName = '';
                 if (treatment?.drug) {
@@ -141,7 +127,7 @@ export default {
                         currentDose: item.doze !== undefined ? item.doze : '—',
                         prescribedDose: matchingAppt ? matchingAppt.doze : '—',
                         recommendations: matchingAppt ? (matchingAppt.comment || '') : '',
-                        comment: item.comment || '',
+                        comment: item.comment || ''
                     });
                 });
 
@@ -154,7 +140,7 @@ export default {
                         currentDose: '—',
                         prescribedDose: a.doze,
                         recommendations: a.comment || '',
-                        comment: '',
+                        comment: ''
                     });
                 });
 
@@ -175,30 +161,11 @@ export default {
                     prescribedDose: event.prescribedDose,
                     recommendations: event.recommendations,
                     comment: event.comment,
-                    isAppointment: event.type === 'appointment',
+                    isAppointment: event.type === 'appointment'
                 }));
 
-                const fullName = [
-                    patientData.lastname,
-                    patientData.firstname,
-                    patientData.secondName
-                ].filter(Boolean).join(' ') || 'Без имени';
-                const age = calculateAge(patientData.birthday);
-
-                this.patient = {
-                    name: fullName,
-                    age: age ? formatAge(age) : '—',
-                    birthDate: patientData.birthday
-                        ? formatDate(patientData.birthday)
-                        : '—',
-                    address: patientData.address || '—',
-                    phone: patientData.smsPhone || '—',
-                    email: '—',
-                    passport: patientData.passport || '—',
-                    insurance: patientData.healthInsurance || '—',
-                    snils: patientData.snils || '—',
-                    hospital: hospitalName || '—',
-
+                // Сохраняем данные лечения в отдельном объекте для использования в шаблоне и модальных окнах
+                this.treatment = {
                     diagnosis: treatment?.diagnosis || '—',
                     diagnosisCode: treatment?.diagnosisCode || '',
                     comorbiditiesRaw: treatment?.comorbidities || '',
@@ -216,12 +183,7 @@ export default {
                     treatmentIri: treatment?.['@id'] || null,
                     isActive: isActive,
                     stoppingReason: treatment?.stoppingReason || null,
-                    hemorrhages: treatment?.hemorrhages ?? 0,
-
-                    consentSigned: false,
-                    riskScores: null,
-                    pharmacogenetics: [],
-                    mutations: [],
+                    hemorrhages: treatment?.hemorrhages ?? 0
                 };
             } catch (err) {
                 console.error('Ошибка загрузки истории:', err);
@@ -230,20 +192,21 @@ export default {
                 this.loading = false;
             }
         },
-        
+
+        // ========== Редактирование лечения (осталось без изменений) ==========
         async startEditingTreatment() {
             this.treatmentFormError = '';
             await this.loadDrugsIfNeeded();
             this.editingTreatmentData = {
-                diagnosis: this.patient.diagnosis,
-                diagnosisCode: this.patient.diagnosisCode || '',
-                comorbiditiesRaw: this.patient.comorbiditiesRaw,
-                mnoFrom: this.patient.mnoFrom,
-                mnoTo: this.patient.mnoTo,
-                drugId: this.patient.drugId,
-                begDt: this.patient.begDt ? this.patient.begDt.substring(0, 10) : null,
-                planEndDt: this.patient.planEndDt ? this.patient.planEndDt.substring(0, 10) : null,
-                treatmentComment: this.patient.treatmentComment || '',
+                diagnosis: this.treatment.diagnosis,
+                diagnosisCode: this.treatment.diagnosisCode || '',
+                comorbiditiesRaw: this.treatment.comorbiditiesRaw,
+                mnoFrom: this.treatment.mnoFrom,
+                mnoTo: this.treatment.mnoTo,
+                drugId: this.treatment.drugId,
+                begDt: this.treatment.begDt ? this.treatment.begDt.substring(0, 10) : null,
+                planEndDt: this.treatment.planEndDt ? this.treatment.planEndDt.substring(0, 10) : null,
+                treatmentComment: this.treatment.treatmentComment || ''
             };
             this.originalTreatmentJson = JSON.stringify(this.editingTreatmentData);
             this.editingTreatment = true;
@@ -256,7 +219,7 @@ export default {
             }
             this.editingTreatment = false;
         },
-        
+
         async saveTreatment() {
             if (this.validateTreatmentForm()) {
                 return;
@@ -275,30 +238,30 @@ export default {
                 drug: `/api/drugs/${this.editingTreatmentData.drugId}`,
                 begDt: this.editingTreatmentData.begDt,
                 planEndDt: this.editingTreatmentData.planEndDt || null,
-                comment: (this.editingTreatmentData.treatmentComment || '').trim() || null,
+                comment: (this.editingTreatmentData.treatmentComment || '').trim() || null
             };
 
             try {
-                const treatmentId = extractIdFromIri(this.patient.treatmentIri);
+                const treatmentId = extractIdFromIri(this.treatment.treatmentIri);
                 await treatmentApi.update(treatmentId, body);
 
-                this.patient.diagnosis = body.diagnosis;
-                this.patient.comorbiditiesRaw = body.comorbidities;
-                this.patient.additionalConditions = body.comorbidities
+                this.treatment.diagnosis = body.diagnosis;
+                this.treatment.comorbiditiesRaw = body.comorbidities;
+                this.treatment.additionalConditions = body.comorbidities
                     ? [body.comorbidities]
                     : ['Нет данных'];
-                this.patient.mnoFrom = body.mnoFrom;
-                this.patient.mnoTo = body.mnoTo;
-                this.patient.drugId = this.editingTreatmentData.drugId;
+                this.treatment.mnoFrom = body.mnoFrom;
+                this.treatment.mnoTo = body.mnoTo;
+                this.treatment.drugId = this.editingTreatmentData.drugId;
 
                 const selectedDrug = this.allDrugs.find(d => d.id == this.editingTreatmentData.drugId);
                 if (selectedDrug) {
-                    this.patient.drugName = selectedDrug.nominative;
+                    this.treatment.drugName = selectedDrug.nominative;
                 }
 
-                this.patient.begDt = body.begDt;
-                this.patient.planEndDt = body.planEndDt;
-                this.patient.treatmentComment = body.comment || '';
+                this.treatment.begDt = body.begDt;
+                this.treatment.planEndDt = body.planEndDt;
+                this.treatment.treatmentComment = body.comment || '';
 
                 this.editingTreatment = false;
             } catch (err) {
@@ -322,7 +285,7 @@ export default {
             }
         },
 
-        async loadDrugsIfNeeded(){
+        async loadDrugsIfNeeded() {
             if (this.allDrugs.length === 0) {
                 try {
                     const resp = await drugApi.getAll();
@@ -339,24 +302,24 @@ export default {
                     required: true,
                     message: 'Диагноз обязателен',
                     validator: (val) => val && val.trim().length > 0,
-                    errorMsg: 'Введите диагноз',
+                    errorMsg: 'Введите диагноз'
                 },
                 drugId: {
                     required: true,
-                    message: 'Выберите препарат',
+                    message: 'Выберите препарат'
                 },
                 begDt: {
                     required: true,
-                    message: 'Дата госпитализации обязательна',
+                    message: 'Дата госпитализации обязательна'
                 },
                 mnoFrom: {
                     required: true,
-                    message: 'Нижняя граница МНО обязательна',
+                    message: 'Нижняя граница МНО обязательна'
                 },
                 mnoTo: {
                     required: true,
-                    message: 'Верхняя граница МНО обязательна',
-                },
+                    message: 'Верхняя граница МНО обязательна'
+                }
             };
 
             const extraChecks = (errors, data) => {
@@ -383,6 +346,8 @@ export default {
         isTreatmentDataChanged() {
             return JSON.stringify(this.editingTreatmentData) !== this.originalTreatmentJson;
         },
+
+        // ========== Модальные окна ==========
         closeAppointmentModal() {
             useAppointmentAddStore().closeModal();
         },
@@ -403,122 +368,6 @@ export default {
         onAppointmentInlineSaved() {
             this.loadPatientData();
             this.showAppointmentInlineModal = false;
-        },
-
-        startEditingPatient() {
-            this.patientFormError = '';
-            this.editingPatientData = {
-                address: this.patient.address || '',
-                phone: formatPhone(this.patient.phone) || this.patient.phone || '',
-                passport: formatPassport(this.patient.passport) || this.patient.passport || '',
-                insurance: this.patient.insurance || '',
-                snils: formatSnils(this.patient.snils) || this.patient.snils || '',
-                comment: this.patient.comment || '',
-                email: this.patient.email || '',
-            };
-            this.originalPatientJson = JSON.stringify(this.editingPatientData);
-            this.editingPatient = true;
-        },
-
-        cancelEditingPatient() {
-            if (this.originalPatientJson) {
-                this.editingPatientData = JSON.parse(this.originalPatientJson);
-            }
-            this.editingPatient = false;
-            this.patientFormError = '';
-        },
-
-        validatePatientForm() {
-            const rules = {
-                address: {
-                    required: true,
-                    message: 'Адрес обязателен',
-                },
-                phone: {
-                    required: true,
-                    message: 'Телефон обязателен',
-                    validator: isValidPhone,
-                    errorMsg: 'Формат: 8(XXX)XXX-XX-XX',
-                },
-                passport: {
-                    required: true,
-                    message: 'Паспорт обязателен',
-                    validator: isValidPassport,
-                    errorMsg: 'Формат: XXXX XXXXXX',
-                },
-                snils: {
-                    required: true,
-                    message: 'СНИЛС обязателен',
-                    validator: isValidSnils,
-                    errorMsg: 'Формат: XXX-XXX-XXX XX',
-                },
-                email: {
-                    validator: isValidEmail,
-                    errorMsg: 'Неверный формат email',
-                },
-            };
-
-            const errors = validateForm(this.editingPatientData, rules);
-            if (Object.keys(errors).length > 0) {
-                this.patientFormError = Object.values(errors).join('\n');
-                return true;
-            }
-            this.patientFormError = '';
-            return false;
-        },
-
-        async savePatient() {
-            if (this.validatePatientForm()) return;
-
-            const body = {
-                address: this.editingPatientData.address.trim(),
-                smsPhone: formatPhone(this.editingPatientData.phone),
-                passport: formatPassport(this.editingPatientData.passport),
-                healthInsurance: this.editingPatientData.insurance.trim(),
-                snils: formatSnils(this.editingPatientData.snils),
-                comment: this.editingPatientData.comment.trim() || null,
-                email: this.editingPatientData.email.trim() || null,
-            };
-
-            try {
-                await patientApi.update(this.id, body);
-
-                this.patient.address = body.address;
-                this.patient.phone = body.smsPhone;
-                this.patient.passport = body.passport;
-                this.patient.insurance = body.healthInsurance;
-                this.patient.snils = body.snils;
-                this.patient.comment = body.comment;
-                this.patient.email = body.email;
-                this.editingPatient = false;
-            } catch (err) {
-                console.error('Ошибка сохранения данных пациента:', err);
-                if (err.response?.status === 422) {
-                    const parsed = parseApiError(err);
-                    if (parsed.violations) {
-                        const messages = parsed.violations.map(v => {
-                            let msg = v.message;
-                            const prefix = `${v.propertyPath}: `;
-                            if (msg.startsWith(prefix)) msg = msg.slice(prefix.length);
-                            return `• ${v.propertyPath}: ${msg}`;
-                        });
-                        this.patientFormError = messages.join('\n');
-                    } else {
-                        this.patientFormError = parsed.generalError || 'Ошибка сохранения';
-                    }
-                } else {
-                    this.patientFormError = 'Не удалось сохранить данные. Проверьте соединение.';
-                }
-            }
-        },
-        onPhoneInput() {
-            this.editingPatientData.phone = formatPhone(this.editingPatientData.phone);
-        },
-        onPassportInput() {
-            this.editingPatientData.passport = formatPassport(this.editingPatientData.passport);
-        },
-        onSnilsInput() {
-            this.editingPatientData.snils = formatSnils(this.editingPatientData.snils);
-        },
+        }
     }
 };
