@@ -1,4 +1,5 @@
-// Импорт убираем – Chart доступен глобально через CDN
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 export default {
     name: 'MnoChart',
@@ -8,16 +9,6 @@ export default {
         mnoTo: { type: Number, default: null },
     },
     mounted() {
-        // Дождёмся, пока Chart загрузится с CDN
-        if (typeof Chart === 'undefined') {
-            const checkChart = setInterval(() => {
-                if (typeof Chart !== 'undefined') {
-                    clearInterval(checkChart);
-                    this.renderChart();
-                }
-            }, 100);
-            return;
-        }
         this.renderChart();
     },
     methods: {
