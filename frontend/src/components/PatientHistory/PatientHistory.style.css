@@ -36,7 +36,7 @@
     gap: 20px;
 }
 
-/* ОБЩИЕ СТИЛИ ДЛЯ СЕКЦИЙ */
+/* ОБЩИЕ СТИЛИ ДЛЯ СЕКЦИЙ (используются в виджетах) */
 .patient-history .section {
     background: white;
     border: 1px solid #dee2e6;
@@ -83,38 +83,6 @@
     margin-bottom: 0;
     box-shadow: none;
     border: 1px solid #dee2e6;
-}
-
-/* СТИЛИ ДЛЯ ФАРМАКОГЕНЕТИКИ */
-.patient-history .pharmacogenetics-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.patient-history .pharmacogenetics-item {
-    padding: 8px 12px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    border-left: 3px solid #3498db;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-/* СТИЛИ ДЛЯ МУТАЦИЙ */
-.patient-history .mutations-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.patient-history .mutation-item {
-    padding: 8px 12px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    border-left: 3px solid #9b59b6;
-    font-size: 14px;
-    line-height: 1.4;
 }
 
 /* МЕДИЦИНСКИЕ ДАННЫЕ (ТАБЛИЦА) */
@@ -165,150 +133,6 @@
     color: #666;
 }
 
-/* ЛЕЧЕНИЕ: ЗАГОЛОВОК И КНОПКИ */
-.patient-history .treatment-section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.patient-history .treatment-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-}
-
-.patient-history .btn-edit-treatment,
-.patient-history .btn-save-treatment,
-.patient-history .btn-cancel-treatment {
-    padding: 6px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.patient-history .btn-edit-treatment {
-    background: #3498db;
-    color: white;
-}
-.patient-history .btn-edit-treatment:hover {
-    background: #2980b9;
-}
-
-.patient-history .btn-save-treatment {
-    margin: 0;
-    flex: none;
-    background: #27ae60;
-    color: white;
-}
-.patient-history .btn-save-treatment:hover {
-    background: #219a52;
-}
-
-.patient-history .btn-cancel-treatment {
-    background: #e0e0e0;
-    color: #333;
-}
-.patient-history .btn-cancel-treatment:hover {
-    background: #bdbdbd;
-}
-
-/* ЛЕЧЕНИЕ: ПОЛЯ ВВОДА */
-.patient-history .info-row {
-    display: flex;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
-}
-
-.patient-history .info-group {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    width: 100%;
-}
-
-.patient-history .info-group label {
-    font-weight: 600;
-    color: #2c3e50;
-    flex: 1 1 40%;
-    min-width: 0;
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-.patient-history .info-group span {
-    flex: 1 1 60%;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    min-width: 0;
-}
-
-.patient-history .status-active {
-    color: #27ae60;
-    font-weight: 600;
-}
-
-.patient-history .status-inactive {
-    color: #7f8c8d;
-    font-weight: 600;
-}
-
-.patient-history .edit-input {
-    flex: 1 1 60%;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    min-width: 0;
-}
-
-.patient-history .edit-input.small {
-    flex: 0 0 60px;
-    width: 60px;
-    text-align: center;
-}
-
-.patient-history .edit-textarea {
-    flex: 1 1 60%;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    resize: vertical;
-    min-height: 60px;
-}
-
-.patient-history .range-edit {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    width: auto;
-    flex: 0 0 auto;
-}
-
-.patient-history .range-edit input[type="number"] {
-    width: 60px;
-    flex: none;
-}
-
-.patient-history .range-edit span {
-    flex: none;
-}
-
-.patient-history .treatment-form-error {
-    color: #e74c3c;
-    font-size: 13px;
-    margin-bottom: 8px;
-    padding: 6px 10px;
-    background: #fdf0f0;
-    border-left: 3px solid #e74c3c;
-    border-radius: 4px;
-    white-space: pre-line;
-}
-
 /* КНОПКИ НАД ТАБЛИЦЕЙ */
 .patient-history .medical-data-header {
     display: flex;
@@ -350,26 +174,6 @@
     margin-bottom: 0;
 }
 
-/* Квадратная кнопка-карандаш для лечения */
-.patient-history .treatment-section-header .btn-edit-treatment {
-    background: #2980b9;
-    border: 1px solid #3498db;
-    color: white;
-    font-size: 18px;
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-.patient-history .treatment-section-header .btn-edit-treatment:hover {
-    background: #3498db;
-    color: white;
-}
-
 /* АДАПТИВНОСТЬ */
 @media (max-width: 1200px) {
     .patient-history .patient-main-content {
@@ -378,16 +182,6 @@
 }
 
 @media (max-width: 768px) {
-    .patient-history .info-group {
-        flex-direction: column;
-        gap: 4px;
-    }
-    .patient-history .info-group label {
-        flex: auto;
-    }
-    .patient-history .info-group span {
-        flex: auto;
-    }
     .patient-history .patient-main-content {
         grid-template-columns: 1fr;
         gap: 15px;
@@ -395,10 +189,5 @@
     .patient-history .left-column,
     .patient-history .right-column {
         gap: 15px;
-    }
-    .patient-history .pharmacogenetics-item,
-    .patient-history .mutation-item {
-        font-size: 13px;
-        padding: 6px 10px;
     }
 }
