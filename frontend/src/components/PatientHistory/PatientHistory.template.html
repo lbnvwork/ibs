@@ -23,53 +23,13 @@
         <p>Пациент не найден</p>
     </div>
 
-    <div v-if="treatmentStore.treatment" class="medical-data">
-        <div class="medical-data-header">
-            <h3>Медицинские данные</h3>
-            <div class="medical-data-actions">
-                <button class="btn-add-test" @click="openTestModal">Добавить анализ</button>
-                <button class="btn-add-appointment" @click="openAppointmentInlineModal">Добавить назначение</button>
-            </div>
-        </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                <tr>
-                    <th>Дата</th>
-                    <th>МНО</th>
-                    <th>Анализ №1</th>
-                    <th>Анализ №2</th>
-                    <th>ЧСС</th>
-                    <th>АД</th>
-                    <th>Принимаемая доза</th>
-                    <th>Назначенная доза</th>
-                    <th>Рекомендации</th>
-                    <th>Комментарий</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="(data, index) in medicalData" :key="index" :class="{ 'appointment-row': data.isAppointment }">
-                    <td>{{ data.date }}</td>
-                    <td><strong>{{ data.inr }}</strong></td>
-                    <td>{{ data.analysis1 }}</td>
-                    <td>{{ data.analysis2 }}</td>
-                    <td>{{ data.heartRate }}</td>
-                    <td>{{ data.bloodPressure }}</td>
-                    <td>{{ data.currentDose }}</td>
-                    <td>{{ data.prescribedDose }}</td>
-                    <td class="recommendations">{{ data.recommendations }}</td>
-                    <td class="comment">{{ data.comment }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <MnoChart
-            v-if="medicalData.length > 0"
-            :data="medicalData"
-            :mno-from="treatmentStore.treatment.mnoFrom"
-            :mno-to="treatmentStore.treatment.mnoTo"
-        />
-    </div>
+    <MedicalTable
+        v-if="treatmentStore.treatment"
+        :mno-from="treatmentStore.treatment.mnoFrom"
+        :mno-to="treatmentStore.treatment.mnoTo"
+        @open-test-modal="openTestModal"
+        @open-appointment-modal="openAppointmentInlineModal"
+    />
     <TestAddModal
         v-if="showTestModal"
         :treatment="treatmentStore.treatment['@id']"
