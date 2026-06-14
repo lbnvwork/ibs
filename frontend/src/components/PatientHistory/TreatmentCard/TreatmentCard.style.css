@@ -1,0 +1,166 @@
+/* ЗАГОЛОВОК И КНОПКИ */
+.treatment-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.treatment-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.btn-edit-treatment,
+.btn-save-treatment,
+.btn-cancel-treatment {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-edit-treatment {
+    background: #3498db;
+    color: white;
+}
+.btn-edit-treatment:hover {
+    background: #2980b9;
+}
+
+.btn-save-treatment {
+    margin: 0;
+    flex: none;
+    background: #27ae60;
+    color: white;
+}
+.btn-save-treatment:hover {
+    background: #219a52;
+}
+
+.btn-cancel-treatment {
+    background: #e0e0e0;
+    color: #333;
+}
+.btn-cancel-treatment:hover {
+    background: #bdbdbd;
+}
+
+/* КВАДРАТНАЯ КНОПКА-КАРАНДАШ */
+.treatment-section-header .btn-edit-treatment {
+    background: transparent;
+    border: 1px solid #3498db;
+    color: #3498db;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.treatment-section-header .btn-edit-treatment:hover {
+    background: #3498db;
+    color: white;
+}
+
+/* ПОЛЯ ВВОДА */
+.edit-input {
+    flex: 1 1 60%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 0;
+}
+
+.edit-input.small {
+    flex: 0 0 60px;
+    width: 60px;
+    text-align: center;
+}
+
+.edit-textarea {
+    flex: 1 1 60%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 60px;
+}
+
+.range-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+    flex: 0 0 auto;
+}
+
+.range-edit input[type="number"] {
+    width: 60px;
+    flex: none;
+}
+
+.range-edit span {
+    flex: none;
+}
+
+/* ОШИБКА ВАЛИДАЦИИ */
+.treatment-form-error {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+    white-space: pre-line;
+}
+
+/* СТАТУСЫ */
+.status-active {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.status-inactive {
+    color: #7f8c8d;
+    font-weight: 600;
+}
+
+/* ОБЩИЕ ЭЛЕМЕНТЫ ФОРМЫ (info-row, info-group используются в лечении) */
+.info-row {
+    display: flex;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.info-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+.info-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1 1 40%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.info-group span {
+    flex: 1 1 60%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
+}
