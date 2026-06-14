@@ -85,93 +85,11 @@
     border: 1px solid #dee2e6;
 }
 
-/* МЕДИЦИНСКИЕ ДАННЫЕ (ТАБЛИЦА) */
-.patient-history .medical-data {
-    margin-bottom: 20px;
-}
-
-.patient-history .table-container {
-    overflow-x: auto;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.patient-history .medical-data table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    min-width: 1000px;
-}
-
-.patient-history .medical-data th,
-.patient-history .medical-data td {
-    padding: 8px 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-.patient-history .medical-data th {
-    background-color: #f2f2f2;
-    font-weight: 600;
-}
-
-.patient-history .medical-data tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.patient-history .recommendations,
-.patient-history .comment {
-    max-width: 200px;
-    white-space: normal;
-    line-height: 1.3;
-}
-
 .patient-history .loading-message {
     text-align: center;
     padding: 50px;
     font-size: 18px;
     color: #666;
-}
-
-/* КНОПКИ НАД ТАБЛИЦЕЙ */
-.patient-history .medical-data-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    overflow: auto;
-}
-
-.patient-history .medical-data-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.patient-history .btn-add-test,
-.patient-history .btn-add-appointment {
-    border: none;
-    padding: 0 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    color: white;
-    background: #3498db;
-    line-height: 1.2;
-    height: 36px;
-    display: inline-flex;
-    align-items: center;
-    box-sizing: border-box;
-}
-
-.patient-history .btn-add-appointment {
-    background: #2980b9;
-}
-
-.patient-history .btn-add-test,
-.patient-history .btn-add-appointment {
-    margin-bottom: 0;
 }
 
 /* АДАПТИВНОСТЬ */

@@ -7,11 +7,12 @@ import PatientCard from '@/components/PatientHistory/PatientCard/PatientCard.vue
 import TreatmentCard from '@/components/PatientHistory/TreatmentCard/TreatmentCard.vue';
 import { usePatientCardStore } from '@/stores/patientCardStore';
 import { useTreatmentStore } from '@/stores/treatmentStore';
-import { useMedicalHistoryStore } from '@/stores/medicalHistoryStore';
+import { useMedicalTableStore } from '@/stores/medicalHistoryStore';
+import MedicalTable from '@/components/PatientHistory/MedicalTable/MedicalTable.vue';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale: null, AppointmentAdd, TestAddModal, MnoChart, PatientCard, TreatmentCard },
+    components: { RiskScale: null, AppointmentAdd, TestAddModal, MnoChart, PatientCard, TreatmentCard, MedicalTable },
     props: {
         id: { type: String, default: null }
     },
@@ -31,7 +32,7 @@ export default {
             return useTreatmentStore();
         },
         medicalData() {
-            return useMedicalHistoryStore().events;
+            return useMedicalTableStore().events;
         }
     },
     watch: {
@@ -66,7 +67,7 @@ export default {
                 useAppointmentAddStore().setTreatmentActive(isActive);
 
                 if (treatment['@id']) {
-                    await useMedicalHistoryStore().fetchMedicalData(treatment['@id']);
+                    await useMedicalTableStore().fetchMedicalData(treatment['@id']);
                 }
             } catch (err) {
                 console.error('Ошибка загрузки истории:', err);

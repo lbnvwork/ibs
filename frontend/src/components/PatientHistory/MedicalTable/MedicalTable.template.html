@@ -1,0 +1,47 @@
+<div class="medical-data">
+    <div class="medical-data-header">
+        <h3>Медицинские данные</h3>
+        <div class="medical-data-actions">
+            <button class="btn-add-test" @click="$emit('open-test-modal')">Добавить анализ</button>
+            <button class="btn-add-appointment" @click="$emit('open-appointment-modal')">Добавить назначение</button>
+        </div>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>МНО</th>
+                    <th>Анализ №1</th>
+                    <th>Анализ №2</th>
+                    <th>ЧСС</th>
+                    <th>АД</th>
+                    <th>Принимаемая доза</th>
+                    <th>Назначенная доза</th>
+                    <th>Рекомендации</th>
+                    <th>Комментарий</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(data, index) in store.events" :key="index" :class="{ 'appointment-row': data.isAppointment }">
+                    <td>{{ data.date }}</td>
+                    <td><strong>{{ data.inr }}</strong></td>
+                    <td>{{ data.analysis1 }}</td>
+                    <td>{{ data.analysis2 }}</td>
+                    <td>{{ data.heartRate }}</td>
+                    <td>{{ data.bloodPressure }}</td>
+                    <td>{{ data.currentDose }}</td>
+                    <td>{{ data.prescribedDose }}</td>
+                    <td class="recommendations">{{ data.recommendations }}</td>
+                    <td class="comment">{{ data.comment }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <MnoChart
+        v-if="store.events.length > 0"
+        :data="store.events"
+        :mno-from="mnoFrom"
+        :mno-to="mnoTo"
+    />
+</div>

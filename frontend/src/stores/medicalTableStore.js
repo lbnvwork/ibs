@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import apiClient from '@/api/client';
 import { testHistoryApi } from '@/api/testHistory';
 
-export const useMedicalTableStore = defineStore('medicalHistory', {
+export const useMedicalTableStore = defineStore('medicalTable', {
     state: () => ({
         events: [],
         loading: false,
