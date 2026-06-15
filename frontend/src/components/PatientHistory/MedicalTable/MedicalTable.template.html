@@ -6,6 +6,12 @@
             <button class="btn-add-appointment" @click="$emit('open-appointment-modal')">Добавить назначение</button>
         </div>
     </div>
+    <MnoChart
+        v-if="store.events.length > 0"
+        :data="store.events"
+        :mno-from="mnoFrom"
+        :mno-to="mnoTo"
+    />
     <div class="table-container">
         <table>
             <thead>
@@ -38,10 +44,4 @@
             </tbody>
         </table>
     </div>
-    <MnoChart
-        v-if="store.events.length > 0"
-        :data="store.events"
-        :mno-from="mnoFrom"
-        :mno-to="mnoTo"
-    />
 </div>
