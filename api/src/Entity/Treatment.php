@@ -34,11 +34,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'treatments', indexes: [
-    new ORM\Index(name: 'idx_treatment_patient_id', columns: ['patient_id']),
-    new ORM\Index(name: 'idx_treatment_patient_beg_dt', columns: ['patient_id', 'beg_dt']),
-    new ORM\Index(name: 'idx_treatment_drug_id', columns: ['drug_id'])
-])]
+#[ORM\Table(name: 'treatments')]
+#[ORM\Index(name: 'idx_treatment_patient_id', columns: ['patient_id'])]
+#[ORM\Index(name: 'idx_treatment_patient_beg_dt', columns: ['patient_id', 'beg_dt'])]
+#[ORM\Index(name: 'idx_treatment_drug_id', columns: ['drug_id'])]
 #[ApiFilter(ActiveTreatmentFilter::class)]
 #[ApiFilter(SearchFilter::class, properties: [
     'patient' => 'exact',
