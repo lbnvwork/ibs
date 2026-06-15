@@ -25,6 +25,7 @@
 
     <MedicalTable
         v-if="treatmentStore.treatment"
+        :key="treatmentStore.treatment['@id']"
         :mno-from="treatmentStore.treatment.mnoFrom"
         :mno-to="treatmentStore.treatment.mnoTo"
         @open-test-modal="openTestModal"

@@ -32,13 +32,17 @@ export default {
         }
     },
     watch: {
-        id: {
+    id: {
             immediate: true,
-            handler(newId) {
+            async handler(newId) {
                 if (newId) {
+                    const patientCardStore = usePatientCardStore();
+                    const treatmentStore = useTreatmentStore();
+                    await Promise.all([
+                        patientCardStore.fetchPatient(newId),
+                        treatmentStore.fetchTreatment(newId)
+                    ]);
                     this.loadPatientData();
-                    usePatientCardStore().fetchPatient(newId);
-                    useTreatmentStore().fetchTreatment(newId);
                 }
             }
         }
