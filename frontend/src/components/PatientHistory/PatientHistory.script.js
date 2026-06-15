@@ -2,17 +2,16 @@ import { extractIdFromIri } from '@/utils/apiHelpers';
 import { useAppointmentAddStore } from '@/stores/appointmentAddStore';
 import AppointmentAdd from '@/components/PatientHistory/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/components/PatientHistory/TestAddModal/TestAddModal.vue';
-import MnoChart from '@/components/PatientHistory/MnoChart/MnoChart.vue';
 import PatientCard from '@/components/PatientHistory/PatientCard/PatientCard.vue';
 import TreatmentCard from '@/components/PatientHistory/TreatmentCard/TreatmentCard.vue';
 import { usePatientCardStore } from '@/stores/patientCardStore';
 import { useTreatmentStore } from '@/stores/treatmentStore';
-import { useMedicalTableStore } from '@/stores/medicalHistoryStore';
+import { useMedicalTableStore } from '@/stores/medicalTableStore';
 import MedicalTable from '@/components/PatientHistory/MedicalTable/MedicalTable.vue';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale: null, AppointmentAdd, TestAddModal, MnoChart, PatientCard, TreatmentCard, MedicalTable },
+    components: { RiskScale: null, AppointmentAdd, TestAddModal, PatientCard, TreatmentCard, MedicalTable },
     props: {
         id: { type: String, default: null }
     },
@@ -30,9 +29,6 @@ export default {
         },
         treatmentStore() {
             return useTreatmentStore();
-        },
-        medicalData() {
-            return useMedicalTableStore().events;
         }
     },
     watch: {
