@@ -53,6 +53,7 @@ services:
   node:
     image: node:20
     container_name: ibs-node
+    user: "1000:1000"
     working_dir: /app
     volumes:
       - ./frontend:/app

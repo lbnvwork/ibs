@@ -4,7 +4,7 @@ import { PATIENTS_PER_PAGE } from '@/utils/constants'
 import { transformForListPanel } from '@/transformers/patientTransformers'
 import apiClient from '@/api/client'
 
-export const usePatientListStore = defineStore('patient', {
+export const usePatientListStore = defineStore('patientList', {
     state: () => ({
         rawPatients: new Map(),
         statuses: {},
