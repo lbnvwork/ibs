@@ -1,4 +1,4 @@
-import { useMedicalTableStore } from '@/stores/medicalHistoryStore';
+import { useMedicalTableStore } from '@/stores/medicalTableStore';
 import MnoChart from '@/components/PatientHistory/MnoChart/MnoChart.vue';
 
 export default {
