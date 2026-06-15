@@ -39,9 +39,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'users', indexes: [
-    new ORM\Index(name: 'idx_users_medpers', columns: ['medical_personnel_id'])
-])]
+#[ORM\Table(name: 'users')]
+#[ORM\Index(name: 'idx_users_medpers', columns: ['medical_personnel_id'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -157,10 +156,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @see UserInterface
+     * @deprecated since Symfony 7.3, use __serialize() instead
      */
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // Ничего не делаем, можно очистить временные данные
+        // Пароль не сохраняется в сессии благодаря __serialize()
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'login' => $this->login,
+            'userName' => $this->userName,
+            'roles' => $this->roles,
+            'medicalPersonnel' => $this->medicalPersonnel,
+            'comment' => $this->comment,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'] ?? null;
+        $this->login = $data['login'] ?? null;
+        $this->userName = $data['userName'] ?? null;
+        $this->roles = $data['roles'] ?? [];
+        $this->medicalPersonnel = $data['medicalPersonnel'] ?? null;
+        $this->comment = $data['comment'] ?? null;
     }
 }
