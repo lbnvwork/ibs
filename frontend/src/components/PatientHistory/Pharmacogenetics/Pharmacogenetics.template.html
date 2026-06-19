@@ -28,6 +28,10 @@
             <template v-if="marker.currentValue">
                 <span class="genotype">{{ getGenotypeLabel(marker) || marker.currentValue }}</span>
                 <span v-if="marker.testDate" class="test-date">Дата теста: {{ marker.testDate }}</span>
+                <span v-if="marker.comment" class="comment-tooltip-wrapper">
+                    <span class="comment-icon">ℹ️</span>
+                    <span class="comment-tooltip-text">{{ marker.comment }}</span>
+                </span>
             </template>
             <span v-else class="not-tested">Не исследовано</span>
         </div>
