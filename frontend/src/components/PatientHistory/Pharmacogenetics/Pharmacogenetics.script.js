@@ -77,30 +77,43 @@ export default {
             const requests = [];
 
             for (const marker of this.markers) {
-                const originalValueId = this.getOriginalValueId(marker.markerId);
+                const original = this.getOriginalMarker(marker.markerId);
                 const newValueId = marker.editingValueId;
+                const originalValueId = original ? original.currentValueId : null;
+                const hasResult = !!marker.resultId;
 
-                if (newValueId === originalValueId) {
+                // Если нет результата и генотип не выбран – пропускаем
+                if (!hasResult && (newValueId === null || newValueId === undefined)) {
                     continue;
                 }
 
-                if (newValueId === null || newValueId === undefined) {
-                    if (marker.resultId) {
-                        requests.push(pharmacogeneticsApi.deleteResult(marker.resultId));
-                    }
+                // Если есть результат и генотип удалён – удаляем запись
+                if (hasResult && (newValueId === null || newValueId === undefined)) {
+                    requests.push(pharmacogeneticsApi.deleteResult(marker.resultId));
+                    continue;
+                }
+
+                // Проверяем, изменилось ли значение, дата или комментарий
+                const valueChanged = newValueId !== originalValueId;
+                const dateChanged = (marker.editingTestDate || null) !== (original ? original.testDate || null : null);
+                const commentChanged = (marker.editingComment || null) !== (original ? original.comment || null : null);
+
+                if (!valueChanged && !dateChanged && !commentChanged) {
+                    continue;
+                }
+
+                const payload = {
+                    patient: `/api/patients/${this.patientId}`,
+                    marker: `/api/genetic_markers/${marker.markerId}`,
+                    markerValue: `/api/genetic_marker_values/${newValueId}`,
+                    testDate: marker.editingTestDate || null,
+                    comment: marker.editingComment || null
+                };
+
+                if (hasResult) {
+                    requests.push(pharmacogeneticsApi.updateResult(marker.resultId, payload));
                 } else {
-                    const payload = {
-                        patient: `/api/patients/${this.patientId}`,
-                        marker: `/api/genetic_markers/${marker.markerId}`,
-                        markerValue: `/api/genetic_marker_values/${newValueId}`,
-                        testDate: marker.editingTestDate || null,
-                        comment: marker.editingComment || null
-                    };
-                    if (marker.resultId) {
-                        requests.push(pharmacogeneticsApi.updateResult(marker.resultId, payload));
-                    } else {
-                        requests.push(pharmacogeneticsApi.createResult(payload));
-                    }
+                    requests.push(pharmacogeneticsApi.createResult(payload));
                 }
             }
 
@@ -118,6 +131,11 @@ export default {
                 this.saveError = 'Не удалось сохранить фармакогенетические данные.';
                 await this.loadData();
             }
+        },
+
+        getOriginalMarker(markerId) {
+            const originalMarkers = JSON.parse(this.originalMarkersJson || '[]');
+            return originalMarkers.find(m => m.markerId === markerId) || null;
         },
         getGenotypeLabel(marker) {
             if (!marker.currentValueId) return null;
