@@ -5,7 +5,16 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 
+#[ApiResource(
+    operations: [
+        new Get()
+    ]
+)]
 #[ORM\Entity]
 #[ORM\Table(name: 'genetic_markers')]
 class GeneticMarker
@@ -24,11 +33,16 @@ class GeneticMarker
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $rsId = null;
 
-    #[ORM\Column(type: 'json')]
-    private array $possibleValues = [];
+    #[ORM\OneToMany(targetEntity: GeneticMarkerValue::class, mappedBy: 'marker', cascade: ['persist'])]
+    private Collection $possibleValues;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
+
+    public function __construct()
+    {
+        $this->possibleValues = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -68,14 +82,28 @@ class GeneticMarker
         return $this;
     }
 
-    public function getPossibleValues(): array
+    public function getPossibleValues(): Collection
     {
         return $this->possibleValues;
     }
 
-    public function setPossibleValues(array $possibleValues): self
+    public function addPossibleValue(GeneticMarkerValue $value): self
     {
-        $this->possibleValues = $possibleValues;
+        if (!$this->possibleValues->contains($value)) {
+            $this->possibleValues->add($value);
+            $value->setMarker($this);
+        }
+        return $this;
+    }
+
+    public function removePossibleValue(GeneticMarkerValue $value): self
+    {
+        if ($this->possibleValues->contains($value)) {
+            $this->possibleValues->removeElement($value);
+            if ($value->getMarker() === $this) {
+                $value->setMarker(null);
+            }
+        }
         return $this;
     }
 

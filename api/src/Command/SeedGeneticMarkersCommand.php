@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Entity\Drug;
 use App\Entity\GeneticMarker;
+use App\Entity\GeneticMarkerValue;
 use App\Entity\MarkerDrugRelation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -28,13 +29,12 @@ class SeedGeneticMarkersCommand extends Command
     {
         $output->writeln('Seeding genetic markers...');
 
-        // 1. Определяем справочник маркеров
         $markersData = [
             [
                 'geneSymbol' => 'CYP2C9',
                 'fullName'   => 'Цитохром P450 2C9',
                 'rsId'       => 'rs1799853 (CYP2C9*2), rs1057910 (CYP2C9*3)',
-                'possibleValues' => [
+                'values' => [
                     ['value' => '*1/*1', 'label' => '*1/*1 (норма)', 'description' => 'Нормальная активность фермента'],
                     ['value' => '*1/*2', 'label' => '*1/*2 (гетерозигота)', 'description' => 'Снижение активности, повышенная чувствительность к варфарину, риск кровотечений'],
                     ['value' => '*1/*3', 'label' => '*1/*3 (гетерозигота)', 'description' => 'Снижение активности, повышенная чувствительность к варфарину, риск кровотечений'],
@@ -48,7 +48,7 @@ class SeedGeneticMarkersCommand extends Command
                 'geneSymbol' => 'VKORC1_3673',
                 'fullName'   => 'Витамин К эпоксидредуктаза, G3673A',
                 'rsId'       => 'rs9923231',
-                'possibleValues' => [
+                'values' => [
                     ['value' => 'GG', 'label' => 'GG (норма)', 'description' => 'Нормальная чувствительность к варфарину'],
                     ['value' => 'GA', 'label' => 'GA (гетерозигота)', 'description' => 'Повышение чувствительности к варфарину, требуется меньшая доза'],
                     ['value' => 'AA', 'label' => 'AA (мутантная гомозигота)', 'description' => 'Повышение чувствительности к варфарину, требуется меньшая доза'],
@@ -59,7 +59,7 @@ class SeedGeneticMarkersCommand extends Command
                 'geneSymbol' => 'VKORC1_3730',
                 'fullName'   => 'Витамин К эпоксидредуктаза, G3730A',
                 'rsId'       => 'rs7294',
-                'possibleValues' => [
+                'values' => [
                     ['value' => 'GG', 'label' => 'GG (норма)', 'description' => 'Нормальная чувствительность'],
                     ['value' => 'GA', 'label' => 'GA (гетерозигота)', 'description' => 'Резистентность, требуется более высокая доза варфарина'],
                     ['value' => 'AA', 'label' => 'AA (мутантная гомозигота)', 'description' => 'Резистентность, требуется более высокая доза варфарина'],
@@ -70,7 +70,7 @@ class SeedGeneticMarkersCommand extends Command
                 'geneSymbol' => 'ABCB1',
                 'fullName'   => 'АВС-транспортёр 1',
                 'rsId'       => null,
-                'possibleValues' => [
+                'values' => [
                     ['value' => 'CC', 'label' => 'CC (норма)', 'description' => 'Нормальный транспорт ПОАК'],
                     ['value' => 'CT', 'label' => 'CT (гетерозигота)', 'description' => 'Возможно изменение транспорта ПОАК'],
                     ['value' => 'TT', 'label' => 'TT (мутантная гомозигота)', 'description' => 'Изменённый транспорт ПОАК'],
@@ -81,7 +81,7 @@ class SeedGeneticMarkersCommand extends Command
                 'geneSymbol' => 'CYP3A5',
                 'fullName'   => 'Цитохром P450 3A5',
                 'rsId'       => null,
-                'possibleValues' => [
+                'values' => [
                     ['value' => '*1/*1', 'label' => '*1/*1 (норма)', 'description' => 'Нормальный метаболизм'],
                     ['value' => '*1/*3', 'label' => '*1/*3 (гетерозигота)', 'description' => 'Сниженный метаболизм апиксабана и ривароксабана'],
                     ['value' => '*3/*3', 'label' => '*3/*3 (мутантная гомозигота)', 'description' => 'Значительно сниженный метаболизм апиксабана и ривароксабана'],
@@ -90,7 +90,6 @@ class SeedGeneticMarkersCommand extends Command
             ],
         ];
 
-        // 2. Идемпотентно заполняем маркеры
         $markerRepo = $this->entityManager->getRepository(GeneticMarker::class);
         foreach ($markersData as $data) {
             $existing = $markerRepo->findOneBy(['geneSymbol' => $data['geneSymbol']]);
@@ -99,21 +98,27 @@ class SeedGeneticMarkersCommand extends Command
                 $marker->setGeneSymbol($data['geneSymbol']);
                 $marker->setFullName($data['fullName']);
                 $marker->setRsId($data['rsId']);
-                $marker->setPossibleValues($data['possibleValues']);
                 $marker->setDescription($data['description']);
                 $this->entityManager->persist($marker);
-                $output->writeln(sprintf('  Created marker %s', $data['geneSymbol']));
+
+                foreach ($data['values'] as $val) {
+                    $markerValue = new GeneticMarkerValue();
+                    $markerValue->setMarker($marker);
+                    $markerValue->setValue($val['value']);
+                    $markerValue->setLabel($val['label']);
+                    $markerValue->setDescription($val['description']);
+                    $this->entityManager->persist($markerValue);
+                }
+                $output->writeln(sprintf('  Created marker %s with %d values', $data['geneSymbol'], count($data['values'])));
             } else {
                 $output->writeln(sprintf('  Marker %s already exists', $data['geneSymbol']));
             }
         }
         $this->entityManager->flush();
 
-        // 3. Заполняем связи с препаратами
         $drugRepo = $this->entityManager->getRepository(Drug::class);
         $relationRepo = $this->entityManager->getRepository(MarkerDrugRelation::class);
 
-        // Препараты, с которыми связываем маркеры
         $drugMappings = [
             'CYP2C9'       => ['варфарин', 'фенилин'],
             'VKORC1_3673'  => ['варфарин', 'фенилин'],
@@ -130,7 +135,6 @@ class SeedGeneticMarkersCommand extends Command
             }
 
             foreach ($drugNames as $drugName) {
-                // Ищем препарат по номинативному падежу (можно также по genitive)
                 $drug = $drugRepo->findOneBy(['nominative' => $drugName]);
                 if (!$drug) {
                     $output->writeln(sprintf('  WARNING: Drug "%s" not found, skipping relation for %s', $drugName, $geneSymbol));

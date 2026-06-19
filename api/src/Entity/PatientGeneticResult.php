@@ -12,16 +12,15 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\ClinicalCore\Pharmacogenetics\State\PatientGeneticResultProcessor;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(),
+        new Post(processor: PatientGeneticResultProcessor::class),
         new Get(),
-        new Put(),
+        new Put(processor: PatientGeneticResultProcessor::class),
         new Delete(),
     ]
 )]
@@ -44,9 +43,9 @@ class PatientGeneticResult
     #[ORM\JoinColumn(name: 'marker_id', referencedColumnName: 'id', nullable: false)]
     private ?GeneticMarker $marker = null;
 
-    #[ORM\Column(type: 'string', length: 20)]
-    #[Assert\NotBlank(message: 'Значение генотипа обязательно')]
-    private string $value;
+    #[ORM\ManyToOne(targetEntity: GeneticMarkerValue::class)]
+    #[ORM\JoinColumn(name: 'marker_value_id', referencedColumnName: 'id', nullable: false)]
+    private ?GeneticMarkerValue $markerValue = null;
 
     #[ORM\Column(type: 'date', nullable: true)]
     private ?\DateTimeInterface $testDate = null;
@@ -91,18 +90,6 @@ class PatientGeneticResult
     public function setMarker(?GeneticMarker $marker): self
     {
         $this->marker = $marker;
-
-        return $this;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function setValue(string $value): self
-    {
-        $this->value = $value;
 
         return $this;
     }
@@ -155,20 +142,14 @@ class PatientGeneticResult
         return $this;
     }
 
-    #[Assert\Callback]
-    public function validateValue(ExecutionContextInterface $context): void
+    public function getMarkerValue(): ?GeneticMarkerValue
     {
-        if ($this->marker === null) {
-            return;
-        }
+        return $this->markerValue;
+    }
 
-        $allowedValues = array_column($this->marker->getPossibleValues(), 'value');
-        if (!in_array($this->value, $allowedValues, true)) {
-            $context->buildViolation('Значение генотипа "{{ value }}" недопустимо для маркера {{ marker }}.')
-                ->setParameter('{{ value }}', $this->value)
-                ->setParameter('{{ marker }}', $this->marker->getGeneSymbol())
-                ->atPath('value')
-                ->addViolation();
-        }
+    public function setMarkerValue(?GeneticMarkerValue $markerValue): self
+    {
+        $this->markerValue = $markerValue;
+        return $this;
     }
 }

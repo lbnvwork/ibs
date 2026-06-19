@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace App\ClinicalCore\Pharmacogenetics\Dto;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use App\State\PharmacogeneticsProvider;
+use App\ClinicalCore\Pharmacogenetics\State\PharmacogeneticsProvider;
 
 #[ApiResource(
     operations: [
