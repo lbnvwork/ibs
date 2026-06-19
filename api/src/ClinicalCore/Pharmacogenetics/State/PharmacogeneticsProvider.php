@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\State;
+namespace App\ClinicalCore\Pharmacogenetics\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Dto\PharmacogeneticsResponse;
-use App\Service\PharmacogeneticsService;
+use App\ClinicalCore\Pharmacogenetics\Dto\PharmacogeneticsResponse;
+use App\ClinicalCore\Pharmacogenetics\Service\PharmacogeneticsService;
 
 class PharmacogeneticsProvider implements ProviderInterface
 {
@@ -18,10 +18,9 @@ class PharmacogeneticsProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PharmacogeneticsResponse
     {
         $patientId = (int) $uriVariables['patientId'];
-        $markers = $this->service->getPatientPharmacogenetics($patientId);
 
         $response = new PharmacogeneticsResponse();
-        $response->markers = $markers;
+        $response->markers = $this->service->getPatientPharmacogenetics($patientId);
 
         return $response;
     }

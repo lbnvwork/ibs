@@ -1,0 +1,145 @@
+.pharmacogenetics-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #9b59b6;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.section-header h3 {
+    margin: 0;
+    color: #10345c;
+    font-size: 16px;
+}
+.section-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.btn-icon-edit {
+    background: transparent;
+    border: 1px solid #3498db;
+    color: #3498db;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.btn-icon-edit:hover {
+    background: #3498db;
+    color: white;
+}
+.btn-save {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+.btn-save:hover {
+    background: #219a52;
+}
+.btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+.btn-cancel:hover {
+    background: #bdbdbd;
+}
+.pharmacogenetics-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #9b59b6;
+}
+.pharmacogenetics-section h3 {
+    margin-top: 0;
+    color: #10345c;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    font-size: 16px;
+}
+.marker-item {
+    margin-bottom: 12px;
+    border-bottom: 1px dashed #ddd;
+    padding-bottom: 12px;
+}
+.marker-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.marker-header {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+.marker-fullname {
+    color: #666;
+    font-size: 12px;
+}
+.rs-id {
+    color: #3498db;
+    font-size: 12px;
+    margin-left: 8px;
+}
+.not-tested {
+    color: #999;
+    font-style: italic;
+}
+.genotype {
+    font-weight: 600;
+    color: #2c3e50;
+}
+.test-date {
+    font-size: 12px;
+    color: #666;
+    margin-left: 10px;
+}
+.marker-description {
+    color: #555;
+    font-size: 13px;
+    margin-top: 4px;
+}
+.marker-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+.form-control {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.save-error {
+    color: #e74c3c;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+    font-size: 13px;
+}

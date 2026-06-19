@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\ClinicalCore\Pharmacogenetics\Service;
 
 use App\Entity\MarkerDrugRelation;
 use App\Entity\PatientGeneticResult;
@@ -54,11 +54,19 @@ class PharmacogeneticsService
                 'geneSymbol'     => $marker->getGeneSymbol(),
                 'fullName'       => $marker->getFullName(),
                 'rsId'           => $marker->getRsId(),
-                'possibleValues' => $marker->getPossibleValues(),
-                'currentValue'   => $existingResult ? $existingResult->getValue() : null,
-                'testDate'       => $existingResult ? ($existingResult->getTestDate() ? $existingResult->getTestDate()->format('Y-m-d') : null) : null,
-                'comment'        => $existingResult ? $existingResult->getComment() : null,
-                'resultId'       => $existingResult ? $existingResult->getId() : null,
+                'possibleValues' => $marker->getPossibleValues()->map(function($gmv) {
+                    return [
+                        'id'          => $gmv->getId(),
+                        'value'       => $gmv->getValue(),
+                        'label'       => $gmv->getLabel(),
+                        'description' => $gmv->getDescription(),
+                    ];
+                })->toArray(),
+                'currentValueId'  => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getId() : null) : null,
+                'currentValue'    => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getValue() : null) : null,
+                'testDate'        => $existingResult ? ($existingResult->getTestDate() ? $existingResult->getTestDate()->format('Y-m-d') : null) : null,
+                'comment'         => $existingResult ? $existingResult->getComment() : null,
+                'resultId'        => $existingResult ? $existingResult->getId() : null,
             ];
         }
 

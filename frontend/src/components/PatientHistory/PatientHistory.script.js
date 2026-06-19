@@ -8,10 +8,11 @@ import { usePatientCardStore } from '@/stores/patientCardStore';
 import { useTreatmentStore } from '@/stores/treatmentStore';
 import { useMedicalTableStore } from '@/stores/medicalTableStore';
 import MedicalTable from '@/components/PatientHistory/MedicalTable/MedicalTable.vue';
+import Pharmacogenetics from '@/components/PatientHistory/Pharmacogenetics/Pharmacogenetics.vue';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale: null, AppointmentAdd, TestAddModal, PatientCard, TreatmentCard, MedicalTable },
+    components: { RiskScale: null, AppointmentAdd, TestAddModal, PatientCard, TreatmentCard, MedicalTable, Pharmacogenetics },
     props: {
         id: { type: String, default: null }
     },
