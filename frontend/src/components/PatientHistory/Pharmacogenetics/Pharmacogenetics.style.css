@@ -1,0 +1,212 @@
+/* === Секция в целом === */
+.pharmacogenetics-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: transparent;       /* убираем фон, карточки сами будут выделены */
+    border: none;                  /* убираем левую полосу у всей секции */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.section-header h3 {
+    margin: 0;
+    color: #10345c;
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 8px;
+    width: 100%;
+}
+
+/* === Кнопки управления === */
+.section-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.btn-icon-edit {
+    background: transparent;
+    border: 1px solid #3498db;
+    color: #3498db;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.btn-icon-edit:hover {
+    background: #3498db;
+    color: white;
+}
+.btn-save {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+.btn-save:hover {
+    background: #219a52;
+}
+.btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+.btn-cancel:hover {
+    background: #bdbdbd;
+}
+
+/* === Список маркеров === */
+.marker-item {
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #3498db;   /* синяя полоса как в старом дизайне */
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 8px;               /* отступ между карточками */
+    border-bottom: none;               /* убираем нижний пунктир, если был */
+}
+.marker-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Заголовок маркера */
+.marker-header {
+    margin-bottom: 4px;
+}
+.marker-header strong {
+    color: #2c3e50;
+}
+.marker-fullname {
+    color: #666;
+    font-size: 12px;
+}
+.rs-id {
+    color: #3498db;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+/* Значения */
+.genotype {
+    font-weight: 600;
+    color: #2c3e50;
+}
+.not-tested {
+    color: #999;
+    font-style: italic;
+}
+.test-date {
+    font-size: 12px;
+    color: #666;
+    margin-left: 10px;
+}
+.marker-description {
+    color: #555;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* Режим редактирования */
+.marker-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+.form-control {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Сообщение об ошибке */
+.save-error {
+    color: #e74c3c;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Комментарий с tooltip */
+.comment-tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-left: 8px;
+    cursor: help;
+}
+
+.comment-icon {
+    font-size: 16px;
+    color: #6c757d;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.comment-tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: #555;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 6px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* над иконкой */
+    left: 50%;
+    margin-left: -110px; /* ширина/2 */
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    line-height: 1.3;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+}
+
+.comment-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.comment-tooltip-wrapper:hover .comment-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .marker-item {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+}
