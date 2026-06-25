@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\ClinicalCore\Pharmacogenetics\State;
 
 use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Post as PostOperation;
+use ApiPlatform\Metadata\Put as PutOperation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\GeneticMarker;
 use App\Entity\GeneticMarkerValue;
@@ -15,6 +16,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PatientGeneticResultProcessor implements ProcessorInterface
@@ -23,7 +26,8 @@ class PatientGeneticResultProcessor implements ProcessorInterface
         #[Autowire('@api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor,
         private EntityManagerInterface $entityManager,
-        private TranslatorInterface $translator
+        private TranslatorInterface $translator,
+        private TokenStorageInterface $tokenStorage
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): PatientGeneticResult
@@ -84,7 +88,7 @@ class PatientGeneticResultProcessor implements ProcessorInterface
         $data->setMarkerValue($value);
 
         // ---------- 3. Проверка дубликата (только для POST) ----------
-        if ($operation instanceof Post) {
+        if ($operation instanceof PostOperation) {
             $patient = $data->getPatient();
             if ($patient === null) {
                 throw new BadRequestHttpException(
@@ -104,7 +108,29 @@ class PatientGeneticResultProcessor implements ProcessorInterface
             }
         }
 
-        // ---------- 4. Передача стандартному процессору ----------
+        // ---------- 4. Аудит: заполнение created_by / updated_by ----------
+        $username = $this->getCurrentUsername();
+
+        if ($operation instanceof PostOperation) {
+            $data->setCreatedBy($username);
+            $data->setUpdatedBy($username);
+        } elseif ($operation instanceof PutOperation) {
+            // createdBy не трогаем — он уже сохранён при создании и защищён #[Ignore]
+            $data->setUpdatedBy($username);
+            $data->setUpdatedAt(new \DateTime());
+        }
+
+        // ---------- 5. Передача стандартному процессору ----------
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+    }
+
+    private function getCurrentUsername(): ?string
+    {
+        $token = $this->tokenStorage->getToken();
+        if (null === $token) {
+            return null;
+        }
+        $user = $token->getUser();
+        return ($user instanceof UserInterface) ? $user->getUserIdentifier() : null;
     }
 }
