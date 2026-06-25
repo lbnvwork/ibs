@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\ClinicalCore\Pharmacogenetics\State\PatientGeneticResultProcessor;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ApiResource(
     operations: [
@@ -52,6 +53,14 @@ class PatientGeneticResult
 
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $updatedAt;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Ignore] // не принимать от клиента
+    private ?string $createdBy = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Ignore] // не принимать от клиента
+    private ?string $updatedBy = null;
 
     public function __construct()
     {
@@ -120,6 +129,28 @@ class PatientGeneticResult
     public function setMarkerValue(?GeneticMarkerValue $markerValue): self
     {
         $this->markerValue = $markerValue;
+        return $this;
+    }
+    
+    public function getCreatedBy(): ?string
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?string $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    public function getUpdatedBy(): ?string
+    {
+        return $this->updatedBy;
+    }
+
+    public function setUpdatedBy(?string $updatedBy): self
+    {
+        $this->updatedBy = $updatedBy;
         return $this;
     }
 }
