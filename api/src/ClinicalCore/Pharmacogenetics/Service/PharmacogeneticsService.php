@@ -15,33 +15,42 @@ class PharmacogeneticsService
         private EntityManagerInterface $entityManager
     ) {}
 
-    public function getPatientPharmacogenetics(int $patientId): array
+    /**
+     * @param int      $patientId
+     * @param int|null $drugId    Если передан, фильтрует маркеры по препарату через marker_drug_relations.
+     *                            Если null – используется препарат из последнего лечения пациента (старое поведение).
+     */
+    public function getPatientPharmacogenetics(int $patientId, ?int $drugId = null): array
     {
-        // 1. Получить последнее активное лечение, иначе последнее завершённое
-        $treatment = $this->getLatestTreatment($patientId);
-        if (!$treatment) {
-            return [];
-        }
-
-        $drug = $treatment->getDrug();
-        if (!$drug) {
-            return [];
+        // Если drugId не передан явно, определяем по последнему лечению пациента
+        if ($drugId === null) {
+            $treatment = $this->getLatestTreatment($patientId);
+            if (!$treatment) {
+                return [];
+            }
+            $drug = $treatment->getDrug();
+            if (!$drug) {
+                return [];
+            }
+            $drugId = $drug->getId();
         }
 
         // 2. Получить все связи маркеров с этим препаратом
         $relations = $this->entityManager->getRepository(MarkerDrugRelation::class)->findBy([
-            'drug' => $drug,
+            'drug' => $drugId,
         ]);
 
         if (empty($relations)) {
             return [];
         }
 
-        // 3. Собрать маркеры и результаты
+        // 3. Собрать маркеры и результаты для пациента
         $resultSet = [];
         foreach ($relations as $relation) {
             $marker = $relation->getMarker();
-            if (!$marker) continue;
+            if (!$marker) {
+                continue;
+            }
 
             // Найти существующий результат для этого пациента и маркера
             $existingResult = $this->entityManager->getRepository(PatientGeneticResult::class)->findOneBy([
@@ -54,7 +63,7 @@ class PharmacogeneticsService
                 'geneSymbol'     => $marker->getGeneSymbol(),
                 'fullName'       => $marker->getFullName(),
                 'rsId'           => $marker->getRsId(),
-                'possibleValues' => $marker->getPossibleValues()->map(function($gmv) {
+                'possibleValues' => $marker->getPossibleValues()->map(function ($gmv) {
                     return [
                         'id'          => $gmv->getId(),
                         'value'       => $gmv->getValue(),
@@ -62,11 +71,9 @@ class PharmacogeneticsService
                         'description' => $gmv->getDescription(),
                     ];
                 })->toArray(),
-                'currentValueId'  => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getId() : null) : null,
-                'currentValue'    => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getValue() : null) : null,
-                'testDate'        => $existingResult ? ($existingResult->getTestDate() ? $existingResult->getTestDate()->format('Y-m-d') : null) : null,
-                'comment'         => $existingResult ? $existingResult->getComment() : null,
-                'resultId'        => $existingResult ? $existingResult->getId() : null,
+                'currentValueId' => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getId() : null) : null,
+                'currentValue'   => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getValue() : null) : null,
+                'resultId'       => $existingResult ? $existingResult->getId() : null,
             ];
         }
 
