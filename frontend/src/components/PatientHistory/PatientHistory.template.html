@@ -15,6 +15,7 @@
             <Pharmacogenetics
                 v-if="id"
                 :patient-id="id"
+                :drug-iri="treatmentStore.treatment?.drug"
             />
         </div>
 
