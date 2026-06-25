@@ -65,3 +65,14 @@ treatment:
     diagnosisCode:
         not_blank: 'Код диагноза обязателен.'
         length: 'Код диагноза не может превышать 255 символов.'
+
+genetic_result:
+    marker_required: 'Не указан генетический маркер.'
+    marker_id_required: 'Требуется идентификатор генетического маркера.'
+    marker_not_found: 'Генетический маркер с ID %markerId% не найден.'
+    marker_value_required: 'Не указано значение генетического маркера.'
+    marker_value_id_required: 'Требуется идентификатор значения маркера.'
+    marker_value_not_found: 'Значение маркера с ID %valueId% не найдено.'
+    marker_value_wrong_marker: 'Значение маркера с ID %valueId% не принадлежит маркеру с ID %markerId%.'
+    duplicate_result: 'Результат для данного пациента и маркера уже существует.'
+    patient_required: 'Пациент обязателен.'
