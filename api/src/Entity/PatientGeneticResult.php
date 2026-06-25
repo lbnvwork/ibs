@@ -47,12 +47,6 @@ class PatientGeneticResult
     #[ORM\JoinColumn(name: 'marker_value_id', referencedColumnName: 'id', nullable: false)]
     private ?GeneticMarkerValue $markerValue = null;
 
-    #[ORM\Column(type: 'date', nullable: true)]
-    private ?\DateTimeInterface $testDate = null;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $comment = null;
-
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
@@ -90,30 +84,6 @@ class PatientGeneticResult
     public function setMarker(?GeneticMarker $marker): self
     {
         $this->marker = $marker;
-
-        return $this;
-    }
-
-    public function getTestDate(): ?\DateTimeInterface
-    {
-        return $this->testDate;
-    }
-
-    public function setTestDate(?\DateTimeInterface $testDate): self
-    {
-        $this->testDate = $testDate;
-
-        return $this;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function setComment(?string $comment): self
-    {
-        $this->comment = $comment;
 
         return $this;
     }
