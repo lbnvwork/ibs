@@ -2,36 +2,31 @@
     <div class="section-header">
         <h3>Фармакогенетика</h3>
         <div class="section-actions">
-            <button 
-                v-if="!editing"
+            <button
+                v-if="!store.editing"
                 class="btn-icon-edit"
                 title="Редактировать фармакогенетику"
-                @click="startEditing"
+                @click="store.startEditing"
             >✎</button>
-            <template v-if="editing">
-                <button class="btn-save" @click="save">Сохранить</button>
-                <button class="btn-cancel" @click="cancelEditing">Отмена</button>
+            <template v-if="store.editing">
+                <button class="btn-save" @click="store.save">Сохранить</button>
+                <button class="btn-cancel" @click="store.cancelEditing">Отмена</button>
             </template>
         </div>
     </div>
 
-    <div v-if="saveError" class="save-error">{{ saveError }}</div>
+    <div v-if="store.saveError" class="save-error">{{ store.saveError }}</div>
 
-    <div v-for="marker in markers" :key="marker.markerId" class="marker-item">
+    <div v-for="marker in store.markers" :key="marker.markerId" class="marker-item">
         <div class="marker-header">
             <strong>{{ marker.geneSymbol }}</strong>
             <span class="marker-fullname"> ({{ marker.fullName }})</span>
             <span v-if="marker.rsId" class="rs-id">{{ marker.rsId }}</span>
         </div>
 
-        <div v-if="!editing" class="marker-value">
+        <div v-if="!store.editing" class="marker-value">
             <template v-if="marker.currentValue">
                 <span class="genotype">{{ getGenotypeLabel(marker) || marker.currentValue }}</span>
-                <span v-if="marker.testDate" class="test-date">Дата теста: {{ marker.testDate }}</span>
-                <span v-if="marker.comment" class="comment-tooltip-wrapper">
-                    <span class="comment-icon">ℹ️</span>
-                    <span class="comment-tooltip-text">{{ marker.comment }}</span>
-                </span>
             </template>
             <span v-else class="not-tested">Не исследовано</span>
         </div>
@@ -43,8 +38,6 @@
                     {{ opt.label }}
                 </option>
             </select>
-            <input type="date" v-model="marker.editingTestDate" class="form-control" placeholder="Дата теста" />
-            <textarea v-model="marker.editingComment" class="form-control" placeholder="Комментарий" rows="2"></textarea>
         </div>
     </div>
 </div>
