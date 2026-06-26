@@ -5,13 +5,13 @@ import { testHistoryApi } from '@/api/testHistory';
 import { calculateAge, formatAge } from '@/utils/formatters';
 import { getIdFromIri } from '@/utils/apiHelpers';
 
-export const useMonitoringStore = defineStore('monitoring', {
+export const useWorkListStore = defineStore('workList', {
     state: () => ({
         patients: [],
         loading: false,
         error: null,
         activeDrugId: null,
-        selectedDiagnosisCodes: [],
+        selectedDiagnosisCodes: [],   // фильтр по нозологиям
         currentPage: 1,
         itemsPerPage: 30,
         totalItems: 0,
@@ -19,11 +19,13 @@ export const useMonitoringStore = defineStore('monitoring', {
         nextPageUrl: null,
         prevPageUrl: null,
     }),
+
     getters: {
         hasPatients: (state) => state.patients.length > 0,
     },
+
     actions: {
-        async fetchMonitoringData(drugId, page = 1) {
+        async fetchWorkListData(drugId, page = 1) {
             if (!drugId) return;
             this.activeDrugId = drugId;
             this.loading = true;
@@ -48,7 +50,6 @@ export const useMonitoringStore = defineStore('monitoring', {
                     this.totalPages = 0;
                     this.nextPageUrl = null;
                     this.prevPageUrl = null;
-
                     return;
                 }
 
@@ -129,36 +130,36 @@ export const useMonitoringStore = defineStore('monitoring', {
                         comment: treatment?.comment || patient.comment || '',
                         highlightRed,
                         highlightBlue,
-                    }
+                    };
                 });
 
                 this.patients = monitoringPatients;
             } catch (err) {
-                console.error('[MonitoringStore]', err);
+                console.error('[WorkListStore]', err);
                 this.error = err.message || 'Ошибка загрузки данных';
             } finally {
                 this.loading = false;
             }
         },
-   
+
         setSelectedDiagnosisCodes(codes) {
             if (JSON.stringify(this.selectedDiagnosisCodes) !== JSON.stringify(codes)) {
                 this.selectedDiagnosisCodes = codes;
                 if (this.activeDrugId) {
-                    this.fetchMonitoringData(this.activeDrugId, 1);
+                    this.fetchWorkListData(this.activeDrugId, 1);
                 }
             }
         },
-   
+
         async setDrug(drugId) {
             this.selectedDiagnosisCodes = [];
             this.currentPage = 1;
-            await this.fetchMonitoringData(drugId);
+            await this.fetchWorkListData(drugId);
         },
         
         async setPage(page) {
             if (this.activeDrugId && page >= 1 && page <= this.totalPages) {
-                await this.fetchMonitoringData(this.activeDrugId, page);
+                await this.fetchWorkListData(this.activeDrugId, page);
             }
         },
         

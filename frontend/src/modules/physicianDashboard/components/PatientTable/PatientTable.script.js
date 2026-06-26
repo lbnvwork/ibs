@@ -13,6 +13,10 @@ export default {
     totalPages: Number,
     currentPage: Number,
     pageInput: [Number, String],
+    showDiagnosisFilter: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: [
     'update:activeTab', 'update:selectedDiagnosis', 'update:pageInput',
