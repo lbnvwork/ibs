@@ -1,16 +1,26 @@
-import { mapState } from 'pinia';
-import { useMonitoringStore } from '@/stores/monitoringStore';
+import { mapState, mapActions } from 'pinia';
+import { useMonitoringStore } from '@/stores/physicianDashboard/monitoringStore';
 import PatientTable from '@/components/PatientList/PatientTable/PatientTable.vue';
 import drugsMixin from '@/mixins/drugsMixin';
-import diagnosisFilterMixin from '@/mixins/diagnosisFilterMixin';
 import paginationMixin from '@/mixins/paginationMixin';
 
 export default {
   name: 'PatientMonitoring',
   components: { PatientTable },
-  mixins: [drugsMixin, diagnosisFilterMixin, paginationMixin],
+  mixins: [drugsMixin, paginationMixin],
   computed: {
     ...mapState(useMonitoringStore, ['patients', 'loading', 'error']),
+  },
+  methods: {
+    ...mapActions(useMonitoringStore, [
+      'fetchMonitoringData',
+      'setDrug',
+      'setPage',
+      'nextPage',
+      'prevPage',
+      'firstPage',
+      'lastPage'
+    ]),
   },
   watch: {
     activeTab: {
