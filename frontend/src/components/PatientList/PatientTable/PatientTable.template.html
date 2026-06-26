@@ -16,7 +16,7 @@
         <slot name="title">
             <h3>Пациенты, требующие контроля</h3>
         </slot>
-        <div class="filter-controls">
+        <div v-if="showDiagnosisFilter" class="filter-controls">
           <label for="diagnosis-select">Выборка пациентов по нозологиям*</label>
           <MultiDiagnosisSelect v-model="selectedDiagnosisLocal" />
         </div>
@@ -26,7 +26,6 @@
       <table aria-label="Таблица пациентов">
         <thead>
           <slot name="thead">
-            <!-- Заголовки по умолчанию, если слот не определён -->
             <tr>
               <th>#</th>
               <th>Статус SMS</th>
