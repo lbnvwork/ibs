@@ -1,5 +1,5 @@
-import PatientMonitoring from '@/components/PatientList/PatientMonitoring/PatientMonitoring.vue';
-import PatientWorkList from '@/components/PatientList/PatientWorkList/PatientWorkList.vue';
+import PatientMonitoring from '@/modules/physicianDashboard/components/PatientMonitoring/PatientMonitoring.vue';
+import PatientWorkList from '@/modules/physicianDashboard/components/PatientWorkList/PatientWorkList.vue';
 
 export default {
   name: 'Home',
