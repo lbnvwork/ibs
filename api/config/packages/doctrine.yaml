@@ -24,6 +24,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            LabIoTGateway:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/LabIoTGateway/Entity'
+                prefix: 'App\LabIoTGateway\Entity'
+                alias: LabIoTGateway
         controller_resolver:
             auto_mapping: false
 
