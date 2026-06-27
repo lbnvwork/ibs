@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\LabIoTGateway\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -16,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\LabIoTGateway\Validator\Constraints\AtLeastOneVitalSign;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ApiResource(
     operations: [
@@ -102,6 +102,14 @@ class PatientVitals
     #[ORM\Column(type: 'datetime')]
     #[Groups(['vitals:read'])]
     private \DateTimeInterface $updatedAt;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Ignore] // не принимается от клиента и не возвращается
+    private ?string $createdBy = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Ignore]
+    private ?string $updatedBy = null;
 
     public function __construct()
     {
@@ -228,5 +236,27 @@ class PatientVitals
     public function getUpdatedAt(): \DateTimeInterface
     {
         return $this->updatedAt;
+    }
+
+    public function getCreatedBy(): ?string
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?string $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    public function getUpdatedBy(): ?string
+    {
+        return $this->updatedBy;
+    }
+
+    public function setUpdatedBy(?string $updatedBy): self
+    {
+        $this->updatedBy = $updatedBy;
+        return $this;
     }
 }
