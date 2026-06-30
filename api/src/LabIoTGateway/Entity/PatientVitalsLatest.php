@@ -34,6 +34,9 @@ class PatientVitalsLatest
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $lastUpdated;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $weight = null;
+
     public function __construct(Patient $patient)
     {
         $this->patient = $patient;
@@ -108,6 +111,17 @@ class PatientVitalsLatest
     public function setLastUpdated(\DateTimeInterface $lastUpdated): self
     {
         $this->lastUpdated = $lastUpdated;
+        return $this;
+    }
+
+    public function getWeight(): ?float
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?float $weight): self
+    {
+        $this->weight = $weight;
         return $this;
     }
 }
