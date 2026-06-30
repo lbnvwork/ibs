@@ -111,6 +111,12 @@ class PatientVitals
     #[Ignore]
     private ?string $updatedBy = null;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Assert\Positive]
+    #[Assert\Range(min: 20, max: 300)]
+    #[Groups(['vitals:read', 'vitals:write'])]
+    private ?float $weight = null;
+
     public function __construct()
     {
         $this->recordDt = new \DateTime();
@@ -258,5 +264,16 @@ class PatientVitals
     {
         $this->updatedBy = $updatedBy;
         return $this;
+    }
+
+    public function getWeight(): ?float
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?float $weight): self
+    { 
+        $this->weight = $weight;
+        return $this; 
     }
 }
