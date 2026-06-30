@@ -42,6 +42,9 @@ class PatientVitalsSyncService
         if ($vitals->getSaturation() !== null) {
             $latest->setSaturation($vitals->getSaturation());
         }
+        if ($vitals->getWeight() !== null) {
+            $latest->setWeight($vitals->getWeight());
+        }
 
         $latest->setLastUpdated(new \DateTime());
         $this->entityManager->flush();
