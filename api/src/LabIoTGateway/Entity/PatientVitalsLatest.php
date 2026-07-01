@@ -4,9 +4,19 @@ declare(strict_types=1);
 
 namespace App\LabIoTGateway\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Entity\Patient;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/patient_vitals_latest/{patientId}',
+            requirements: ['patientId' => '\d+']
+        )
+    ]
+)]
 #[ORM\Entity]
 #[ORM\Table(name: 'patient_vitals_latest')]
 class PatientVitalsLatest
