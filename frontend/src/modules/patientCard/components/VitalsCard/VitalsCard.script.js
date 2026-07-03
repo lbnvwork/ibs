@@ -1,3 +1,5 @@
+// frontend/src/modules/patientCard/components/VitalsCard/VitalsCard.script.js
+
 import { usePatientVitalsLatestStore } from '@/modules/patientCard/stores/patientVitalsLatestStore';
 
 export default {
@@ -52,7 +54,11 @@ export default {
   watch: {
     patientId: {
       immediate: true,
-      handler() { this.store.fetchLatest(this.patientId); },
+      handler(newId) {
+        if (newId) {
+          this.store.fetchLatest(newId);
+        }
+      },
     },
   },
   methods: {

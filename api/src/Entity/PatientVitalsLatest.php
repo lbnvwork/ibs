@@ -2,28 +2,34 @@
 
 declare(strict_types=1);
 
-namespace App\LabIoTGateway\Entity;
+namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Patient;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(
     operations: [
-        new Get(
-            uriTemplate: '/patient_vitals_latest/{patientId}',
-            requirements: ['patientId' => '\d+']
-        )
+        new GetCollection(),
+        new Get(),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['patient' => 'exact'])]
 #[ORM\Entity]
 #[ORM\Table(name: 'patient_vitals_latest')]
 class PatientVitalsLatest
 {
     #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
+
     #[ORM\OneToOne(targetEntity: Patient::class)]
-    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, unique: true, onDelete: 'CASCADE')]
     private Patient $patient;
 
     #[ORM\Column(type: 'float', nullable: true)]
@@ -41,16 +47,21 @@ class PatientVitalsLatest
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $saturation = null;
 
-    #[ORM\Column(type: 'datetime')]
-    private \DateTimeInterface $lastUpdated;
-
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $weight = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $lastUpdated;
 
     public function __construct(Patient $patient)
     {
         $this->patient = $patient;
         $this->lastUpdated = new \DateTime();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
     public function getPatient(): Patient
@@ -113,17 +124,6 @@ class PatientVitalsLatest
         return $this;
     }
 
-    public function getLastUpdated(): \DateTimeInterface
-    {
-        return $this->lastUpdated;
-    }
-
-    public function setLastUpdated(\DateTimeInterface $lastUpdated): self
-    {
-        $this->lastUpdated = $lastUpdated;
-        return $this;
-    }
-
     public function getWeight(): ?float
     {
         return $this->weight;
@@ -132,6 +132,17 @@ class PatientVitalsLatest
     public function setWeight(?float $weight): self
     {
         $this->weight = $weight;
+        return $this;
+    }
+
+    public function getLastUpdated(): \DateTimeInterface
+    {
+        return $this->lastUpdated;
+    }
+
+    public function setLastUpdated(\DateTimeInterface $lastUpdated): self
+    {
+        $this->lastUpdated = $lastUpdated;
         return $this;
     }
 }
