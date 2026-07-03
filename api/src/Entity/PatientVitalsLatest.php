@@ -11,10 +11,15 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Patient;
 use Doctrine\ORM\Mapping as ORM;
+use App\LabIoTGateway\State\PatientVitalsLatestBatchProvider;
 
 #[ApiResource(
     operations: [
         new GetCollection(),
+        new GetCollection(
+            uriTemplate: '/patient_vitals_latests/batch',
+            provider: PatientVitalsLatestBatchProvider::class
+        ),
         new Get(),
     ]
 )]
