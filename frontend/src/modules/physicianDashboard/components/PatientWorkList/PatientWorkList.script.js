@@ -1,4 +1,5 @@
-import { ref, computed, watch, toRefs } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useWorkListStore } from '@/modules/physicianDashboard/stores/workListStore';
 import { usePagination } from '@/modules/physicianDashboard/composables/usePagination';
 import { useDrugTabs } from '@/modules/physicianDashboard/composables/useDrugTabs';
@@ -14,12 +15,13 @@ export default {
 
     const selectedDiagnosisCodes = ref([]);
 
+    const { patients, loading, error, totalPages, currentPage } = storeToRefs(store);
+
     const activeTab = computed({
       get: () => store.activeDrugId,
       set: (val) => { store.activeDrugId = val; },
     });
 
-    // Автовыбор первого препарата
     watch(tabs, (newTabs) => {
       if (newTabs.length > 0 && !store.activeDrugId) {
         activeTab.value = newTabs[0].id;
@@ -37,7 +39,11 @@ export default {
     });
 
     return {
-      ...toRefs(store),
+      patients,
+      loading,
+      error,
+      totalPages,
+      currentPage,
       nextPage: () => store.nextPage(),
       prevPage: () => store.prevPage(),
       firstPage: () => store.firstPage(),

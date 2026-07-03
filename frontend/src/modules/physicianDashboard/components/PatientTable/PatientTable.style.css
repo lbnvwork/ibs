@@ -263,6 +263,118 @@
   color: #2c7be5;
 }
 
+
+
+/* ---------- Гибкая ширина столбцов для витальных показателей ---------- */
+
+.patient-table .table-container table {
+  table-layout: auto;              /* браузер сам распределит ширину */
+}
+
+/* # (порядковый номер) */
+.patient-table .table-container th:nth-child(1),
+.patient-table .table-container td:nth-child(1) {
+  width: 30px;
+  text-align: center;
+}
+
+/* Статус SMS */
+.patient-table .table-container th:nth-child(2),
+.patient-table .table-container td:nth-child(2) {
+  max-width: 40px;
+  text-align: center;
+  padding: 4px 2px;
+}
+
+/* Возраст */
+.patient-table .table-container th:nth-child(4),
+.patient-table .table-container td:nth-child(4) {
+  width: 50px;
+  text-align: center;
+}
+
+/* ФИО — ограничиваем, но оставляем читаемым */
+.patient-table .table-container th:nth-child(3),
+.patient-table .table-container td:nth-child(3) {
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Диагноз */
+.patient-table .table-container th:nth-child(5),
+.patient-table .table-container td:nth-child(5) {
+  min-width: 350px;
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Показатели */
+.patient-table .table-container th:nth-child(6),
+.patient-table .table-container td:nth-child(6) { 
+  padding: 4px 6px;
+}
+
+/* Общие отступы для компактности */
+.patient-table .table-container td {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+
+
+/* Чипсы показателей */
+.indicator-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #f0f4f8;
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.indicator-item:first-child {
+    margin-left: 0;
+}
+
+/* МНО выделяется */
+.indicator-mno {
+    background: #e8f0fe;
+    border: 1px solid #c5d9f7;
+}
+
+/* Название показателя */
+.indicator-label {
+    color: #5f6b7a;
+    font-weight: 400;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Значение показателя */
+.indicator-value {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 13px;
+}
+.indicator-mno .indicator-value {
+    color: #1a56db;
+}
+
+.indicator-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

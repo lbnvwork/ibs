@@ -1,4 +1,7 @@
-import { computed, watch, toRefs } from 'vue';
+// frontend/src/modules/physicianDashboard/components/PatientMonitoring/PatientMonitoring.script.js
+
+import { computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useMonitoringStore } from '@/modules/physicianDashboard/stores/monitoringStore';
 import { useWorkListStore } from '@/modules/physicianDashboard/stores/workListStore';
 import { usePagination } from '@/modules/physicianDashboard/composables/usePagination';
@@ -14,22 +17,21 @@ export default {
     const { pageInput, goToPage } = usePagination(store);
     const { tabs } = useDrugTabs();
 
+    const { patients, loading, error, totalPages, currentPage } = storeToRefs(store);
+
     const activeTab = computed({
       get: () => store.activeDrugId,
       set: (val) => { store.activeDrugId = val; },
     });
 
-    // Сброс фильтра рабочего списка при входе в мониторинг
     workListStore.setSelectedDiagnosisCodes([]);
 
-    // Автовыбор первого препарата, если он ещё не выбран
     watch(tabs, (newTabs) => {
       if (newTabs.length > 0 && !store.activeDrugId) {
         activeTab.value = newTabs[0].id;
       }
     }, { immediate: true });
 
-    // Загрузка данных при смене препарата
     watch(() => store.activeDrugId, (newDrugId) => {
       if (newDrugId) {
         store.fetchMonitoringData(newDrugId, 1);
@@ -37,7 +39,11 @@ export default {
     });
 
     return {
-      ...toRefs(store),
+      patients,
+      loading,
+      error,
+      totalPages,
+      currentPage,
       nextPage: () => store.nextPage(),
       prevPage: () => store.prevPage(),
       firstPage: () => store.firstPage(),
