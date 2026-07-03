@@ -9,10 +9,20 @@ import { useTreatmentStore } from '@/stores/treatmentStore';
 import { useMedicalTableStore } from '@/stores/medicalTableStore';
 import MedicalTable from '@/components/PatientHistory/MedicalTable/MedicalTable.vue';
 import Pharmacogenetics from '@/components/PatientHistory/Pharmacogenetics/Pharmacogenetics.vue';
+import VitalsCard from '@/modules/patientCard/components/VitalsCard/VitalsCard.vue';
 
 export default {
     name: 'PatientHistory',
-    components: { RiskScale: null, AppointmentAdd, TestAddModal, PatientCard, TreatmentCard, MedicalTable, Pharmacogenetics },
+    components: { 
+        RiskScale: null, 
+        AppointmentAdd, 
+        TestAddModal, 
+        PatientCard, 
+        TreatmentCard, 
+        MedicalTable, 
+        Pharmacogenetics,
+        VitalsCard
+    },
     props: {
         id: { type: String, default: null }
     },
@@ -30,10 +40,14 @@ export default {
         },
         treatmentStore() {
             return useTreatmentStore();
-        }
+        },
+        activeTreatmentId() {
+            const treatment = this.treatmentStore.treatment;
+            return treatment ? this.extractIdFromIri(treatment['@id']) : null;
+        },
     },
     watch: {
-    id: {
+        id: {
             immediate: true,
             async handler(newId) {
                 if (newId) {
@@ -57,8 +71,10 @@ export default {
             this.error = null;
 
             try {
+                const patientCardStore = usePatientCardStore();
                 const treatmentStore = useTreatmentStore();
                 const treatment = treatmentStore.treatment;
+
                 if (!treatment) {
                     this.loading = false;
                     return;
@@ -98,6 +114,12 @@ export default {
         onAppointmentInlineSaved() {
             this.loadPatientData();
             this.showAppointmentInlineModal = false;
-        }
+        },
+        async reloadPatient() {
+            if (this.id) {
+                const patientCardStore = usePatientCardStore();
+                await patientCardStore.fetchPatient(this.id);
+            }
+        },
     }
 };

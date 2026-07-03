@@ -24,7 +24,7 @@
     <div class="vitals-row">
       <span class="vital-label">АД:</span>
       <span class="vital-value">
-        <template v-if="latest?.systolicPressure !== null && latest?.diastolicPressure !== null">
+        <template v-if="latest && latest.systolicPressure !== null && latest.diastolicPressure !== null">
           {{ latest.systolicPressure }}/{{ latest.diastolicPressure }} мм рт. ст.
         </template>
         <template v-else>—</template>
