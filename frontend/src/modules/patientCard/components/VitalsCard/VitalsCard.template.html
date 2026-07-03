@@ -1,0 +1,82 @@
+<div class="vitals-card section">
+  <div class="section-header">
+    <h3>Витальные показатели</h3>
+    <div class="section-actions">
+      <button v-if="!editing" class="btn-icon-edit" @click="startEditing">✎</button>
+      <template v-if="editing">
+        <button class="btn-save" :disabled="saving" @click="save">Сохранить</button>
+        <button class="btn-cancel" @click="cancelEditing">Отмена</button>
+      </template>
+    </div>
+  </div>
+
+  <div v-if="loading" class="info-message">Загрузка...</div>
+  <div v-else-if="error" class="info-message error">{{ error }}</div>
+  <div v-else-if="!editing">
+    <div class="vitals-row">
+      <span class="vital-label">Hb:</span>
+      <span class="vital-value">{{ formatValue(latest?.hb, 'г/л') }}</span>
+    </div>
+    <div class="vitals-row">
+      <span class="vital-label">ЧСС:</span>
+      <span class="vital-value">{{ formatValue(latest?.heartRate, 'уд/мин') }}</span>
+    </div>
+    <div class="vitals-row">
+      <span class="vital-label">АД:</span>
+      <span class="vital-value">
+        <template v-if="latest && latest.systolicPressure !== null && latest.diastolicPressure !== null">
+          {{ latest.systolicPressure }}/{{ latest.diastolicPressure }} мм рт. ст.
+        </template>
+        <template v-else>—</template>
+      </span>
+    </div>
+    <div class="vitals-row">
+      <span class="vital-label">SpO₂:</span>
+      <span class="vital-value">{{ formatValue(latest?.saturation, '%') }}</span>
+    </div>
+    <div class="vitals-row">
+      <span class="vital-label">Вес:</span>
+      <span class="vital-value">{{ formatValue(latest?.weight, 'кг') }}</span>
+    </div>
+    <div class="vitals-last-updated" v-if="lastUpdatedFormatted">
+      Последнее измерение: {{ lastUpdatedFormatted }}
+    </div>
+    <div class="vitals-last-updated" v-else>Нет данных</div>
+  </div>
+
+  <div v-else class="vitals-form">
+    <div v-if="saveError" class="save-error">{{ saveError }}</div>
+    <div class="form-row">
+      <label>Hb (г/л)</label>
+      <input type="number" v-model.number="form.hb" class="form-control" step="0.1" min="0" />
+    </div>
+    <div class="form-row">
+      <label>ЧСС (уд/мин)</label>
+      <input type="number" v-model.number="form.heartRate" class="form-control" min="0" />
+    </div>
+    <div class="form-row">
+      <label>Систолическое АД</label>
+      <input type="number" v-model.number="form.systolicPressure" class="form-control" min="0" />
+    </div>
+    <div class="form-row">
+      <label>Диастолическое АД</label>
+      <input type="number" v-model.number="form.diastolicPressure" class="form-control" min="0" />
+    </div>
+    <div class="form-row">
+      <label>SpO₂ (%)</label>
+      <input type="number" v-model.number="form.saturation" class="form-control" min="0" max="100" />
+    </div>
+    <div class="form-row">
+      <label>Вес (кг)</label>
+      <input type="number" v-model.number="form.weight" class="form-control" step="0.1" min="0" />
+    </div>
+    <div class="form-row">
+      <label>Дата и время</label>
+      <input type="datetime-local" v-model="form.recordDt" class="form-control" />
+    </div>
+    <div class="form-row">
+      <label>Комментарий</label>
+      <textarea v-model="form.comment" class="form-control" rows="2"></textarea>
+    </div>
+  </div>
+</div>

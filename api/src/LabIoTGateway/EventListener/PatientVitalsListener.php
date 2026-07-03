@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\LabIoTGateway\EventListener;
 
-use App\LabIoTGateway\Entity\PatientVitals;
+use App\Entity\PatientVitals;
 use App\LabIoTGateway\Service\PatientVitalsSyncService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;

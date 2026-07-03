@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\LabIoTGateway\Entity;
+namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
@@ -104,7 +104,7 @@ class PatientVitals
     private \DateTimeInterface $updatedAt;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Ignore] // не принимается от клиента и не возвращается
+    #[Ignore]
     private ?string $createdBy = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

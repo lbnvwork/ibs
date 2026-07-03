@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\LabIoTGateway\Validator\Constraints;
 
-use App\LabIoTGateway\Entity\PatientVitals;
+use App\Entity\PatientVitals;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;

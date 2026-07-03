@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\LabIoTGateway\Service;
 
-use App\Entity\Patient;
-use App\LabIoTGateway\Entity\PatientVitals;
-use App\LabIoTGateway\Entity\PatientVitalsLatest;
+use App\Entity\PatientVitals;
+use App\Entity\PatientVitalsLatest;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PatientVitalsSyncService
@@ -17,16 +16,15 @@ class PatientVitalsSyncService
 
     public function syncFromVitals(PatientVitals $vitals): void
     {
-        $patientId = $vitals->getPatient()->getId();
-        $latest = $this->entityManager->find(PatientVitalsLatest::class, $patientId);
+        $patient = $vitals->getPatient();
+        $latest = $this->entityManager->getRepository(PatientVitalsLatest::class)
+            ->findOneBy(['patient' => $patient]);
 
         if ($latest === null) {
-            $patient = $this->entityManager->getReference(Patient::class, $patientId);
             $latest = new PatientVitalsLatest($patient);
             $this->entityManager->persist($latest);
         }
 
-        // Обновляем только не-null поля
         if ($vitals->getHb() !== null) {
             $latest->setHb($vitals->getHb());
         }

@@ -12,6 +12,11 @@
     <div v-if="treatmentStore.treatment" class="patient-main-content">
         <div class="left-column">
             <PatientCard />
+            <VitalsCard
+                v-if="id"
+                :patient-id="id"
+                :treatment-id="activeTreatmentId"
+            />
             <Pharmacogenetics
                 v-if="id"
                 :patient-id="id"
