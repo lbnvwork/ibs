@@ -9,4 +9,9 @@ export const vitalsApi = {
             params: { patient: `/api/patients/${patientId}` }
         });
     },
+    getBatch(patientIds) {
+        return apiClient.get('/patient_vitals_latests/batch', {
+            params: { 'patient_id[]': patientIds }
+        });
+    }
 };

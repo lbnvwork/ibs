@@ -1,9 +1,12 @@
+// frontend/src/modules/physicianDashboard/stores/workListStore.js
 import { defineStore } from 'pinia';
 import { patientApi } from '@/api/patients';
 import { treatmentApi } from '@/api/treatments';
 import { testHistoryApi } from '@/api/testHistory';
+import { vitalsApi } from '@/api/vitals';
 import { calculateAge, formatAge } from '@/utils/formatters';
 import { getIdFromIri } from '@/utils/apiHelpers';
+import { buildIndicators } from '@/modules/physicianDashboard/utils/vitalsHelpers';
 
 export const useWorkListStore = defineStore('workList', {
     state: () => ({
@@ -11,13 +14,14 @@ export const useWorkListStore = defineStore('workList', {
         loading: false,
         error: null,
         activeDrugId: null,
-        selectedDiagnosisCodes: [],   // фильтр по нозологиям
+        selectedDiagnosisCodes: [],
         currentPage: 1,
         itemsPerPage: 30,
         totalItems: 0,
         totalPages: 0,
         nextPageUrl: null,
         prevPageUrl: null,
+        vitalsMap: new Map(),
     }),
 
     getters: {
@@ -61,18 +65,32 @@ export const useWorkListStore = defineStore('workList', {
 
                 const patientIds = patients.map(p => p.id);
 
-                const treatmentsResponse = await treatmentApi.getAllWithoutPagination({
-                    patient: patientIds,
-                    active: true,
-                    order: { begDt: 'desc' },
-                });
+                const [treatmentsResponse, vitalsResponse] = await Promise.all([
+                    treatmentApi.getAllWithoutPagination({
+                        patient: patientIds,
+                        active: true,
+                        order: { begDt: 'desc' },
+                    }),
+                    vitalsApi.getBatch(patientIds)
+                ]);
+
                 const treatments = treatmentsResponse.member || treatmentsResponse;
-                
+                const vitalsRaw = vitalsResponse.data || vitalsResponse;
+                const vitalsArray = vitalsRaw.member || vitalsRaw.items || vitalsRaw;
+
                 const treatmentByPatient = new Map();
                 treatments.forEach(t => {
                     const patientId = getIdFromIri(t.patient);
                     if (patientId && !treatmentByPatient.has(patientId)) {
                         treatmentByPatient.set(patientId, t);
+                    }
+                });
+
+                this.vitalsMap.clear();
+                (Array.isArray(vitalsArray) ? vitalsArray : []).forEach(v => {
+                    const pid = getIdFromIri(v.patient) || v.patientId;
+                    if (pid) {
+                        this.vitalsMap.set(Number(pid), v);
                     }
                 });
 
@@ -92,8 +110,10 @@ export const useWorkListStore = defineStore('workList', {
                     const treatment = treatmentByPatient.get(patient.id);
                     const testHistory = treatment ? testHistoryMap.get(treatment.id) : null;
                     const age = calculateAge(patient.birthday);
-                    
-                    let indicatorsHtml = '';
+                    const vitals = this.vitalsMap.get(patient.id) || null;
+
+                    const indicatorsHtml = buildIndicators(testHistory, vitals);
+
                     let highlightRed = false;
                     let highlightBlue = false;
 
@@ -104,20 +124,11 @@ export const useWorkListStore = defineStore('workList', {
 
                         if (mnoFrom !== undefined && mnoTo !== undefined) {
                             if (mno < mnoFrom) {
-                                indicatorsHtml = `<span class="value-down">↓&nbsp;МНО - ${mno}</span>`;
                                 highlightBlue = true;
                             } else if (mno > mnoTo) {
-                                indicatorsHtml = `<span class="value-up">↑&nbsp;МНО - ${mno}</span>`;
                                 highlightRed = true;
-                            } else {
-                                indicatorsHtml = `<span>МНО - ${mno}</span>`;
                             }
-                            indicatorsHtml += `, Целевой диапазон: ${mnoFrom}-${mnoTo}`;
-                        } else {
-                            indicatorsHtml = `МНО - ${mno}`;
                         }
-                    } else {
-                        indicatorsHtml = 'нет данных';
                     }
 
                     return {
@@ -127,7 +138,7 @@ export const useWorkListStore = defineStore('workList', {
                         diagnosis: treatment?.diagnosis || '—',
                         smsStatus: '📱',
                         indicators: indicatorsHtml,
-                        comment: treatment?.comment || patient.comment || '',
+                        comment: '',
                         highlightRed,
                         highlightBlue,
                     };
