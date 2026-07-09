@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/components/Home/Home.vue';
-import PatientHistory from '../components/PatientHistory/PatientHistory.vue';
-import Login from '../components/Login/Login.vue';
-import { useAuthStore } from '../stores/authStore';
-import PatientAdd from '@/components/PatientAdd/PatientAdd.vue';
-import TreatmentAdd from '@/components/TreatmentAdd/TreatmentAdd.vue';
+import Home from '@/modules/shared/layout/Home/Home.vue';
+import PatientHistory from '@/modules/patientCard/components/PatientHistory/PatientHistory.vue';
+import Login from '@/modules/shared/components/Login/Login.vue';
+import { useAuthStore } from '@/modules/shared/stores/authStore';
+import PatientAdd from '@/modules/patientManagement/components/PatientAdd/PatientAdd.vue';
+import TreatmentAdd from '@/modules/patientManagement/components/TreatmentAdd/TreatmentAdd.vue';
 import { 
   HOME_PATH, 
   LOGIN_PATH, 
