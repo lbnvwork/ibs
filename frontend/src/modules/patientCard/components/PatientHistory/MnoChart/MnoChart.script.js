@@ -1,4 +1,6 @@
 import { Chart, registerables } from 'chart.js';
+import { formatDate } from '@/modules/shared/utils/formatters';
+
 Chart.register(...registerables);
 
 export default {
@@ -19,7 +21,7 @@ export default {
                 .filter(item => item.inr !== '—' && !isNaN(parseFloat(item.inr)))
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            const labels = filtered.map(item => item.date);
+            const labels = filtered.map(item => formatDate(item.date));
             const inrValues = filtered.map(item => parseFloat(item.inr));
 
             const datasets = [
