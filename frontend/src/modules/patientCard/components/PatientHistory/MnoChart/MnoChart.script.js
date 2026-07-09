@@ -1,4 +1,3 @@
-// frontend/src/modules/patientCard/components/PatientHistory/MnoChart/MnoChart.script.js
 import { Line } from 'vue-chartjs';
 import { formatDate } from '@/modules/shared/utils/formatters';
 import {
@@ -14,8 +13,8 @@ const customLabelsPlugin = {
     afterDatasetsDraw(chart) {
         const { ctx } = chart;
         const meta = chart.getDatasetMeta(0);
-        const mnoFrom = chart.data.mnoFrom;
-        const mnoTo = chart.data.mnoTo;
+        const mnoFrom = chart.options.mnoFrom;
+        const mnoTo = chart.options.mnoTo;
 
         if (!meta || !meta.data) return;
 
@@ -48,7 +47,7 @@ export default {
     data() {
         return {
             customLabelsPlugin,
-            selectedRange: 'all',          // выбранный диапазон по умолчанию
+            selectedRange: 'all',
             ranges: [
                 { value: '1m', label: '1 мес.' },
                 { value: '3m', label: '3 мес.' },
@@ -62,12 +61,7 @@ export default {
         chartData() {
             const d = this.prepareChartData();
             if (!d) return null;
-            return {
-                labels: d.labels,
-                datasets: d.datasets,
-                mnoFrom: this.mnoFrom,
-                mnoTo: this.mnoTo,
-            };
+            return { labels: d.labels, datasets: d.datasets };
         },
         chartOptions() {
             return {
@@ -85,13 +79,14 @@ export default {
                         title: { display: true, text: 'Дата' },
                     },
                 },
+                mnoFrom: this.mnoFrom,
+                mnoTo: this.mnoTo,
             };
         },
     },
     methods: {
         changeRange(range) {
             this.selectedRange = range;
-            // график обновится автоматически, так как chartData зависит от selectedRange
         },
         prepareChartData() {
             if (!this.data || this.data.length === 0) return null;
@@ -102,7 +97,6 @@ export default {
 
             if (items.length === 0) return null;
 
-            // Применяем фильтр диапазона
             if (this.selectedRange !== 'all') {
                 const lastDate = items.reduce((max, item) => new Date(item.date) > max ? new Date(item.date) : max, new Date(0));
                 if (isNaN(lastDate.getTime())) return null;
