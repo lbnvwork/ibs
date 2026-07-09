@@ -30,7 +30,7 @@
             </thead>
             <tbody>
                 <tr v-for="(data, index) in store.events" :key="index" :class="{ 'appointment-row': data.isAppointment }">
-                    <td>{{ data.date }}</td>
+                    <td>{{ data.displayDate }}</td>
                     <td><strong>{{ data.inr }}</strong></td>
                     <td>{{ data.analysis1 }}</td>
                     <td>{{ data.analysis2 }}</td>
