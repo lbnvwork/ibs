@@ -1,7 +1,8 @@
 import { Chart, registerables } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { formatDate } from '@/modules/shared/utils/formatters';
 
-Chart.register(...registerables);
+Chart.register(...registerables, ChartDataLabels);
 
 export default {
     name: 'MnoChart',
@@ -65,6 +66,32 @@ export default {
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'bottom' },
+                        datalabels: {
+                            display: (context) => {
+                                // Показываем только для основной линии МНО и только если значение вне диапазона
+                                if (context.datasetIndex !== 0) return false;
+                                const value = context.dataset.data[context.dataIndex];
+                                const below = this.mnoFrom !== null && value < this.mnoFrom;
+                                const above = this.mnoTo !== null && value > this.mnoTo;
+                                return below || above;
+                            },
+                            anchor: 'center',
+                            align: (context) => {
+                                const value = context.dataset.data[context.dataIndex];
+                                if (this.mnoFrom !== null && value < this.mnoFrom) return 'bottom'; // ниже нормы — метка снизу
+                                if (this.mnoTo !== null && value > this.mnoTo) return 'top';         // выше нормы — метка сверху
+                                return 'center';
+                            },
+                            offset: 6,
+                            color: (context) => {
+                                const value = context.dataset.data[context.dataIndex];
+                                if (this.mnoFrom !== null && value < this.mnoFrom) return '#2a5c98'; // синий для нижних
+                                if (this.mnoTo !== null && value > this.mnoTo) return '#e74c3c';     // красный для верхних
+                                return '#000';
+                            },
+                            formatter: (value) => value,
+                            font: { weight: 'bold', size: 10 },
+                        },
                     },
                     scales: {
                         y: {
