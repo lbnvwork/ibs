@@ -1,3 +1,18 @@
 <div class="mno-chart-container">
-    <canvas ref="chartCanvas"></canvas>
+    <div class="chart-range-controls">
+        <button 
+            v-for="range in ranges" 
+            :key="range.value" 
+            :class="{ active: selectedRange === range.value }"
+            @click="changeRange(range.value)"
+        >
+            {{ range.label }}
+        </button>
+    </div>
+    <Line
+        v-if="chartData"
+        :data="chartData"
+        :options="chartOptions"
+        :plugins="[customLabelsPlugin]"
+    />
 </div>
