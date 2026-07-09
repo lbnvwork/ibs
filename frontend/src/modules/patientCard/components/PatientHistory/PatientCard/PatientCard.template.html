@@ -23,7 +23,7 @@
     <div class="info-row">
         <div class="info-group">
             <label>ФИО:</label>
-            <span><strong>{{ store.patient.name }}</strong>, {{ store.patient.age || '—' }} ({{ store.patient.birthDate || '—' }})</span>
+            <span><strong>{{ store.patient.name }}</strong>, {{ store.patient.age || '—' }} ({{ formatDate(store.patient.birthday) || '—' }})</span>
         </div>
     </div>
 

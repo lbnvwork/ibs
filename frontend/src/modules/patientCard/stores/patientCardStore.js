@@ -3,7 +3,7 @@ import { patientApi } from '@/modules/shared/api/patients';
 import apiClient from '@/modules/shared/api/client';
 import { extractIdFromIri } from '@/modules/shared/utils/apiHelpers';
 import { validateForm } from '@/modules/shared/utils/validationHelper';
-import { formatPhone, formatPassport, formatSnils } from '@/modules/shared/utils/formatters';
+import { formatPhone, formatPassport, formatSnils, calculateAge, formatAge } from '@/modules/shared/utils/formatters';
 import { isValidPhone, isValidSnils, isValidPassport, isValidEmail } from '@/modules/shared/utils/validators';
 import { parseApiError } from '@/modules/shared/utils/apiErrorHandler';
 
@@ -47,7 +47,8 @@ export const usePatientCardStore = defineStore('patientCard', {
                     snils: data.snils || '—',
                     comment: data.comment || '',
                     hospital: this.hospitalName || '—',
-                    birthDate: data.birthday
+                    birthday: data.birthday,
+                    age: calculateAge(data.birthday) ? formatAge(calculateAge(data.birthday)) : '—'
                 };
             } catch (err) {
                 this.error = 'Не удалось загрузить данные пациента.';
