@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import Sidebar from './components/Sidebar/Sidebar.vue';
-import PatientListPanel from './components/PatientListPanel/PatientListPanel.vue';
-import MainHeader from './components/MainHeader.vue';
+import Sidebar from '@/modules/shared/layout/Sidebar/Sidebar.vue';
+import PatientListPanel from '@/modules/patientManagement/components/PatientListPanel/PatientListPanel.vue';
+import MainHeader from '@/modules/shared/layout/MainHeader.vue';
 
 export default {
   name: 'App',

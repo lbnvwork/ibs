@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { vitalsApi } from '@/api/vitals';
+import { vitalsApi } from '@/modules/shared/api/vitals';
 
 export const usePatientVitalsLatestStore = defineStore('patientVitalsLatest', {
     state: () => ({
