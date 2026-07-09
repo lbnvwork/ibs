@@ -1,11 +1,11 @@
 import { usePatientCardStore } from '@/modules/patientCard/stores/patientCardStore';
-import { formatPhone, formatPassport, formatSnils } from '@/modules/shared/utils/formatters';
+import { formatPhone, formatPassport, formatSnils, formatDate } from '@/modules/shared/utils/formatters';
 
 export default {
     name: 'PatientCard',
     setup() {
         const store = usePatientCardStore();
-        return { store, formatPhone, formatPassport, formatSnils };
+        return { store, formatPhone, formatPassport, formatSnils, formatDate };
     },
     methods: {
         async savePatient() {
