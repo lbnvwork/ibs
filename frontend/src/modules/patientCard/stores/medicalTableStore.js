@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import apiClient from '@/modules/shared/api/client';
 import { testHistoryApi } from '@/modules/shared/api/testHistory';
+import { formatDate } from '@/modules/shared/utils/formatters';
 
 export const useMedicalTableStore = defineStore('medicalTable', {
     state: () => ({
@@ -49,6 +50,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                     events.push({
                         type: 'test',
                         date: item.creationDt,
+                        displayDate: formatDate(item.creationDt),
                         inr: item.mno !== undefined ? item.mno : '—',
                         currentDose: item.doze !== undefined ? item.doze : '—',
                         prescribedDose: matchingAppt ? matchingAppt.doze : '—',
@@ -61,6 +63,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                     events.push({
                         type: 'appointment',
                         date: a.appointmentDt,
+                        displayDate: formatDate(a.appointmentDt),
                         inr: '—',
                         currentDose: '—',
                         prescribedDose: a.doze,
