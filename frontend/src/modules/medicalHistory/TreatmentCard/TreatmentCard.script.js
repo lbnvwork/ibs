@@ -1,4 +1,4 @@
-import { useTreatmentStore } from '@/modules/patientCard/stores/treatmentStore';
+import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore';
 
 export default {
     name: 'TreatmentCard',

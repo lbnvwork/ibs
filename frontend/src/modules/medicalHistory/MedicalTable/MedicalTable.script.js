@@ -1,5 +1,5 @@
-import { useMedicalTableStore } from '@/modules/patientCard/stores/medicalTableStore';
-import MnoChart from '@/modules/patientCard/components/PatientHistory/MnoChart/MnoChart.vue';
+import { useMedicalTableStore } from '@/modules/medicalHistory/stores/medicalTableStore';
+import MnoChart from '@/modules/medicalHistory/MnoChart/MnoChart.vue';
 import { buildIndicatorsFromRow } from '@/modules/shared/utils/vitalsHelpers';
 import { computed } from 'vue';
 

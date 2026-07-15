@@ -1,4 +1,4 @@
-import { usePatientCardStore } from '@/modules/patientCard/stores/patientCardStore';
+import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCardStore';
 import { formatPhone, formatPassport, formatSnils, formatDate } from '@/modules/shared/utils/formatters';
 
 export default {
