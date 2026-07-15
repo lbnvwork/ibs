@@ -52,3 +52,21 @@ export function buildIndicators(testHistory, vitals) {
 
     return `<span class="indicator-wrapper">${parts.join(' ')}</span>`;
 }
+
+/**
+ * Обёртка для строк MedicalTable, где все поля (mno, hb, ...) лежат в одном объекте.
+ * @param {object} row – объект с полями mno, hb, heartRate, systolicPressure, diastolicPressure, saturation, weight
+ * @returns {string} HTML-строка с чипсами
+ */
+export function buildIndicatorsFromRow(row) {
+    const testHistory = row.mno != null ? { mno: row.mno } : null;
+    const vitals = {
+        hb: row.hb,
+        heartRate: row.heartRate,
+        systolicPressure: row.systolicPressure,
+        diastolicPressure: row.diastolicPressure,
+        saturation: row.saturation,
+        weight: row.weight
+    };
+    return buildIndicators(testHistory, vitals);
+}
