@@ -3,13 +3,25 @@ import { formatPhone, formatPassport, formatSnils, formatDate } from '@/modules/
 
 export default {
     name: 'PatientCard',
+    emits: ['edit-start', 'edit-end'],
     setup() {
         const store = usePatientCardStore();
         return { store, formatPhone, formatPassport, formatSnils, formatDate };
     },
     methods: {
+        startEditingPatient() {
+            this.$emit('edit-start');
+            this.store.startEditingPatient();
+        },
+        cancelEditingPatient() {
+            this.$emit('edit-end');
+            this.store.cancelEditingPatient();
+        },
         async savePatient() {
-            await this.store.savePatient(this.$route.params.patientId);
+            const success = await this.store.savePatient(this.$route.params.patientId);
+            if (success) {
+                this.$emit('edit-end');
+            }
         }
     }
 };
