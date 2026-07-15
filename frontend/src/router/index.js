@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/modules/shared/layout/Home/Home.vue';
-import PatientHistory from '@/modules/patientCard/components/PatientHistory/PatientHistory.vue';
+import MedicalHistory from '@/modules/medicalHistory/MedicalHistory.vue';
 import Login from '@/modules/shared/components/Login/Login.vue';
 import { useAuthStore } from '@/modules/shared/stores/authStore';
 import PatientAdd from '@/modules/patientManagement/components/PatientAdd/PatientAdd.vue';
@@ -28,8 +28,8 @@ const routes = [
   },
   { 
     path: PATIENT_HISTORY_TEMPLATE,
-    name: 'PatientHistory', 
-    component: PatientHistory,
+    name: 'MedicalHistory', 
+    component: MedicalHistory,
     props: (route) => ({ id: route.params.patientId }),
     meta: { requiresAuth: true, backTarget: HOME_PATH }
   },

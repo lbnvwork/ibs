@@ -1,4 +1,4 @@
-import { usePharmacogeneticsStore } from '@/modules/patientCard/stores/pharmacogeneticsStore';
+import { usePharmacogeneticsStore } from '@/modules/medicalHistory/stores/pharmacogeneticsStore';
 
 export default {
     name: 'Pharmacogenetics',
