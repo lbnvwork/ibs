@@ -1,0 +1,14 @@
+<div class="collapsible-section" :class="{ expanded: isExpanded }">
+  <div class="section-header" @click="toggle">
+    <span class="section-arrow">{{ isExpanded ? '▼' : '▶' }}</span>
+    <h3 class="section-title">{{ title }}</h3>
+  </div>
+  <div class="section-preview-area" v-if="!isExpanded && preview">
+    <span class="section-preview">{{ preview }}</span>
+  </div>
+  <Transition name="collapse">
+    <div v-show="isExpanded" class="section-content">
+      <slot></slot>
+    </div>
+  </Transition>
+</div>

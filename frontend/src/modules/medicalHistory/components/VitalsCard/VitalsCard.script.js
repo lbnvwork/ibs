@@ -1,6 +1,6 @@
-// frontend/src/modules/patientCard/components/VitalsCard/VitalsCard.script.js
+// frontend/src/modules/medicalHistory/components/VitalsCard/VitalsCard.script.js
 
-import { usePatientVitalsLatestStore } from '@/modules/patientCard/stores/patientVitalsLatestStore';
+import { usePatientVitalsLatestStore } from '@/modules/medicalHistory/stores/patientVitalsLatestStore';
 
 export default {
   name: 'VitalsCard',

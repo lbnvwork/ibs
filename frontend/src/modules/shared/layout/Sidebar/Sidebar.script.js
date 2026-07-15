@@ -1,5 +1,5 @@
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths';
-import { useAppointmentAddStore } from '@/modules/patientCard/stores/appointmentAddStore';
+import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore';
 
 export default {
     name: 'Sidebar',
@@ -86,7 +86,7 @@ export default {
             return this.sidebarItemDefinitions.map(item => {
                 let disabled = false;
                 if (item.name === 'recommendations') {
-                    if (this.$route.name === 'PatientHistory') {
+                    if (this.$route.name === 'MedicalHistory') {
                         disabled = !useAppointmentAddStore().isTreatmentActive;
                     } else {
                         disabled = true;
@@ -118,7 +118,7 @@ export default {
                     this.$router.push(PATIENT_ADD_PATH);
                     break;
                 case 'recommendations':
-                    if (this.$route.name === 'PatientHistory' && useAppointmentAddStore().isTreatmentActive) {
+                    if (this.$route.name === 'MedicalHistory' && useAppointmentAddStore().isTreatmentActive) {
                         useAppointmentAddStore().openModal();
                     }
                     break;
