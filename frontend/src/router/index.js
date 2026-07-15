@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/modules/shared/layout/Home/Home.vue';
-import MedicalHistory from '@/modules/medicalHistory/MedicalHistory.vue';
+import MedicalHistory from '@/modules/medicalHistory/components/MedicalHistory.vue';
 import Login from '@/modules/shared/components/Login/Login.vue';
 import { useAuthStore } from '@/modules/shared/stores/authStore';
 import PatientAdd from '@/modules/patientManagement/components/PatientAdd/PatientAdd.vue';
