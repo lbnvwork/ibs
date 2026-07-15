@@ -13,5 +13,14 @@ export const vitalsApi = {
         return apiClient.get('/patient_vitals_latests/batch', {
             params: { 'patient_id[]': patientIds }
         });
+    },
+    getByTreatment(treatmentIri) {
+        return apiClient.get('/patient_vitals', {
+            params: {
+                treatment: treatmentIri,
+                order: { recordDt: 'asc' },
+                itemsPerPage: 1000
+            }
+        });
     }
 };

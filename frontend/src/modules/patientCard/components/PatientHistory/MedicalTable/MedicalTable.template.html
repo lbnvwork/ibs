@@ -7,8 +7,8 @@
         </div>
     </div>
     <MnoChart
-        v-if="store.events.length > 0"
-        :data="store.events"
+        v-if="chartData.length > 0"
+        :data="chartData"
         :mno-from="mnoFrom"
         :mno-to="mnoTo"
     />
@@ -17,11 +17,7 @@
             <thead>
                 <tr>
                     <th>Дата</th>
-                    <th>МНО</th>
-                    <th>Анализ №1</th>
-                    <th>Анализ №2</th>
-                    <th>ЧСС</th>
-                    <th>АД</th>
+                    <th>Показатели</th>
                     <th>Принимаемая доза</th>
                     <th>Назначенная доза</th>
                     <th>Рекомендации</th>
@@ -29,13 +25,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(data, index) in store.events" :key="index" :class="{ 'appointment-row': data.isAppointment }">
+                <tr v-for="(data, index) in store.events" :key="index" :class="{ 'appointment-row': data.type === 'appointment' }">
                     <td>{{ data.displayDate }}</td>
-                    <td><strong>{{ data.inr }}</strong></td>
-                    <td>{{ data.analysis1 }}</td>
-                    <td>{{ data.analysis2 }}</td>
-                    <td>{{ data.heartRate }}</td>
-                    <td>{{ data.bloodPressure }}</td>
+                    <td>
+                        <span v-if="data.type !== 'appointment'" v-html="buildIndicatorsFromRow(data)"></span>
+                        <span v-else>—</span>
+                    </td>
                     <td>{{ data.currentDose }}</td>
                     <td>{{ data.prescribedDose }}</td>
                     <td class="recommendations">{{ data.recommendations }}</td>
