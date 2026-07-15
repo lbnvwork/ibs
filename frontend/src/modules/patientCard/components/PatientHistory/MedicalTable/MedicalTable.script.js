@@ -1,5 +1,7 @@
 import { useMedicalTableStore } from '@/modules/patientCard/stores/medicalTableStore';
 import MnoChart from '@/modules/patientCard/components/PatientHistory/MnoChart/MnoChart.vue';
+import { buildIndicatorsFromRow } from '@/modules/shared/utils/vitalsHelpers';
+import { computed } from 'vue';
 
 export default {
     name: 'MedicalTable',
@@ -11,6 +13,13 @@ export default {
     emits: ['open-test-modal', 'open-appointment-modal'],
     setup() {
         const store = useMedicalTableStore();
-        return { store };
+
+        const chartData = computed(() => {
+            return store.events
+                .filter(e => e.mno !== null)
+                .map(e => ({ date: e.date, inr: e.mno }));
+        });
+
+        return { store, chartData, buildIndicatorsFromRow };
     }
 };
