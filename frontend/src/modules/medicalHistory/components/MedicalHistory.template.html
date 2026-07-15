@@ -11,21 +11,47 @@
 
     <div v-if="treatmentStore.treatment" class="patient-main-content">
         <div class="left-column">
-            <PatientCard />
-            <VitalsCard
-                v-if="id"
-                :patient-id="id"
-                :treatment-id="activeTreatmentId"
-            />
-            <Pharmacogenetics
-                v-if="id"
-                :patient-id="id"
-                :drug-iri="treatmentStore.treatment?.drug"
-            />
+            <CollapsibleSection
+                ref="patientSection"
+                title="Персональные данные"
+                :preview="patientPreview"
+                :forceExpand="editMode.patient"
+            >
+                <PatientCard @edit-start="startPatientEdit" @edit-end="endPatientEdit" />
+            </CollapsibleSection>
+
+            <CollapsibleSection
+                title="Витальные показатели"
+                :preview="vitalsPreview"
+            >
+                <VitalsCard
+                    v-if="id"
+                    :patient-id="id"
+                    :treatment-id="activeTreatmentId"
+                />
+            </CollapsibleSection>
+
+            <CollapsibleSection
+                title="Фармакогенетика"
+                :preview="pharmacogeneticsPreview"
+            >
+                <Pharmacogenetics
+                    v-if="id"
+                    :patient-id="id"
+                    :drug-iri="treatmentStore.treatment?.drug"
+                />
+            </CollapsibleSection>
         </div>
 
         <div class="right-column">
-            <TreatmentCard />
+            <CollapsibleSection
+                ref="treatmentSection"
+                title="Лечение"
+                :preview="treatmentPreview"
+                :forceExpand="editMode.treatment"
+            >
+                <TreatmentCard @edit-start="startTreatmentEdit" @edit-end="endTreatmentEdit" />
+            </CollapsibleSection>
             <RiskScale v-if="false" />
         </div>
     </div>
