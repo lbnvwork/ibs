@@ -1,14 +1,14 @@
 import { extractIdFromIri } from '@/modules/shared/utils/apiHelpers';
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore';
-import AppointmentAdd from '@/modules/medicalHistory/AppointmentAdd/AppointmentAdd.vue';
-import TestAddModal from '@/modules/medicalHistory/TestAddModal/TestAddModal.vue';
-import PatientCard from '@/modules/medicalHistory/PatientCard/PatientCard.vue';
-import TreatmentCard from '@/modules/medicalHistory/TreatmentCard/TreatmentCard.vue';
+import AppointmentAdd from '@/modules/medicalHistory/components/AppointmentAdd/AppointmentAdd.vue';
+import TestAddModal from '@/modules/medicalHistory/components/TestAddModal/TestAddModal.vue';
+import PatientCard from '@/modules/medicalHistory/components/PatientCard/PatientCard.vue';
+import TreatmentCard from '@/modules/medicalHistory/components/TreatmentCard/TreatmentCard.vue';
 import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCardStore';
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore';
 import { useMedicalTableStore } from '@/modules/medicalHistory/stores/medicalTableStore';
-import MedicalTable from '@/modules/medicalHistory/MedicalTable/MedicalTable.vue';
-import Pharmacogenetics from '@/modules/medicalHistory/Pharmacogenetics/Pharmacogenetics.vue';
+import MedicalTable from '@/modules/medicalHistory/components/MedicalTable/MedicalTable.vue';
+import Pharmacogenetics from '@/modules/medicalHistory/components/Pharmacogenetics/Pharmacogenetics.vue';
 import VitalsCard from '@/modules/medicalHistory/components/VitalsCard/VitalsCard.vue';
 import RiskScale from '@/modules/medicalHistory/components/RiskScale/RiskScale.vue';
 
