@@ -82,3 +82,47 @@ tr:nth-child(even) {
 .btn-add-appointment {
     margin-bottom: 0;
 }
+
+/* Чипсы показателей */
+.indicator-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    margin: 2px 4px;
+    border-radius: 10px;
+    background: #f0f4f8;
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: nowrap;
+    min-width: 45px;
+}
+.indicator-item:first-child {
+    margin-left: 0;
+}
+
+/* МНО выделяется */
+.indicator-mno {
+    background: #e8f0fe;
+    border: 1px solid #c5d9f7;
+}
+
+/* Название показателя */
+.indicator-label {
+    color: #5f6b7a;
+    font-weight: 400;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Значение показателя */
+.indicator-value {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 13px;
+}
+.indicator-mno .indicator-value {
+    color: #1a56db;
+}

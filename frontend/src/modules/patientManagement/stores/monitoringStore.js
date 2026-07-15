@@ -5,7 +5,7 @@ import { testHistoryApi } from '@/modules/shared/api/testHistory';
 import { vitalsApi } from '@/modules/shared/api/vitals';
 import { calculateAge, formatAge } from '@/modules/shared/utils/formatters';
 import { getIdFromIri } from '@/modules/shared/utils/apiHelpers';
-import { buildIndicators } from '@/modules/patientManagement/utils/vitalsHelpers';
+import { buildIndicators } from '@/modules/shared/utils/vitalsHelpers';
 
 export const useMonitoringStore = defineStore('monitoring', {
     state: () => ({
