@@ -11,6 +11,10 @@ import MedicalTable from '@/modules/medicalHistory/components/MedicalTable/Medic
 import Pharmacogenetics from '@/modules/medicalHistory/components/Pharmacogenetics/Pharmacogenetics.vue';
 import VitalsCard from '@/modules/medicalHistory/components/VitalsCard/VitalsCard.vue';
 import RiskScale from '@/modules/medicalHistory/components/RiskScale/RiskScale.vue';
+import CollapsibleSection from '@/modules/medicalHistory/components/CollapsibleSection/CollapsibleSection.vue';
+import { usePatientVitalsLatestStore } from '@/modules/medicalHistory/stores/patientVitalsLatestStore';
+import { usePharmacogeneticsStore } from '@/modules/medicalHistory/stores/pharmacogeneticsStore';
+import { buildIndicators } from '@/modules/shared/utils/vitalsHelpers';
 
 export default {
     name: 'MedicalHistory',
@@ -22,7 +26,8 @@ export default {
         TreatmentCard, 
         MedicalTable, 
         Pharmacogenetics,
-        VitalsCard
+        VitalsCard,
+        CollapsibleSection
     },
     props: {
         id: { type: String, default: null }
@@ -32,7 +37,11 @@ export default {
             loading: true,
             error: null,
             showTestModal: false,
-            showAppointmentInlineModal: false
+            showAppointmentInlineModal: false,
+            editMode: {
+                patient: false,
+                treatment: false
+            }
         };
     },
     computed: {
@@ -46,6 +55,44 @@ export default {
             const treatment = this.treatmentStore.treatment;
             return treatment ? this.extractIdFromIri(treatment['@id']) : null;
         },
+        patientPreview() {
+            const p = usePatientCardStore().patient;
+            if (!p) return 'Нет данных';
+            const phone = p.phone || '—';
+            const sex = p.sex === 1 ? 'м' : 'ж';
+            return `${p.name}, ${p.age || '—'} (${sex}), ${phone}`;
+        },
+        treatmentPreview() {
+            const t = useTreatmentStore().treatment;
+            if (!t) return 'Нет активного лечения';
+            let preview = `${t.diagnosis || '—'}, ${t.drugName || '—'}`;
+            if (t.mnoFrom !== undefined && t.mnoTo !== undefined) {
+                preview += `, МНО ${t.mnoFrom}–${t.mnoTo}`;
+            }
+            if (t.realEndDt) preview += ' (Завершено)';
+            return preview;
+        },
+        pharmacogeneticsPreview() {
+            const store = usePharmacogeneticsStore();
+            const markers = store.markers || [];
+            const parts = markers
+                .filter(m => m.currentValueId !== null)
+                .map(m => `${m.geneSymbol}: ${m.currentValue}`);
+            return parts.length ? parts.join(', ') : 'Не исследовано';
+        },
+        vitalsPreview() {
+            const latest = usePatientVitalsLatestStore().latest;
+            if (!latest) return 'Нет измерений';
+            const parts = [];
+            if (latest.hb != null) parts.push(`Hb ${latest.hb}`);
+            if (latest.heartRate != null) parts.push(`ЧСС ${latest.heartRate}`);
+            if (latest.systolicPressure != null && latest.diastolicPressure != null) {
+                parts.push(`АД ${latest.systolicPressure}/${latest.diastolicPressure}`);
+            }
+            if (latest.saturation != null) parts.push(`SpO₂ ${latest.saturation}%`);
+            if (latest.weight != null) parts.push(`Вес ${latest.weight} кг`);
+            return parts.length > 0 ? parts.join(', ') : 'Нет измерений';
+        }
     },
     watch: {
         id: {
@@ -122,5 +169,19 @@ export default {
                 await patientCardStore.fetchPatient(this.id);
             }
         },
+        startPatientEdit() {
+            this.editMode.patient = true;
+            this.$refs.patientSection?.expand();
+        },
+        endPatientEdit() {
+            this.editMode.patient = false;
+        },
+        startTreatmentEdit() {
+            this.editMode.treatment = true;
+            this.$refs.treatmentSection?.expand();
+        },
+        endTreatmentEdit() {
+            this.editMode.treatment = false;
+        }
     }
 };
