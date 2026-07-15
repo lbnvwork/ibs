@@ -16,6 +16,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\LabIoTGateway\Validator\Constraints\AtLeastOneVitalSign;
 use Symfony\Component\Serializer\Annotation\Ignore;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
 #[ApiResource(
     operations: [
@@ -27,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\Ignore;
     normalizationContext: ['groups' => ['vitals:read']],
     denormalizationContext: ['groups' => ['vitals:write']],
 )]
+#[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
 #[ORM\Entity]
 #[ORM\Table(name: 'patient_vitals')]
 #[ORM\Index(
