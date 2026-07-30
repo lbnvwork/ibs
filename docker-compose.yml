@@ -9,13 +9,23 @@ services:
       - ./api:/var/www/html
     environment:
       APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
       CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN}
+      COMPOSER_ALLOW_SUPERUSER: 1
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - ibs-network
+      - default
+    command: >
+      sh -c "composer install --no-dev --optimize-autoloader --no-interaction
+      && php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+      && php bin/console cache:clear --env=prod --no-debug
+      && php bin/console cache:warmup --env=prod
+      && php-fpm"
+    restart: unless-stopped
 
   db:
     image: postgres:15
@@ -24,8 +34,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -34,38 +42,44 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - ibs-network
+      - default
+    restart: unless-stopped
+
+  node:
+    image: node:20-alpine
+    container_name: ibs-node
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - frontend_dist:/app/dist
+    command: sh -c "npm ci && npm run build"
+    networks:
+      - default
+    restart: "no"
 
   nginx:
     image: nginx:alpine
     container_name: ibs-nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./api/public:/var/www/html/public:ro
+      - frontend_dist:/var/www/html/frontend:ro
     ports:
       - "8081:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./api/public:/var/www/html/public:ro
     depends_on:
       php:
         condition: service_started
+      node:
+        condition: service_completed_successfully
     networks:
-      - ibs-network
-
-  node:
-    image: node:20
-    container_name: ibs-node
-    user: "1000:1000"
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-    command: sh -c "npm install && npm run dev"
-    ports:
-      - "5174:5173"
-    networks:
-      - ibs-network
+      - default
+    restart: unless-stopped
 
 volumes:
   db_data:
+  frontend_dist:
 
 networks:
-  ibs-network:
-    driver: bridge
+  default:
+    external: true
+    name: app-network
