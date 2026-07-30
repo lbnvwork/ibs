@@ -20,7 +20,7 @@ final class Version20260204144554FixTreatmentsTable extends AbstractMigration
         $this->addSql('ALTER TABLE treatments ADD diagnosis_code VARCHAR(255) DEFAULT NULL');
 
         // 2. Переносим данные из старого столбца в новый (если есть данные)
-        $this->addSql('UPDATE treatments SET diagnosis_code = "diagnosisCode" WHERE "diagnosisCode" IS NOT NULL');
+        // $this->addSql('UPDATE treatments SET diagnosis_code = "diagnosisCode" WHERE "diagnosisCode" IS NOT NULL');
 
         // 3. Удаляем старый столбец diagnosisCode
         $this->addSql('ALTER TABLE treatments DROP "diagnosisCode"');
