@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\ClinicalCore\Pharmacogenetics\State;
+namespace Ibs\Context\AICDSS\Pharmacogenetics\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\ClinicalCore\Pharmacogenetics\Dto\PharmacogeneticsResponse;
-use App\ClinicalCore\Pharmacogenetics\Service\PharmacogeneticsService;
+use Ibs\Context\AICDSS\Pharmacogenetics\Dto\PharmacogeneticsResponse;
+use Ibs\Context\AICDSS\Pharmacogenetics\Service\PharmacogeneticsService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 

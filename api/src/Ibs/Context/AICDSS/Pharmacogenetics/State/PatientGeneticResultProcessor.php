@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\ClinicalCore\Pharmacogenetics\State;
+namespace Ibs\Context\AICDSS\Pharmacogenetics\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Post as PostOperation;
 use ApiPlatform\Metadata\Put as PutOperation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Entity\GeneticMarker;
-use App\Entity\GeneticMarkerValue;
-use App\Entity\PatientGeneticResult;
+use Ibs\Context\AICDSS\Entity\GeneticMarker;
+use Ibs\Context\AICDSS\Entity\GeneticMarkerValue;
+use Ibs\Context\AICDSS\Entity\PatientGeneticResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

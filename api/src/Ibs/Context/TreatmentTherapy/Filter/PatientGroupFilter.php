@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filter;
+namespace Ibs\Context\TreatmentTherapy\Filter;
 
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Entity\Treatment;
+use Ibs\Context\TreatmentTherapy\Entity\Treatment;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -50,12 +50,12 @@ final class PatientGroupFilter extends AbstractFilter
             ->where('t_group.patient = o.id')
             ->andWhere('t_group.begDt = (
             SELECT MAX(t2_group.begDt)
-            FROM App\Entity\Treatment t2_group
+            FROM Ibs\Context\TreatmentTherapy\Entity\Treatment t2_group
             WHERE t2_group.patient = o.id
         )')
             ->andWhere('t_group.drug IN (
             SELECT d.id
-            FROM App\Entity\Drug d
+            FROM Ibs\Context\TreatmentTherapy\Entity\Drug d
             WHERE d.group = :' . $parameterName . '
         )');
 

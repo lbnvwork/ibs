@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Ibs\Context\AICDSS\Entity;
 
+use Ibs\Context\TreatmentTherapy\Entity\Drug;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Command;
+namespace Ibs\Context\SecurityIdentity\Command;
 
-use App\Entity\User;
+use Ibs\Context\SecurityIdentity\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

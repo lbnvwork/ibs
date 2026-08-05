@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\LabIoTGateway\EventListener;
+namespace Ibs\Context\LabIoTGateway\EventListener;
 
-use App\Entity\PatientVitals;
+use Ibs\Context\LabIoTGateway\Entity\PatientVitals;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;

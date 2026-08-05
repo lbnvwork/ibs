@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Ibs\Context\LabIoTGateway\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Entity\Patient;
-use App\Entity\Treatment;
+use Ibs\Context\PatientManagement\Entity\Patient;
+use Ibs\Context\TreatmentTherapy\Entity\Treatment;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\LabIoTGateway\Validator\Constraints\AtLeastOneVitalSign;
+use Ibs\Context\LabIoTGateway\Validator\Constraints\AtLeastOneVitalSign;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;

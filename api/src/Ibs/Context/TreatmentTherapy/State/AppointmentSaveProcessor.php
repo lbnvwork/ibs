@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Treatment\State;
+namespace Ibs\Context\TreatmentTherapy\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Entity\Appointment;
+use Ibs\Context\TreatmentTherapy\Entity\Appointment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;

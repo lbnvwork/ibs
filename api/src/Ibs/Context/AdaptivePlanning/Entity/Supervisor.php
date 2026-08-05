@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Ibs\Context\AdaptivePlanning\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use Ibs\Context\SecurityIdentity\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]

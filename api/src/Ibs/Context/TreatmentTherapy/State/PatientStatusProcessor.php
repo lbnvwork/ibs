@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\State;
+namespace Ibs\Context\TreatmentTherapy\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\DTO\PatientStatus\PatientStatusRequest;
-use App\DTO\PatientStatus\PatientStatusResponse;
-use App\Repository\TreatmentRepository;
+use Ibs\Context\TreatmentTherapy\Dto\PatientStatus\PatientStatusRequest;
+use Ibs\Context\TreatmentTherapy\Dto\PatientStatus\PatientStatusResponse;
+use Ibs\Context\TreatmentTherapy\Repository\TreatmentRepository;
 
 final class PatientStatusProcessor implements ProcessorInterface
 {

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Resource;
+namespace Ibs\Context\TreatmentTherapy\Resource;
 
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\OpenApi\Model\Operation as OpenApiOperation;
 use ApiPlatform\OpenApi\Model\RequestBody;
 use ApiPlatform\OpenApi\Model\Response;
-use App\DTO\PatientStatus\PatientStatusResponse;
-use App\DTO\PatientStatus\PatientStatusRequest;
-use App\State\PatientStatusProcessor;
+use Ibs\Context\TreatmentTherapy\Dto\PatientStatus\PatientStatusResponse;
+use Ibs\Context\TreatmentTherapy\Dto\PatientStatus\PatientStatusRequest;
+use Ibs\Context\TreatmentTherapy\State\PatientStatusProcessor;
 
 #[ApiResource(
     operations: [

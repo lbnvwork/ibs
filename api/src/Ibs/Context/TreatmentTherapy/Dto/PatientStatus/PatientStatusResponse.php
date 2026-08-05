@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\PatientStatus;
+namespace Ibs\Context\TreatmentTherapy\Dto\PatientStatus;
 
 class PatientStatusResponse
 {

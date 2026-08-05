@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\LabIoTGateway\Validator\Constraints;
+namespace Ibs\Context\LabIoTGateway\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Attribute;

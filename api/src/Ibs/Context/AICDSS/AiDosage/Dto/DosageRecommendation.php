@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ai\Dto;
+namespace Ibs\Context\AICDSS\AiDosage\Dto;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use App\Module\Ai\State\DosageRecommendationProvider;
+use Ibs\Context\AICDSS\AiDosage\State\DosageRecommendationProvider;
 
 #[ApiResource(
     shortName: 'Dosage',

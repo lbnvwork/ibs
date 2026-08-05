@@ -11,4 +11,11 @@ return [
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
     Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => ['dev' => true, 'test' => true],
     Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle::class => ['all' => true],
+    Ibs\Context\PatientManagement\PatientManagementBundle::class => ['all' => true],
+    Ibs\Context\TreatmentTherapy\TreatmentTherapyBundle::class => ['all' => true],
+    Ibs\Context\AICDSS\AICDSSBundle::class => ['all' => true],
+    Ibs\Context\LabIoTGateway\LabIoTGatewayBundle::class => ['all' => true],
+    Ibs\Context\AdaptivePlanning\AdaptivePlanningBundle::class => ['all' => true],
+    Ibs\Context\Communication\CommunicationBundle::class => ['all' => true],
+    Ibs\Context\SecurityIdentity\SecurityIdentityBundle::class => ['all' => true],
 ];
