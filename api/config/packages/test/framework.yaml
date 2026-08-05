@@ -1,0 +1,4 @@
+framework:
+    test: true
+    router:
+        default_uri: 'http://localhost'
