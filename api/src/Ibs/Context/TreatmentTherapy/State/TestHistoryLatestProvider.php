@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\State;
+namespace Ibs\Context\TreatmentTherapy\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Repository\TestHistoryRepository;
+use Ibs\Context\TreatmentTherapy\Repository\TestHistoryRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class TestHistoryLatestProvider implements ProviderInterface

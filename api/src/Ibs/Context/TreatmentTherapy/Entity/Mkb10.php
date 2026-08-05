@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Ibs\Context\TreatmentTherapy\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use App\State\Mkb10PopularProvider;
-use App\State\Mkb10SearchProvider;
+use Ibs\Context\TreatmentTherapy\State\Mkb10PopularProvider;
+use Ibs\Context\TreatmentTherapy\State\Mkb10SearchProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(

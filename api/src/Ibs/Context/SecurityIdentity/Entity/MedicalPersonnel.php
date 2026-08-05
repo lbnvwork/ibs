@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Ibs\Context\SecurityIdentity\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use Ibs\Context\PatientManagement\Entity\Hospital;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]

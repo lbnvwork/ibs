@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\LabIoTGateway\EventListener;
+namespace Ibs\Context\LabIoTGateway\EventListener;
 
-use App\Entity\PatientVitals;
-use App\LabIoTGateway\Service\PatientVitalsSyncService;
+use Ibs\Context\LabIoTGateway\Entity\PatientVitals;
+use Ibs\Context\LabIoTGateway\Service\PatientVitalsSyncService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;

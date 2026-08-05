@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\State;
+namespace Ibs\Context\TreatmentTherapy\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Repository\Mkb10Repository;
+use Ibs\Context\TreatmentTherapy\Repository\Mkb10Repository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class Mkb10SearchProvider implements ProviderInterface

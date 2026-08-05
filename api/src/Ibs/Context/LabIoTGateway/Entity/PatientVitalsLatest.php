@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Ibs\Context\LabIoTGateway\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use App\Entity\Patient;
+use Ibs\Context\PatientManagement\Entity\Patient;
 use Doctrine\ORM\Mapping as ORM;
-use App\LabIoTGateway\State\PatientVitalsLatestBatchProvider;
+use Ibs\Context\LabIoTGateway\State\PatientVitalsLatestBatchProvider;
 
 #[ApiResource(
     operations: [

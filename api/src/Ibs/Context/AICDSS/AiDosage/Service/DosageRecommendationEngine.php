@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ai\Service;
+namespace Ibs\Context\AICDSS\AiDosage\Service;
 
-use App\Entity\Treatment;
-use App\Entity\Appointment;
-use App\Entity\TestHistory;
+use Ibs\Context\TreatmentTherapy\Entity\Treatment;
+use Ibs\Context\TreatmentTherapy\Entity\Appointment;
+use Ibs\Context\TreatmentTherapy\Entity\TestHistory;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DosageRecommendationEngine

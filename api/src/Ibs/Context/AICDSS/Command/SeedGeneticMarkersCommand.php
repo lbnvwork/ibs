@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace Ibs\Context\AICDSS\Command;
 
-use App\Entity\Drug;
-use App\Entity\GeneticMarker;
-use App\Entity\GeneticMarkerValue;
-use App\Entity\MarkerDrugRelation;
+use Ibs\Context\TreatmentTherapy\Entity\Drug;
+use Ibs\Context\AICDSS\Entity\GeneticMarker;
+use Ibs\Context\AICDSS\Entity\GeneticMarkerValue;
+use Ibs\Context\AICDSS\Entity\MarkerDrugRelation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

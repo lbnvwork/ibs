@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace Ibs\Context\SecurityIdentity\EventListener;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\Security\Core\User\UserInterface;

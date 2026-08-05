@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\ClinicalCore\Pharmacogenetics\Service;
+namespace Ibs\Context\AICDSS\Pharmacogenetics\Service;
 
-use App\Entity\MarkerDrugRelation;
-use App\Entity\PatientGeneticResult;
-use App\Entity\Treatment;
+use Ibs\Context\AICDSS\Entity\MarkerDrugRelation;
+use Ibs\Context\AICDSS\Entity\PatientGeneticResult;
+use Ibs\Context\TreatmentTherapy\Entity\Treatment;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PharmacogeneticsService

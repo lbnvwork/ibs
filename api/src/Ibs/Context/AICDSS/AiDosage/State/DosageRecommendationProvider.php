@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Ai\State;
+namespace Ibs\Context\AICDSS\AiDosage\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Module\Ai\Dto\DosageRecommendation;
-use App\Module\Ai\Service\DosageRecommendationEngine;
+use Ibs\Context\AICDSS\AiDosage\Dto\DosageRecommendation;
+use Ibs\Context\AICDSS\AiDosage\Service\DosageRecommendationEngine;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class DosageRecommendationProvider implements ProviderInterface

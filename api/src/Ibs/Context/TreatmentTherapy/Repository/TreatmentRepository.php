@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Ibs\Context\TreatmentTherapy\Repository;
 
-use App\Entity\Treatment;
+use Ibs\Context\TreatmentTherapy\Entity\Treatment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

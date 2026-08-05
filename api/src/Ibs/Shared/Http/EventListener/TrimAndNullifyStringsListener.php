@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\EventListener;
+namespace Ibs\Shared\Http\EventListener;
 
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 

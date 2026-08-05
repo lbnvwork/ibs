@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filter;
+namespace Ibs\Context\TreatmentTherapy\Filter;
 
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;

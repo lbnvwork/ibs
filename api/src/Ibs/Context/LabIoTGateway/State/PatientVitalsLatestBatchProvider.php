@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\LabIoTGateway\State;
+namespace Ibs\Context\LabIoTGateway\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Entity\PatientVitalsLatest;
+use Ibs\Context\LabIoTGateway\Entity\PatientVitalsLatest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 

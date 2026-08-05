@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Filter;
+namespace Ibs\Context\TreatmentTherapy\Filter;
 
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Entity\Treatment;
+use Ibs\Context\TreatmentTherapy\Entity\Treatment;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -54,7 +54,7 @@ final class PatientDiagnosisFilter extends AbstractFilter
             ->where('t_diag.patient = o.id')
             ->andWhere('t_diag.begDt = (
                 SELECT MAX(t2_diag.begDt)
-                FROM App\Entity\Treatment t2_diag
+                FROM Ibs\Context\TreatmentTherapy\Entity\Treatment t2_diag
                 WHERE t2_diag.patient = o.id
             )')
             ->andWhere('t_diag.realEndDt IS NULL')

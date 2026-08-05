@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\LabIoTGateway\Service;
+namespace Ibs\Context\LabIoTGateway\Service;
 
-use App\Entity\PatientVitals;
-use App\Entity\PatientVitalsLatest;
+use Ibs\Context\LabIoTGateway\Entity\PatientVitals;
+use Ibs\Context\LabIoTGateway\Entity\PatientVitalsLatest;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PatientVitalsSyncService

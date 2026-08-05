@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Ibs\Context\AICDSS\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
@@ -12,7 +12,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\ClinicalCore\Pharmacogenetics\State\PatientGeneticResultProcessor;
+use Ibs\Context\AICDSS\Pharmacogenetics\State\PatientGeneticResultProcessor;
+use Ibs\Context\PatientManagement\Entity\Patient;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
