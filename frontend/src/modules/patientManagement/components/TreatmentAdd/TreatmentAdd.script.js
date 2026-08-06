@@ -3,6 +3,7 @@ import { treatmentApi } from '@/modules/shared/api/treatments';
 import { mkb10Api } from '@/modules/shared/api/mkb10';
 import MultiDiagnosisSelect from '@/modules/shared/components/MultiDiagnosisSelect/MultiDiagnosisSelect.vue';
 import { parseApiError } from '@/modules/shared/utils/apiErrorHandler';
+import { validateForm } from '@/modules/shared/utils/validationHelper';
 
 export default {
     name: 'TreatmentAdd',

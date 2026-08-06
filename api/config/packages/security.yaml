@@ -1,11 +1,11 @@
 security:
     password_hashers:
-        App\Entity\User: 'auto'
+        Ibs\Context\SecurityIdentity\Entity\User: 'auto'
 
     providers:
         app_user_provider:
             entity:
-                class: App\Entity\User
+                class: Ibs\Context\SecurityIdentity\Entity\User
                 property: login
 
     firewalls:

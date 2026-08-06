@@ -1,0 +1,110 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Ibs\Context\AICDSS\Pharmacogenetics\Service;
+
+use Ibs\Context\AICDSS\Entity\MarkerDrugRelation;
+use Ibs\Context\AICDSS\Entity\PatientGeneticResult;
+use Ibs\Context\TreatmentTherapy\Entity\Treatment;
+use Doctrine\ORM\EntityManagerInterface;
+
+class PharmacogeneticsService
+{
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {}
+
+    /**
+     * @param int      $patientId
+     * @param int|null $drugId    Если передан, фильтрует маркеры по препарату через marker_drug_relations.
+     *                            Если null – используется препарат из последнего лечения пациента (старое поведение).
+     */
+    public function getPatientPharmacogenetics(int $patientId, ?int $drugId = null): array
+    {
+        // Если drugId не передан явно, определяем по последнему лечению пациента
+        if ($drugId === null) {
+            $treatment = $this->getLatestTreatment($patientId);
+            if (!$treatment) {
+                return [];
+            }
+            $drug = $treatment->getDrug();
+            if (!$drug) {
+                return [];
+            }
+            $drugId = $drug->getId();
+        }
+
+        // 2. Получить все связи маркеров с этим препаратом
+        $relations = $this->entityManager->getRepository(MarkerDrugRelation::class)->findBy([
+            'drug' => $drugId,
+        ]);
+
+        if (empty($relations)) {
+            return [];
+        }
+
+        // 3. Собрать маркеры и результаты для пациента
+        $resultSet = [];
+        foreach ($relations as $relation) {
+            $marker = $relation->getMarker();
+            if (!$marker) {
+                continue;
+            }
+
+            // Найти существующий результат для этого пациента и маркера
+            $existingResult = $this->entityManager->getRepository(PatientGeneticResult::class)->findOneBy([
+                'patient' => $patientId,
+                'marker'  => $marker,
+            ]);
+
+            $resultSet[] = [
+                'markerId'       => $marker->getId(),
+                'geneSymbol'     => $marker->getGeneSymbol(),
+                'fullName'       => $marker->getFullName(),
+                'rsId'           => $marker->getRsId(),
+                'possibleValues' => $marker->getPossibleValues()->map(function ($gmv) {
+                    return [
+                        'id'          => $gmv->getId(),
+                        'value'       => $gmv->getValue(),
+                        'label'       => $gmv->getLabel(),
+                        'description' => $gmv->getDescription(),
+                    ];
+                })->toArray(),
+                'currentValueId' => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getId() : null) : null,
+                'currentValue'   => $existingResult ? ($existingResult->getMarkerValue() ? $existingResult->getMarkerValue()->getValue() : null) : null,
+                'resultId'       => $existingResult ? $existingResult->getId() : null,
+            ];
+        }
+
+        return $resultSet;
+    }
+
+    private function getLatestTreatment(int $patientId): ?Treatment
+    {
+        $repo = $this->entityManager->getRepository(Treatment::class);
+
+        // Сначала ищем активное
+        $qb = $repo->createQueryBuilder('t')
+            ->where('t.patient = :patientId')
+            ->andWhere('t.realEndDt IS NULL')
+            ->orderBy('t.begDt', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('patientId', $patientId);
+
+        $treatment = $qb->getQuery()->getOneOrNullResult();
+
+        if ($treatment) {
+            return $treatment;
+        }
+
+        // Если нет активного – последнее завершённое
+        $qb = $repo->createQueryBuilder('t')
+            ->where('t.patient = :patientId')
+            ->orderBy('t.begDt', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('patientId', $patientId);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+}

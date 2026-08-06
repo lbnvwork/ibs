@@ -4,20 +4,62 @@ services:
         autoconfigure: true
 
     App\:
-        resource: '../src/'
+        resource: '../src/*'
+        exclude:
+            - '../src/{Kernel.php,Ibs}'
 
-    App\OpenApi\JwtDecorator:
+    Ibs\Shared\:
+        resource: '../src/Ibs/Shared/'
+        exclude:
+            - '../src/Ibs/Shared/{Common/Entity}'
+
+    Ibs\Context\PatientManagement\:
+        resource: '../src/Ibs/Context/PatientManagement/'
+        exclude:
+            - '../src/Ibs/Context/PatientManagement/{DependencyInjection,Entity}'
+
+    Ibs\Context\TreatmentTherapy\:
+        resource: '../src/Ibs/Context/TreatmentTherapy/'
+        exclude:
+            - '../src/Ibs/Context/TreatmentTherapy/{DependencyInjection,Entity,Dto}'
+
+    Ibs\Context\AICDSS\:
+        resource: '../src/Ibs/Context/AICDSS/'
+        exclude:
+            - '../src/Ibs/Context/AICDSS/{DependencyInjection,Entity}'
+
+    Ibs\Context\LabIoTGateway\:
+        resource: '../src/Ibs/Context/LabIoTGateway/'
+        exclude:
+            - '../src/Ibs/Context/LabIoTGateway/{DependencyInjection,Entity}'
+
+    Ibs\Context\AdaptivePlanning\:
+        resource: '../src/Ibs/Context/AdaptivePlanning/'
+        exclude:
+            - '../src/Ibs/Context/AdaptivePlanning/{DependencyInjection,Entity}'
+
+    Ibs\Context\Communication\:
+        resource: '../src/Ibs/Context/Communication/'
+        exclude:
+            - '../src/Ibs/Context/Communication/{DependencyInjection,Entity}'
+
+    Ibs\Context\SecurityIdentity\:
+        resource: '../src/Ibs/Context/SecurityIdentity/'
+        exclude:
+            - '../src/Ibs/Context/SecurityIdentity/{DependencyInjection,Entity}'
+
+    Ibs\Shared\OpenApi\JwtDecorator:
         decorates: 'api_platform.openapi.factory'
         arguments: [ '@.inner' ]
         
-    App\EventListener\TrimAndNullifyStringsListener:
+    Ibs\Shared\Http\EventListener\TrimAndNullifyStringsListener:
         tags:
             - { name: kernel.event_listener, event: kernel.request, priority: 10 }
     
-    App\EventListener\JwtCreatedListener:
+    Ibs\Context\SecurityIdentity\EventListener\JwtCreatedListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJwtCreated }
 
-    App\LabIoTGateway\Validator\:
-        resource: '../src/LabIoTGateway/Validator/'
+    Ibs\Context\LabIoTGateway\Validator\:
+        resource: '../src/Ibs/Context/LabIoTGateway/Validator/'
         autoconfigure: true

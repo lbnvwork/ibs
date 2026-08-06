@@ -24,6 +24,54 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            PatientManagement:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Context/PatientManagement/Entity'
+                prefix: 'Ibs\Context\PatientManagement\Entity'
+                alias: PatientManagement
+            TreatmentTherapy:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Context/TreatmentTherapy/Entity'
+                prefix: 'Ibs\Context\TreatmentTherapy\Entity'
+                alias: TreatmentTherapy
+            AICDSS:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Context/AICDSS/Entity'
+                prefix: 'Ibs\Context\AICDSS\Entity'
+                alias: AICDSS
+            LabIoTGateway:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Context/LabIoTGateway/Entity'
+                prefix: 'Ibs\Context\LabIoTGateway\Entity'
+                alias: LabIoTGateway
+            AdaptivePlanning:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Context/AdaptivePlanning/Entity'
+                prefix: 'Ibs\Context\AdaptivePlanning\Entity'
+                alias: AdaptivePlanning
+            Communication:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Context/Communication/Entity'
+                prefix: 'Ibs\Context\Communication\Entity'
+                alias: Communication
+            SecurityIdentity:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Context/SecurityIdentity/Entity'
+                prefix: 'Ibs\Context\SecurityIdentity\Entity'
+                alias: SecurityIdentity
+            SharedCommon:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ibs/Shared/Common/Entity'
+                prefix: 'Ibs\Shared\Common\Entity'
+                alias: SharedCommon
         controller_resolver:
             auto_mapping: false
 
