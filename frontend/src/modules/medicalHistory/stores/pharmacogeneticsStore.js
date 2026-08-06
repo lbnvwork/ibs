@@ -133,8 +133,9 @@ export const usePharmacogeneticsStore = defineStore('pharmacogenetics', {
                 this.editing = false;
             } catch (err) {
                 console.error('Ошибка сохранения фармакогенетики:', err);
-                this.saveError = 'Не удалось сохранить фармакогенетические данные.';
+                // fetchPharmacogenetics() itself resets saveError to null, so it must run before this assignment.
                 await this.fetchPharmacogenetics(this.patientId, this.drugIri);
+                this.saveError = 'Не удалось сохранить фармакогенетические данные.';
             }
         },
 

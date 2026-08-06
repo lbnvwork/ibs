@@ -7,11 +7,11 @@
                 v-if="store.isActive && !store.editingTreatment"
                 class="btn-edit-treatment"
                 title="Редактировать лечение"
-                @click="store.startEditingTreatment()"
+                @click="startEditingTreatment"
             >✎</button>
             <template v-if="store.editingTreatment">
-                <button class="btn-save-treatment" @click="store.saveTreatment()">Сохранить</button>
-                <button class="btn-cancel-treatment" @click="store.cancelEditingTreatment()">Отмена</button>
+                <button class="btn-save-treatment" @click="saveTreatment">Сохранить</button>
+                <button class="btn-cancel-treatment" @click="cancelEditingTreatment">Отмена</button>
             </template>
         </div>
     </div>
