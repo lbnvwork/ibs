@@ -7,11 +7,11 @@
                 v-if="!store.editingPatient"
                 class="btn-edit-treatment"
                 title="Редактировать данные"
-                @click="store.startEditingPatient"
+                @click="startEditingPatient"
             >✎</button>
             <template v-if="store.editingPatient">
                 <button class="btn-save-treatment" @click="savePatient">Сохранить</button>
-                <button class="btn-cancel-treatment" @click="store.cancelEditingPatient">Отмена</button>
+                <button class="btn-cancel-treatment" @click="cancelEditingPatient">Отмена</button>
             </template>
         </div>
     </div>

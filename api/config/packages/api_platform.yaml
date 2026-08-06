@@ -1,6 +1,14 @@
 api_platform:
     title: Hello API Platform
     version: 1.0.0
+    # Bundled contexts (Ibs\Context\*) get their Entity/ dir auto-discovered via
+    # each context's Bundle. Ibs\Shared has no Bundle by design, so its Entity
+    # dir (and the legacy App fallback paths) must be listed explicitly here.
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/ApiResource'
+            - '%kernel.project_dir%/src/Entity'
+            - '%kernel.project_dir%/src/Ibs/Shared/Common/Entity'
     defaults:
         stateless: true
         cache_headers:

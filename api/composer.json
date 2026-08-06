@@ -45,7 +45,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Ibs\\": "src/Ibs/"
         }
     },
     "autoload-dev": {
