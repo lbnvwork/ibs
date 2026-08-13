@@ -29,3 +29,5 @@ Thumbs.db
 .env.*.local
 docker-compose.override.yml
 .env
+
+frontend/.env.production
