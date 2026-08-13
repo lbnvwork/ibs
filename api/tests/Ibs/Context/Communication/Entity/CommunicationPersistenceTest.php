@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Ibs\Context\Communication\Entity;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Ibs\Context\Communication\Entity\NotificationLog;
+use Ibs\Context\Communication\Entity\NotificationTemplate;
 use Ibs\Context\Communication\Entity\SmsIn;
 use Ibs\Context\Communication\Entity\SmsOut;
 use Ibs\Context\Communication\Entity\SmsOutStatus;
@@ -78,5 +81,61 @@ class CommunicationPersistenceTest extends KernelTestCase
 
         $this->assertSame('СТОП', $this->entityManager->find(SmsIn::class, $smsInId)->getText());
         $this->assertSame('Здравствуйте, {name}!', $this->entityManager->find(SmsTemplate::class, $templateId)->getSmsTemplate());
+    }
+
+    public function testNotificationLogIsPersisted(): void
+    {
+        $log = (new NotificationLog())
+            ->setPatientId(10)
+            ->setTreatmentId(20)
+            ->setChannelType('sms')
+            ->setRecipientAddress('+70000000000')
+            ->setPriority('routine')
+            ->setTemplateCode('reminder_24h')
+            ->setStatus('sent')
+            ->setCreatedAt(new \DateTimeImmutable('2026-08-06 12:00:00'));
+
+        $this->entityManager->persist($log);
+        $this->entityManager->flush();
+        $logId = $log->getId();
+        $this->entityManager->clear();
+
+        $reloaded = $this->entityManager->find(NotificationLog::class, $logId);
+        $this->assertSame('sms', $reloaded->getChannelType());
+        $this->assertSame('sent', $reloaded->getStatus());
+        $this->assertSame(10, $reloaded->getPatientId());
+        $this->assertSame('reminder_24h', $reloaded->getTemplateCode());
+    }
+
+    public function testNotificationTemplateIsPersisted(): void
+    {
+        $template = (new NotificationTemplate('reminder_24h', 'sms'))
+            ->setBodyTemplate('Пора измерить МНО, %patient_name%.')
+            ->setDescription('Напоминание через 24 часа после назначения');
+
+        $this->entityManager->persist($template);
+        $this->entityManager->flush();
+        $templateId = $template->getId();
+        $this->entityManager->clear();
+
+        $reloaded = $this->entityManager->find(NotificationTemplate::class, $templateId);
+        $this->assertSame('reminder_24h', $reloaded->getCode());
+        $this->assertSame('sms', $reloaded->getChannel());
+        $this->assertSame('Пора измерить МНО, %patient_name%.', $reloaded->getBodyTemplate());
+    }
+
+    public function testNotificationTemplateCodeAndChannelAreUnique(): void
+    {
+        $template1 = new NotificationTemplate('duplicate_code', 'sms');
+        $template1->setBodyTemplate('first');
+        $this->entityManager->persist($template1);
+        $this->entityManager->flush();
+
+        $this->expectException(UniqueConstraintViolationException::class);
+
+        $template2 = new NotificationTemplate('duplicate_code', 'sms');
+        $template2->setBodyTemplate('second');
+        $this->entityManager->persist($template2);
+        $this->entityManager->flush();
     }
 }

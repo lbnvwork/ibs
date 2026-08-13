@@ -25,7 +25,12 @@ use Ibs\Context\LabIoTGateway\State\PatientVitalsLatestBatchProvider;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['patient' => 'exact'])]
 #[ORM\Entity]
-#[ORM\Table(name: 'patient_vitals_latest')]
+#[ORM\Table(
+    name: 'patient_vitals_latest',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(name: 'uniq_patient_id', columns: ['patient_id'])
+    ]
+)]
 class PatientVitalsLatest
 {
     #[ORM\Id]
