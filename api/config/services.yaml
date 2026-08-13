@@ -41,7 +41,7 @@ services:
     Ibs\Context\Communication\:
         resource: '../src/Ibs/Context/Communication/'
         exclude:
-            - '../src/Ibs/Context/Communication/{DependencyInjection,Entity}'
+            - '../src/Ibs/Context/Communication/{DependencyInjection,Entity,Model}'
 
     Ibs\Context\SecurityIdentity\:
         resource: '../src/Ibs/Context/SecurityIdentity/'

@@ -27,6 +27,32 @@ services:
       && php-fpm"
     restart: unless-stopped
 
+  messenger-worker:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: ibs-messenger-worker
+    working_dir: /var/www/html
+    volumes:
+      - ./api:/var/www/html
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      php:
+        condition: service_started
+    networks:
+      - default
+    # Consumes the async/failed Messenger transports (ROUTINE notifications, etc).
+    # time-limit recycles the worker periodically to shed accumulated memory; restart: unless-stopped brings it back up.
+    command: >
+      sh -c "php bin/console messenger:consume async failed --time-limit=3600 --memory-limit=128M -vv --env=prod"
+    restart: unless-stopped
+
   db:
     image: postgres:15
     container_name: ibs-db
