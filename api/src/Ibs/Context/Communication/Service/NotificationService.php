@@ -24,11 +24,14 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 final class NotificationService
 {
+    private const MAX_RETRY_ATTEMPTS = 3;
+
     public function __construct(
         private readonly ChannelRegistry $channels,
         private readonly TemplateResolver $templateResolver,
         private readonly NotificationLogRepository $logRepository,
         private readonly ?MessageBusInterface $messageBus = null,
+        private readonly RetrySleeperInterface $retrySleeper = new ExponentialRetrySleeper(),
     ) {
     }
 
@@ -120,12 +123,26 @@ final class NotificationService
 
                 try {
                     $resolvedMessage = $this->templateResolver->resolve($message, $channelType);
-                    $result = $channel->send($recipient, $resolvedMessage);
                 } catch (\Throwable $exception) {
-                    $result = SendResult::failure($exception->getMessage());
+                    $this->log($recipient, $channelType, $priority, $message->template, 'failed', $exception->getMessage(), flush: false);
+                    if ($rethrow) {
+                        throw new NotificationDeliveryException($channelType, $exception->getMessage());
+                    }
+                    continue;
                 }
 
-                $this->log($recipient, $channelType, $priority, $message->template, $result->success ? 'sent' : 'failed', $result->errorMessage, flush: false);
+                $result = $this->sendWithRetries($channel, $recipient, $resolvedMessage);
+
+                $this->log(
+                    $recipient,
+                    $channelType,
+                    $priority,
+                    $message->template,
+                    $result->success ? $result->status : 'failed',
+                    $result->errorMessage,
+                    $result->externalId,
+                    flush: false,
+                );
 
                 if (!$result->success && $rethrow) {
                     throw new NotificationDeliveryException($channelType, $result->errorMessage ?? 'Unknown error');
@@ -137,6 +154,41 @@ final class NotificationService
         }
     }
 
+    /**
+     * Выполняет отправку через канал с повторными попытками для временных ошибок.
+     * Задержки между повторами: 1s, 5s, 25s.
+     */
+    private function sendWithRetries(
+        ChannelInterface $channel,
+        Recipient $recipient,
+        NotificationMessage $message,
+    ): SendResult {
+        $result = $this->attemptSend($channel, $recipient, $message);
+
+        for (
+            $retryNumber = 0; 
+            $retryNumber < self::MAX_RETRY_ATTEMPTS && !$result->success && $result->retryable;
+            $retryNumber++
+        ) {
+            $this->retrySleeper->wait($retryNumber);
+            $result = $this->attemptSend($channel, $recipient, $message);
+        }
+
+        return $result;
+    }
+
+    private function attemptSend(
+        ChannelInterface $channel,
+        Recipient $recipient,
+        NotificationMessage $message,
+    ): SendResult {
+        try {
+            return $channel->send($recipient, $message);
+        } catch (\Throwable $exception) {
+            return SendResult::failure($exception->getMessage());
+        }
+    }
+
     private function log(
         Recipient $recipient,
         ?string $channelType,
@@ -144,6 +196,7 @@ final class NotificationService
         ?string $templateCode,
         string $status,
         ?string $errorMessage,
+        ?string $externalId = null,
         bool $flush = true,
     ): void {
         $log = (new NotificationLog())
@@ -154,6 +207,7 @@ final class NotificationService
             ->setPriority($priority->value)
             ->setTemplateCode($templateCode)
             ->setStatus($status)
+            ->setExternalId($externalId)
             ->setErrorMessage($errorMessage)
             ->setCreatedAt(new \DateTimeImmutable());
 
