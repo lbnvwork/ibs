@@ -38,6 +38,9 @@ class NotificationLog
     #[ORM\Column(type: 'string', length: 16, nullable: true)]
     private ?string $status = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $externalId = null;
+
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $errorMessage = null;
 
@@ -123,6 +126,17 @@ class NotificationLog
     public function setStatus(?string $status): self
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
         return $this;
     }
 
