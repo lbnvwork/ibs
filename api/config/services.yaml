@@ -1,3 +1,7 @@
+parameters:
+    max_api_url: '%env(default::MAX_API_URL)%'
+    max_bot_token: '%env(default::MAX_BOT_TOKEN)%'
+
 services:
     _defaults:
         autowire: true
@@ -42,6 +46,11 @@ services:
         resource: '../src/Ibs/Context/Communication/'
         exclude:
             - '../src/Ibs/Context/Communication/{DependencyInjection,Entity,Model}'
+
+    Ibs\Context\Communication\Service\MaxChannel:
+        arguments:
+            $maxApiUrl: '%max_api_url%'
+            $maxBotToken: '%max_bot_token%'
 
     Ibs\Context\SecurityIdentity\:
         resource: '../src/Ibs/Context/SecurityIdentity/'
