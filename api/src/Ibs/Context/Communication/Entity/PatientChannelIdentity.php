@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ibs\Context\Communication\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -25,14 +27,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['patient_channel_identity:read']],
     denormalizationContext: ['groups' => ['patient_channel_identity:write']],
 )]
+#[ApiFilter(SearchFilter::class, properties: ['patientId' => 'exact'])]
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
-#[ORM\Table(
-    name: 'patient_channel_identities',
-    uniqueConstraints: [
-        new ORM\UniqueConstraint(name: 'uniq_patient_channel_identity', columns: ['patient_id', 'channel_type'])
-    ]
-)]
+#[ORM\Table(name: 'patient_channel_identities')]
+#[ORM\UniqueConstraint(name: 'uniq_patient_channel_identity', columns: ['patient_id', 'channel_type'])]
 class PatientChannelIdentity
 {
     #[ORM\Id]
