@@ -14,6 +14,7 @@ use Ibs\Context\Communication\Repository\NotificationLogRepository;
 use Ibs\Context\Communication\Repository\NotificationTemplateRepository;
 use Ibs\Context\Communication\Repository\PatientChannelIdentityRepository;
 use Ibs\Context\Communication\Service\PatientContactResolver;
+use Ibs\Context\Communication\Service\ChannelInterface;
 use Ibs\Context\Communication\Service\ChannelRegistry;
 use Ibs\Context\Communication\Service\RetrySleeperInterface;
 use Ibs\Context\Communication\Service\Exception\ChannelNotFoundException;
@@ -81,6 +82,9 @@ class NotificationServiceTest extends TestCase
         return new PatientContactResolver($repository);
     }
 
+    /**
+     * @param iterable<ChannelInterface> $channels
+     */
     private function newService(
         iterable $channels,
         ?MessageBusInterface $messageBus = null,
@@ -135,7 +139,7 @@ class NotificationServiceTest extends TestCase
         self::assertCount(0, $sms->calls);
         self::assertCount(1, $this->savedLogs);
         self::assertSame('failed', $this->savedLogs[0]->getStatus());
-        self::assertStringContainsString('Address not configured for channel "sms".', $this->savedLogs[0]->getErrorMessage());
+        self::assertStringContainsString('Address not configured for channel "sms".', $this->savedLogs[0]->getErrorMessage() ?? '');
         self::assertNull($this->savedLogs[0]->getRecipientAddress());
     }
 
@@ -154,7 +158,7 @@ class NotificationServiceTest extends TestCase
         } finally {
             self::assertCount(0, $sms->calls);
             self::assertSame('failed', $this->savedLogs[0]->getStatus());
-            self::assertStringContainsString('Address not configured for channel "sms".', $this->savedLogs[0]->getErrorMessage());
+            self::assertStringContainsString('Address not configured for channel "sms".', $this->savedLogs[0]->getErrorMessage() ?? '');
         }
     }
 
@@ -481,7 +485,7 @@ class NotificationServiceTest extends TestCase
 
         self::assertCount(1, $this->savedLogs);
         self::assertSame('failed', $this->savedLogs[0]->getStatus());
-        self::assertStringContainsString('Channel "sms" is not registered.', $this->savedLogs[0]->getErrorMessage());
+        self::assertStringContainsString('Channel "sms" is not registered.', $this->savedLogs[0]->getErrorMessage() ?? '');
     }
 
     public function testGetHistoryForPatientDelegatesToRepository(): void

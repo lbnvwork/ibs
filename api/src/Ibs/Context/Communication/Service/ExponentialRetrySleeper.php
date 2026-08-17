@@ -12,6 +12,13 @@ final class ExponentialRetrySleeper implements RetrySleeperInterface
     /** @var array<int, int> задержки для каждого номера retry (0, 1, 2) */
     private const DELAY_SECONDS = [1, 5, 25];
 
+    private readonly mixed $sleepFunction;
+
+    public function __construct(?callable $sleepFunction = null)
+    {
+        $this->sleepFunction = $sleepFunction;
+    }
+
     public function wait(int $retryNumber): void
     {
         if (!isset(self::DELAY_SECONDS[$retryNumber])) {
@@ -20,6 +27,10 @@ final class ExponentialRetrySleeper implements RetrySleeperInterface
             );
         }
 
-        \usleep(self::DELAY_SECONDS[$retryNumber] * 1_000_000);
+        $microseconds = self::DELAY_SECONDS[$retryNumber] * 1_000_000;
+        $sleep = $this->sleepFunction ?? static function (int $usec): void {
+            \usleep($usec);
+        };
+        $sleep($microseconds);
     }
 }

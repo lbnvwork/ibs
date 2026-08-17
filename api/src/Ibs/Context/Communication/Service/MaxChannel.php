@@ -91,7 +91,8 @@ final class MaxChannel implements ChannelInterface
 
         $payload = $this->decodePayload($content);
         $externalId = $this->extractExternalId($payload);
-        $status = strtolower((string) ($payload['status'] ?? $payload['delivery_status'] ?? 'sent'));
+        $statusValue = $payload['status'] ?? $payload['delivery_status'] ?? null;
+        $status = \strtolower(\is_string($statusValue) ? $statusValue : 'sent');
 
         return \in_array($status, ['delivered', 'read'], true)
             ? SendResult::delivered($externalId)
@@ -135,7 +136,12 @@ final class MaxChannel implements ChannelInterface
             return [];
         }
 
-        return \is_array($payload) ? $payload : [];
+        if (!\is_array($payload)) {
+            return [];
+        }
+
+        /** @var array<string, mixed> $payload */
+        return $payload;
     }
 
     /**
@@ -144,8 +150,14 @@ final class MaxChannel implements ChannelInterface
     private function extractExternalId(array $payload): ?string
     {
         foreach (['external_id', 'message_id', 'id'] as $key) {
-            if (isset($payload[$key]) && '' !== (string) $payload[$key]) {
-                return (string) $payload[$key];
+            $value = $payload[$key] ?? null;
+
+            if (\is_string($value) && '' !== $value) {
+                return $value;
+            }
+
+            if (\is_int($value)) {
+                return (string) $value;
             }
         }
 
@@ -156,16 +168,19 @@ final class MaxChannel implements ChannelInterface
     {
         $payload = $this->decodePayload($content);
 
-        if (isset($payload['error']['message'])) {
-            return (string) $payload['error']['message'];
+        if (isset($payload['error']) && \is_array($payload['error'])) {
+            $message = $payload['error']['message'] ?? null;
+            if (\is_string($message) && '' !== $message) {
+                return $message;
+            }
         }
 
         if (isset($payload['error']) && \is_string($payload['error'])) {
-            return (string) $payload['error'];
+            return $payload['error'];
         }
 
-        if (isset($payload['message'])) {
-            return (string) $payload['message'];
+        if (isset($payload['message']) && \is_string($payload['message'])) {
+            return $payload['message'];
         }
 
         return \sprintf('MAX API returned HTTP %d.', $statusCode);
