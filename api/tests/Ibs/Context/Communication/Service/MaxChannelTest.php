@@ -44,6 +44,7 @@ class MaxChannelTest extends TestCase
         self::assertSame('sent', $result->status);
         self::assertSame('msg-123', $result->externalId);
 
+        self::assertNotNull($captured);
         self::assertSame('POST', $captured['method']);
         self::assertSame('/messages', parse_url($captured['url'], PHP_URL_PATH));
 
@@ -52,7 +53,9 @@ class MaxChannelTest extends TestCase
 
         $authorization = null;
         $contentType = null;
-        foreach ($captured['options']['headers'] as $key => $value) {
+        $headers = $captured['options']['headers'] ?? [];
+        self::assertIsArray($headers);
+        foreach ($headers as $key => $value) {
             if (is_string($key) && strcasecmp((string) $key, 'Authorization') === 0) {
                 $authorization = $value;
             } elseif (is_string($key) && strcasecmp((string) $key, 'Content-Type') === 0) {
@@ -72,11 +75,13 @@ class MaxChannelTest extends TestCase
             ? ($captured['options']['body'])()
             : ($captured['options']['body'] ?? '');
         self::assertIsString($payload);
+        /** @var array<string, mixed> $decodedBody */
         $decodedBody = json_decode($payload, true, flags: JSON_THROW_ON_ERROR);
-        self::assertSame('Здравствуйте, пациент!', $decodedBody['text'] ?? null);
+        $text = $decodedBody['text'] ?? null;
+        self::assertSame('Здравствуйте, пациент!', $text);
 
         // HTML-теги удалены перед отправкой.
-        self::assertStringNotContainsString('<b', $decodedBody['text']);
+        self::assertStringNotContainsString('<b', $text);
     }
 
     public function testDeliveredStatusIsReturnedAsDelivered(): void

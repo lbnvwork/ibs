@@ -1,0 +1,22 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    tmpDir: var/cache/phpstan
+
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+
+    # Идентификаторы сущностей присваиваются Doctrine (IDENTITY) после INSERT,
+    # что невидимо для статического анализа — поэтому для $id отключаем
+    # проверку «int нигде не присваивается».
+    ignoreErrors:
+        -
+            message: '#Property .+::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+
+    # Анализируем и тесты, чтобы рефакторинг/новые тесты тоже проверялись.
+    reportUnmatchedIgnoredErrors: false

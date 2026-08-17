@@ -11,13 +11,17 @@ use Ibs\Context\Communication\Model\NotificationMessage;
 use Ibs\Context\Communication\Model\Priority;
 use Ibs\Context\Communication\Model\Recipient;
 use Ibs\Context\Communication\Repository\NotificationLogRepository;
+use Ibs\Context\Communication\Service\ChannelInterface;
 use Ibs\Context\Communication\Service\ChannelRegistry;
 use Ibs\Context\Communication\Service\Exception\NotificationDeliveryException;
+use Ibs\Context\Communication\Service\MaxChannel;
 use Ibs\Context\Communication\Service\NotificationService;
 use Ibs\Context\Communication\Service\PatientContactResolver;
 use Ibs\Context\Communication\Service\RetrySleeperInterface;
 use Ibs\Context\Communication\Service\TemplateResolver;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 
 /**
  * Полный цикл отправки через NotificationService с реальным TemplateResolver/
@@ -58,6 +62,9 @@ class NotificationServiceIntegrationTest extends KernelTestCase
         $this->entityManager->flush();
     }
 
+    /**
+     * @param iterable<ChannelInterface> $channels
+     */
     private function service(iterable $channels, ?RetrySleeperInterface $retrySleeper = null): NotificationService
     {
         return new NotificationService(
@@ -150,7 +157,7 @@ class NotificationServiceIntegrationTest extends KernelTestCase
         $logs = $service->getHistoryForPatient(999003);
         self::assertCount(1, $logs);
         self::assertSame('failed', $logs[0]->getStatus());
-        self::assertStringContainsString('Address not configured for channel "sms".', $logs[0]->getErrorMessage());
+        self::assertStringContainsString('Address not configured for channel "sms".', $logs[0]->getErrorMessage() ?? '');
         self::assertNull($logs[0]->getRecipientAddress());
     }
 
@@ -288,5 +295,71 @@ class NotificationServiceIntegrationTest extends KernelTestCase
         $logs = $service->getHistoryForPatient(999010);
         self::assertCount(1, $logs);
         self::assertSame('failed', $logs[0]->getStatus());
+    }
+
+    public function testMaxChannelSendWritesMaxLogWithExternalId(): void
+    {
+        $this->addContact(999011, 'max', 'chat-42');
+
+        $httpClient = new MockHttpClient(
+            new MockResponse(
+                json_encode(['message_id' => 'max-123', 'status' => 'sent'], JSON_THROW_ON_ERROR),
+                ['http_code' => 200],
+            ),
+        );
+
+        $maxChannel = new MaxChannel($httpClient, 'https://platform-api.max.ru', 'test-token');
+        $service = $this->service([$maxChannel], new ImmediateRetrySleeper());
+
+        $recipient = new Recipient(patientId: 999011);
+        $message = new NotificationMessage(body: 'Напоминание о приёме');
+
+        $service->send($recipient, $message, ['max'], Priority::ROUTINE);
+
+        $logs = $service->getHistoryForPatient(999011);
+        self::assertCount(1, $logs);
+        self::assertSame('max', $logs[0]->getChannelType());
+        self::assertSame('sent', $logs[0]->getStatus());
+        self::assertSame('max-123', $logs[0]->getExternalId());
+        self::assertSame('chat-42', $logs[0]->getRecipientAddress());
+    }
+
+    public function testMaxChannelIntegrationWithNotificationService(): void
+    {
+        $this->addContact(999011, 'max', 'chat-999011');
+
+        $captured = null;
+        $httpClient = new MockHttpClient(
+            static function (string $method, string $url, array $options = []) use (&$captured): MockResponse {
+                $captured = ['method' => $method, 'url' => $url];
+
+                return new MockResponse(
+                    json_encode(['message_id' => 'max-msg-123', 'status' => 'sent'], JSON_THROW_ON_ERROR),
+                    ['http_code' => 200],
+                );
+            },
+        );
+
+        $maxChannel = new MaxChannel($httpClient, 'https://platform-api.max.ru', 'test-token');
+        $service = $this->service([$maxChannel]);
+
+        $recipient = new Recipient(patientId: 999011);
+        $message = new NotificationMessage(body: 'Напоминание о приёме');
+
+        $service->send($recipient, $message, ['max'], Priority::ROUTINE);
+
+        // Реальный MaxChannel отправил POST на /messages с нужным chat_id.
+        self::assertNotNull($captured);
+        self::assertSame('POST', $captured['method']);
+        self::assertSame('/messages', parse_url($captured['url'], PHP_URL_PATH));
+        parse_str((string) parse_url($captured['url'], PHP_URL_QUERY), $query);
+        self::assertSame('chat-999011', $query['chat_id'] ?? null);
+
+        $logs = $service->getHistoryForPatient(999011);
+        self::assertCount(1, $logs);
+        self::assertSame('sent', $logs[0]->getStatus());
+        self::assertSame('max', $logs[0]->getChannelType());
+        self::assertSame('max-msg-123', $logs[0]->getExternalId());
+        self::assertSame('chat-999011', $logs[0]->getRecipientAddress());
     }
 }
