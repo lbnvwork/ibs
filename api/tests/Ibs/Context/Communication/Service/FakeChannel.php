@@ -15,18 +15,24 @@ use Ibs\Context\Communication\Service\ChannelInterface;
  */
 final class FakeChannel implements ChannelInterface
 {
-    /** @var array<int, array{recipient: Recipient, message: NotificationMessage}> */
+    /** @var array<int, array{recipient: Recipient, address: string, message: NotificationMessage}> */
     public array $calls = [];
 
+    /** @var SendResult[] */
+    private array $results = [];
+
+    private int $resultIndex = 0;
+
     private ?\Throwable $throws = null;
-    private SendResult $result;
 
     public function __construct(
         private readonly string $channelType,
         ?SendResult $result = null,
         private bool $available = true,
     ) {
-        $this->result = $result ?? SendResult::success();
+        if (null !== $result) {
+            $this->results[] = $result;
+        }
     }
 
     public static function succeeding(string $channelType): self
@@ -34,14 +40,32 @@ final class FakeChannel implements ChannelInterface
         return new self($channelType, SendResult::success());
     }
 
+    public static function succeedingWithExternalId(string $channelType, string $externalId): self
+    {
+        return new self($channelType, SendResult::success(externalId: $externalId));
+    }
+
     public static function failing(string $channelType, string $errorMessage): self
     {
         return new self($channelType, SendResult::failure($errorMessage));
     }
 
+    public static function failingRetryable(string $channelType, string $errorMessage): self
+    {
+        return new self($channelType, SendResult::failure($errorMessage, retryable: true));
+    }
+
     public static function unavailable(string $channelType): self
     {
         return new self($channelType, available: false);
+    }
+
+    public function withResults(SendResult ...$results): self
+    {
+        $this->results = $results;
+        $this->resultIndex = 0;
+
+        return $this;
     }
 
     public function throwing(\Throwable $exception): self
@@ -50,15 +74,22 @@ final class FakeChannel implements ChannelInterface
         return $this;
     }
 
-    public function send(Recipient $recipient, NotificationMessage $message): SendResult
+    public function send(Recipient $recipient, string $address, NotificationMessage $message): SendResult
     {
-        $this->calls[] = ['recipient' => $recipient, 'message' => $message];
+        $this->calls[] = ['recipient' => $recipient, 'address' => $address, 'message' => $message];
 
         if (null !== $this->throws) {
             throw $this->throws;
         }
 
-        return $this->result;
+        if ([] === $this->results) {
+            return SendResult::success();
+        }
+
+        $index = $this->resultIndex;
+        $this->resultIndex++;
+
+        return $this->results[min($index, \count($this->results) - 1)];
     }
 
     public function isAvailable(): bool
