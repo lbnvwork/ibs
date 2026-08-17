@@ -14,7 +14,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * Адаптер отправки уведомлений через мессенджер MAX.
  *
  * POST https://platform-api.max.ru/messages
- *   query:  chat_id = Recipient::$maxUserId
+
+ *   query:  chat_id = $address
  *   headers: Authorization: Bearer {MAX_BOT_TOKEN}
  *            Content-Type: application/json
  *   body:   {"text": "<plain text, <= 4000 символов>"}
@@ -32,9 +33,10 @@ final class MaxChannel implements ChannelInterface
     ) {
     }
 
-    public function send(Recipient $recipient, NotificationMessage $message): SendResult
+    public function send(Recipient $recipient, string $address, NotificationMessage $message): SendResult
     {
-        $chatId = null !== $recipient->maxUserId ? trim($recipient->maxUserId) : '';
+        $chatId = trim($address);
+
         if ('' === $chatId) {
             return SendResult::failure('MAX chat_id is not configured for the recipient.');
         }

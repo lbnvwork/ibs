@@ -29,6 +29,7 @@ final class NotificationService
     public function __construct(
         private readonly ChannelRegistry $channels,
         private readonly TemplateResolver $templateResolver,
+        private readonly PatientContactResolver $contactResolver,
         private readonly NotificationLogRepository $logRepository,
         private readonly ?MessageBusInterface $messageBus = null,
         private readonly RetrySleeperInterface $retrySleeper = new ExponentialRetrySleeper(),
@@ -121,6 +122,16 @@ final class NotificationService
                     continue;
                 }
 
+                $address = $this->contactResolver->get($recipient->patientId, $channelType);
+                if (null === $address) {
+                    $error = \sprintf('Address not configured for channel "%s".', $channelType);
+                    $this->log($recipient, $channelType, $priority, $message->template, 'failed', $error, flush: false);
+                    if ($rethrow) {
+                        throw new NotificationDeliveryException($channelType, $error);
+                    }
+                    continue;
+                }
+
                 try {
                     $resolvedMessage = $this->templateResolver->resolve($message, $channelType);
                 } catch (\Throwable $exception) {
@@ -131,7 +142,7 @@ final class NotificationService
                     continue;
                 }
 
-                $result = $this->sendWithRetries($channel, $recipient, $resolvedMessage);
+                $result = $this->sendWithRetries($channel, $recipient, $address, $resolvedMessage);
 
                 $this->log(
                     $recipient,
@@ -141,6 +152,7 @@ final class NotificationService
                     $result->success ? $result->status : 'failed',
                     $result->errorMessage,
                     $result->externalId,
+                    $address,
                     flush: false,
                 );
 
@@ -161,9 +173,10 @@ final class NotificationService
     private function sendWithRetries(
         ChannelInterface $channel,
         Recipient $recipient,
+        string $address,
         NotificationMessage $message,
     ): SendResult {
-        $result = $this->attemptSend($channel, $recipient, $message);
+        $result = $this->attemptSend($channel, $recipient, $address, $message);
 
         for (
             $retryNumber = 0; 
@@ -171,7 +184,7 @@ final class NotificationService
             $retryNumber++
         ) {
             $this->retrySleeper->wait($retryNumber);
-            $result = $this->attemptSend($channel, $recipient, $message);
+            $result = $this->attemptSend($channel, $recipient, $address, $message);
         }
 
         return $result;
@@ -180,10 +193,11 @@ final class NotificationService
     private function attemptSend(
         ChannelInterface $channel,
         Recipient $recipient,
+        string $address,
         NotificationMessage $message,
     ): SendResult {
         try {
-            return $channel->send($recipient, $message);
+            return $channel->send($recipient, $address, $message);
         } catch (\Throwable $exception) {
             return SendResult::failure($exception->getMessage());
         }
@@ -197,13 +211,14 @@ final class NotificationService
         string $status,
         ?string $errorMessage,
         ?string $externalId = null,
+        ?string $recipientAddress = null,
         bool $flush = true,
     ): void {
         $log = (new NotificationLog())
             ->setPatientId($recipient->patientId)
             ->setTreatmentId($recipient->treatmentId)
             ->setChannelType($channelType)
-            ->setRecipientAddress(null !== $channelType ? $recipient->addressFor($channelType) : null)
+            ->setRecipientAddress($recipientAddress)
             ->setPriority($priority->value)
             ->setTemplateCode($templateCode)
             ->setStatus($status)
