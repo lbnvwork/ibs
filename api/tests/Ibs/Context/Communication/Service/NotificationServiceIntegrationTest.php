@@ -308,7 +308,7 @@ class NotificationServiceIntegrationTest extends KernelTestCase
             ),
         );
 
-        $maxChannel = new MaxChannel($httpClient, 'https://platform-api.max.ru', 'test-token');
+        $maxChannel = new MaxChannel($httpClient, 'https://platform-api2.max.ru', 'test-token');
         $service = $this->service([$maxChannel], new ImmediateRetrySleeper());
 
         $recipient = new Recipient(patientId: 999011);
@@ -340,7 +340,7 @@ class NotificationServiceIntegrationTest extends KernelTestCase
             },
         );
 
-        $maxChannel = new MaxChannel($httpClient, 'https://platform-api.max.ru', 'test-token');
+        $maxChannel = new MaxChannel($httpClient, 'https://platform-api2.max.ru', 'test-token');
         $service = $this->service([$maxChannel]);
 
         $recipient = new Recipient(patientId: 999011);

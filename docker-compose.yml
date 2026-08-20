@@ -13,6 +13,8 @@ services:
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
       CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN}
+      MAX_API_URL: ${MAX_API_URL}
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN}
       COMPOSER_ALLOW_SUPERUSER: 1
     depends_on:
       db:
@@ -40,6 +42,8 @@ services:
       APP_DEBUG: ${APP_DEBUG}
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
+      MAX_API_URL: ${MAX_API_URL}
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN}
     depends_on:
       db:
         condition: service_healthy

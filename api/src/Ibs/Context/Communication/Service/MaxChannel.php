@@ -13,12 +13,16 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * Адаптер отправки уведомлений через мессенджер MAX.
  *
- * POST https://platform-api.max.ru/messages
-
+ * POST https://platform-api2.max.ru/messages
+ *
  *   query:  chat_id = $address
- *   headers: Authorization: Bearer {MAX_BOT_TOKEN}
+ *   headers: Authorization: {MAX_BOT_TOKEN}
  *            Content-Type: application/json
  *   body:   {"text": "<plain text, <= 4000 символов>"}
+ *
+ * Ответ (200) — объект Message (sender, recipient, timestamp, body, link, stat,
+ * url). Идентификатор сообщения и статус доставки в ответе не возвращаются,
+ * поэтому externalId остаётся null, а успех трактуется как 'sent'.
  */
 final class MaxChannel implements ChannelInterface
 {
@@ -26,12 +30,20 @@ final class MaxChannel implements ChannelInterface
 
     private const MAX_TEXT_LENGTH = 4000;
 
+    /**
+     * MAX ограничивает частоту отправки: не более 2 сообщений в секунду
+     * в один диалог/чат/канал. Минимальный интервал между запросами.
+     */
+    private const MIN_REQUEST_INTERVAL_SECONDS = 0.5;
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $maxApiUrl,
         private readonly string $maxBotToken,
     ) {
     }
+
+    private ?float $lastRequestAt = null;
 
     public function send(Recipient $recipient, string $address, NotificationMessage $message): SendResult
     {
@@ -44,6 +56,7 @@ final class MaxChannel implements ChannelInterface
         $text = trim($message->body);
         $text = $this->stripHtml($text);
         $this->assertValidText($text);
+        $this->throttle();
 
         try {
             $response = $this->httpClient->request(
@@ -52,7 +65,7 @@ final class MaxChannel implements ChannelInterface
                 [
                     'query' => ['chat_id' => $chatId],
                     'headers' => [
-                        'Authorization' => 'Bearer ' . $this->maxBotToken,
+                        'Authorization' => $this->maxBotToken,
                         'Content-Type' => 'application/json',
                     ],
                     'json' => ['text' => $text],
@@ -107,6 +120,19 @@ final class MaxChannel implements ChannelInterface
     public function getChannelType(): string
     {
         return self::CHANNEL_TYPE;
+    }
+
+    private function throttle(): void
+    {
+        if (null !== $this->lastRequestAt) {
+            $elapsed = microtime(true) - $this->lastRequestAt;
+            $remaining = self::MIN_REQUEST_INTERVAL_SECONDS - $elapsed;
+            if ($remaining > 0) {
+                usleep((int) ($remaining * 1_000_000));
+            }
+        }
+
+        $this->lastRequestAt = microtime(true);
     }
 
     private function stripHtml(string $text): string
