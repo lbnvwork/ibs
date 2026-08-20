@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Ibs\Context\Communication\Command;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Ibs\Context\Communication\Entity\PatientChannelIdentity;
-use Ibs\Context\Communication\Repository\PatientChannelIdentityRepository;
 use Ibs\Context\Communication\Service\MaxUpdatePoller;
+use Ibs\Context\Communication\Service\MaxUpdateProcessor;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -31,11 +30,18 @@ final class CollectMaxContactsCommand extends Command
 
     public function __construct(
         private readonly MaxUpdatePoller $poller,
-        private readonly PatientChannelIdentityRepository $identities,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly MaxUpdateProcessor $processor,
         private readonly string $projectDir,
     ) {
         parent::__construct();
+    }
+
+    protected function configure(): void
+    {
+        $this
+            ->addOption('timeout', null, InputOption::VALUE_REQUIRED, 'Таймаут Long Polling (секунд).', 1)
+            ->addOption('loop', null, InputOption::VALUE_NONE, 'Работать непрерывно (бесконечный цикл опроса).')
+            ->addOption('max-iterations', null, InputOption::VALUE_REQUIRED, 'Максимум итераций в режиме --loop (0 = бесконечно).', 0);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -46,8 +52,44 @@ final class CollectMaxContactsCommand extends Command
             return Command::FAILURE;
         }
 
+        $timeout = $this->resolveNonNegativeInt($input, $output, 'timeout');
+        if (null === $timeout) {
+            return Command::INVALID;
+        }
+
+        $maxIterations = $this->resolveNonNegativeInt($input, $output, 'max-iterations');
+        if (null === $maxIterations) {
+            return Command::INVALID;
+        }
+
+        $loop = (bool) $input->getOption('loop');
+
+        $iterations = 0;
+        $status = Command::SUCCESS;
+
+        while (true) {
+            $status = $this->pollOnce($output, $timeout);
+            $iterations++;
+
+            if (!$loop) {
+                break;
+            }
+
+            if ($maxIterations > 0 && $iterations >= $maxIterations) {
+                break;
+            }
+
+            // Пауза между опросами; сам GET /updates блокируется до timeout.
+            usleep(1_000_000);
+        }
+
+        return $status;
+    }
+
+    private function pollOnce(OutputInterface $output, int $timeout): int
+    {
         $marker = $this->readMarker();
-        $result = $this->poller->fetch($marker, types: ['bot_started'], limit: 100, timeout: 1);
+        $result = $this->poller->fetch($marker, types: ['bot_started'], limit: 100, timeout: $timeout);
 
         $saved = 0;
         foreach ($result['updates'] as $update) {
@@ -55,25 +97,19 @@ final class CollectMaxContactsCommand extends Command
                 continue;
             }
 
-            $chatId = $update['chat_id'] ?? null;
-            $payload = $update['payload'] ?? null;
-
-            if (!\is_string($chatId) && !\is_int($chatId)) {
-                continue;
+            $contact = $this->processor->process($update);
+            if (null !== $contact) {
+                $saved++;
+                $output->writeln(sprintf(
+                    'Сохранён контакт: patient_id=%d, chat_id=%s',
+                    $contact['patientId'],
+                    $contact['chatId'],
+                ));
             }
-            $chatId = (string) $chatId;
-
-            if (!\is_string($payload) || !\is_numeric($payload)) {
-                continue;
-            }
-
-            $this->upsertContact((int) $payload, $chatId);
-            $saved++;
-            $output->writeln(sprintf('Сохранён контакт: patient_id=%s, chat_id=%s', $payload, $chatId));
         }
 
         if ($saved > 0) {
-            $this->entityManager->flush();
+            $this->processor->flush();
         }
 
         if (null !== $result['marker'] && '' !== $result['marker']) {
@@ -89,21 +125,24 @@ final class CollectMaxContactsCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function upsertContact(int $patientId, string $chatId): void
+    private function resolveNonNegativeInt(InputInterface $input, OutputInterface $output, string $name): ?int
     {
-        $identity = $this->identities->findOneByPatientAndChannel($patientId, 'max');
+        $value = $input->getOption($name);
 
-        if (null === $identity) {
-            $identity = (new PatientChannelIdentity())
-                ->setPatientId($patientId)
-                ->setChannelType('max')
-                ->setValue($chatId);
-            $this->entityManager->persist($identity);
+        if (!\is_numeric($value)) {
+            $output->writeln(sprintf('<error>Опция --%s должна быть целым числом.</error>', $name));
 
-            return;
+            return null;
         }
 
-        $identity->setValue($chatId);
+        $number = (int) $value;
+        if ($number < 0) {
+            $output->writeln(sprintf('<error>Опция --%s должна быть неотрицательной.</error>', $name));
+
+            return null;
+        }
+
+        return $number;
     }
 
     private function markerFile(): string

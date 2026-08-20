@@ -9,6 +9,7 @@ use Ibs\Context\Communication\Command\CollectMaxContactsCommand;
 use Ibs\Context\Communication\Entity\PatientChannelIdentity;
 use Ibs\Context\Communication\Repository\PatientChannelIdentityRepository;
 use Ibs\Context\Communication\Service\MaxUpdatePoller;
+use Ibs\Context\Communication\Service\MaxUpdateProcessor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -74,7 +75,8 @@ class CollectMaxContactsCommandTest extends TestCase
         );
 
         $poller = new MaxUpdatePoller($httpClient, 'https://platform-api2.max.ru', 'test-token');
-        $command = new CollectMaxContactsCommand($poller, $identities, $entityManager, $this->tempDir);
+        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
 
         return new CommandTester($command);
     }
@@ -167,12 +169,83 @@ class CollectMaxContactsCommandTest extends TestCase
         $identities = $this->createStub(PatientChannelIdentityRepository::class);
         $entityManager = $this->createStub(EntityManagerInterface::class);
 
-        $command = new CollectMaxContactsCommand($poller, $identities, $entityManager, $this->tempDir);
+        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
 
         self::assertSame(Command::FAILURE, $exitCode);
         self::assertStringContainsString('MAX не настроен', $tester->getDisplay());
+    }
+
+    public function testTimeoutOptionIsPassedToPoller(): void
+    {
+        $capturedUrl = null;
+        $httpClient = new MockHttpClient(
+            static function (string $method, string $url, array $options = []) use (&$capturedUrl): MockResponse {
+                $capturedUrl = $url;
+
+                return new MockResponse(
+                    json_encode(['updates' => [], 'marker' => null], JSON_THROW_ON_ERROR),
+                    ['http_code' => 200],
+                );
+            },
+        );
+
+        $identities = $this->createStub(PatientChannelIdentityRepository::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        $poller = new MaxUpdatePoller($httpClient, 'https://platform-api2.max.ru', 'test-token');
+        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
+        $tester = new CommandTester($command);
+
+        $tester->execute(['--timeout' => '42']);
+
+        self::assertNotNull($capturedUrl);
+        parse_str((string) parse_url($capturedUrl, PHP_URL_QUERY), $query);
+        self::assertSame('42', $query['timeout'] ?? null);
+    }
+
+    public function testLoopWithMaxIterationsPollsOnce(): void
+    {
+        $calls = 0;
+        $httpClient = new MockHttpClient(
+            static function (string $method, string $url, array $options = []) use (&$calls): MockResponse {
+                $calls++;
+
+                return new MockResponse(
+                    json_encode(['updates' => [], 'marker' => null], JSON_THROW_ON_ERROR),
+                    ['http_code' => 200],
+                );
+            },
+        );
+
+        $identities = $this->createStub(PatientChannelIdentityRepository::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        $poller = new MaxUpdatePoller($httpClient, 'https://platform-api2.max.ru', 'test-token');
+        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['--loop' => true, '--max-iterations' => '1']);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertSame(1, $calls);
+    }
+
+    public function testInvalidTimeoutReturnsInvalid(): void
+    {
+        $identities = $this->createStub(PatientChannelIdentityRepository::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        $poller = new MaxUpdatePoller(new MockHttpClient(), 'https://platform-api2.max.ru', 'test-token');
+        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['--timeout' => 'abc']);
+
+        self::assertSame(Command::INVALID, $exitCode);
+        self::assertStringContainsString('timeout', $tester->getDisplay());
     }
 }
