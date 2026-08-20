@@ -15,7 +15,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MaxChannelTest extends TestCase
 {
-    private const API_URL = 'https://platform-api.max.ru';
+    private const API_URL = 'https://platform-api2.max.ru';
 
     private const BOT_TOKEN = 'test-token';
 
@@ -67,7 +67,7 @@ class MaxChannelTest extends TestCase
             }
         }
 
-        self::assertSame('Bearer test-token', $authorization);
+        self::assertSame('test-token', $authorization);
         self::assertSame('application/json', $contentType);
         self::assertSame(10.0, $captured['options']['timeout']);
 
