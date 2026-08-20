@@ -12,7 +12,7 @@
 
 | Файл | Назначение | Попадает в git? |
 |---|---|---|
-| `.env` (корень проекта) | Реальные `MAX_API_URL`, `MAX_BOT_TOKEN` | ❌ нет (в `.gitignore`) |
+| `.env` (корень проекта) | Реальные `MAX_API_URL`, `MAX_BOT_TOKEN`, `MAX_WEBHOOK_SECRET` | ❌ нет (в `.gitignore`) |
 | `.env.dist` (корень проекта) | Шаблон с плейсхолдерами для разработчиков | ✅ да |
 | `api/.env` | Общие настройки Symfony (БЕЗ секретов MAX) | ✅ да |
 | `api/.env.test` | Заглушки `MAX_API_URL=test` / `MAX_BOT_TOKEN=test` для тестов | ✅ да |
@@ -28,6 +28,7 @@
 
 MAX_API_URL=https://platform-api2.max.ru
 MAX_BOT_TOKEN=<реальный токен бота>
+MAX_WEBHOOK_SECRET=<секрет вебхука — задаётся на деплое>
 ```
 
 > ⚠️ **Важно про `MAX_API_URL`.** Это БАЗОВЫЙ URL API, к которому `MaxChannel`
@@ -80,7 +81,7 @@ docker compose exec php php bin/console app:communication:test-max <patient_id> 
 Пример:
 
 ```bash
-docker compose exec php php bin/console app:communication:test-max 999999 123456789 "Тестовое сообщение"
+docker compose exec php php bin/console app:communication:test-max 999011 42342534 "Тестовое уведомление"
 ```
 
 Что делает команда:
@@ -96,16 +97,16 @@ docker compose exec php php bin/console app:communication:test-max 999999 123456
 
 ```
 Отправка тестового MAX-уведомления:
-  patient_id: 999999
-  chat_id:    123456789
+  patient_id: 999011
+  chat_id:    42342534
   priority:   immediate
-  message:    Тестовое сообщение
+  message:    Тестовое уведомление
 
 Последняя запись NotificationLog:
   status:      sent
   channel:     max
-  external_id: max-msg-123
-  address:     123456789
+  external_id: -
+  address:     42342534
 ```
 
 Код возврата: `0` — успех (`sent`/`delivered`/`read`), `1` — ошибка.
@@ -116,6 +117,10 @@ docker compose exec php php bin/console app:communication:test-max 999999 123456
 > ~30 секунд. Критические ошибки (401/400) возвращаются сразу, без повторов.
 
 ## 4. Как получить chat_id (адрес получателя)
+
+Тестовый бот: **bloodcontrol** — ник `id463246156997_bot`, ссылка
+`https://max.ru/id463246156997_bot`, user_id `399549989`. В тестах уже получен
+`chat_id = 42342534` (диалог с пользователем «Максим»).
 
 `chat_id` — это ID диалога/чата/канала получателя в MAX. Бот узнаёт его из
 **входящих событий**, а не из настроек. Самый простой способ для теста:
@@ -142,104 +147,62 @@ curl "https://platform-api2.max.ru/updates?types=message_created" \
 
 ### Автоматический сбор контактов через диплинк
 
-Вместо ручного получения `chat_id` можно использовать диплинк и команду
-`app:communication:collect-max-contacts`:
+Вместо ручного получения `chat_id` можно выдавать пациенту диплинк — контакт
+сохранится автоматически. Примеры для тестового бота:
 
-1. Выдайте пациенту диплинк вида `https://max.ru/<ник_бота>?start=<patientId>`
-   (длина `payload` — до 128 символов).
-2. Пациент открывает бота — MAX присылает событие `bot_started` с
-   `payload = <patientId>` и `chat_id` диалога.
-3. Запустите команду (вручную или по расписанию/cron):
+```text
+https://max.ru/id463246156997_bot?start=999011    # пациент 999011
+https://max.ru/id463246156997_bot?start=<patientId>
+```
+
+1. Пациент открывает бота по диплинку — MAX присылает событие `bot_started`
+   с `payload = <patientId>` и `chat_id` диалога.
+2. Команда `app:communication:collect-max-contacts` опрашивает `GET /updates`
+   и сохраняет/обновляет контакт `PatientChannelIdentity`
+   (`channelType = "max"`, `value = chat_id`) для пациента `patientId`.
+3. Маркер последнего обработанного обновления хранится в файле
+   `var/max_updates_marker` (чтобы не обрабатывать события повторно).
+
+#### Контейнер-слушатель (Long Polling)
+
+Для непрерывного опроса в `docker-compose.yml` поднят сервис
+`max-updates-listener` (аналог `messenger-worker`). Он запускает команду в
+режиме `--loop` и сам держит Long Polling:
+
+```yaml
+command: sh -c "php bin/console app:communication:collect-max-contacts --loop --timeout=25 --env=prod"
+```
+
+Проверить его работу:
+
+```bash
+docker compose logs -f max-updates-listener
+```
+
+Одноразовый запуск для отладки:
 
 ```bash
 docker compose exec php php bin/console app:communication:collect-max-contacts
 ```
 
-Команда опрашивает `GET /updates` и сохраняет/обновляет контакт
-`PatientChannelIdentity` (`channelType = "max"`, `value = chat_id`) для пациента
-`patientId`. Маркер последнего обработанного обновления хранится в файле
-`var/max_updates_marker` (чтобы не обрабатывать одни и те же события повторно).
+#### Webhook (для production)
 
-## 5. Проверка через Postman
+MAX рекомендует в production использовать Webhook вместо Long Polling. Всё
+подготовлено, но **Webhook не активируется до деплоя** (нужен публичный
+HTTPS-URL на порту 443 с доверенным сертификатом):
 
-У API нет публичного HTTP-эндпоинта для запуска отправки уведомления (отправка
-инициируется внутренним кодом/очередью), поэтому через Postman проверяются:
-авторизация, создание контакта пациента и — опционально — сам API MAX напрямую.
+- эндпоинт `POST /api/max/webhook` (проверяет заголовок `X-Max-Bot-Api-Secret`);
+- секрет `MAX_WEBHOOK_SECRET` (в `.env`, `.env.dist`, `docker-compose`);
+- на деплое регистрируем подписку командой:
 
-Базовый адрес: `http://localhost:8081`.
-
-### 5.1. Получение JWT-токена
-
-`POST http://localhost:8081/api/login`
-
-Тело (JSON):
-
-```json
-{
-  "login": "ваш_логин",
-  "password": "ваш_пароль"
-}
+```bash
+docker compose exec php php bin/console app:communication:max-webhook-subscribe https://<домен>/api/max/webhook
 ```
 
-В ответе придёт `token` — его нужно подставлять в заголовок
-`Authorization: Bearer <token>` для всех защищённых запросов к `/api`.
+После активации Webhook Long Polling не работает (MAX разрешает только один
+механизм) — контейнер-слушатель можно отключить.
 
-### 5.2. Создание контакта пациента (канал MAX)
-
-`POST http://localhost:8081/api/patient_channel_identities`
-
-Заголовки:
-
-```
-Authorization: Bearer <token>
-Content-Type: application/json
-```
-
-Тело (JSON):
-
-```json
-{
-  "patientId": 999999,
-  "channelType": "max",
-  "value": "123456789"
-}
-```
-
-- `patientId` — любой целый ID пациента (в сущности это просто поле, без внешнего ключа).
-- `channelType` — `"max"` (тип канала).
-- `value` — `chat_id` получателя в MAX.
-
-Проверить список контактов пациента:
-
-`GET http://localhost:8081/api/patient_channel_identities?patientId=999999`
-
-### 5.3. Проверка самого API MAX напрямую (опционально)
-
-Чтобы отдельно убедиться, что токен и URL корректны, можно вызвать API MAX
-напрямую (обратите внимание: `chat_id` передаётся в query-строке):
-
-`POST https://platform-api2.max.ru/messages?chat_id=123456789`
-
-Заголовки:
-
-```
-Authorization: <MAX_BOT_TOKEN>
-Content-Type: application/json
-```
-
-Тело (JSON):
-
-```json
-{
-  "text": "Тестовое сообщение"
-}
-```
-
-> Наш `MaxChannel` отправляет `chat_id` в query-строке URL, а текст — в
-> JSON-теле `{"text": "..."}` (см. исходник `MaxChannel`). Это соответствует
-> документации MAX.
-
-## 6. Проверка результата в БД
+## 5. Проверка результата в БД
 
 Каждая попытка отправки фиксируется в таблице `notification_logs`. Проверить
 последнюю запись можно SQL-запросом:
@@ -255,7 +218,7 @@ docker compose exec db psql -U symfony -d symfony -c \
 - `status = failed` — смотрите `error_message`.
 - `external_id` — идентификатор сообщения, который вернул MAX.
 
-## 7. Возможные проблемы и их причины
+## 6. Возможные проблемы и их причины
 
 | Симптом | Вероятная причина |
 |---|---|
