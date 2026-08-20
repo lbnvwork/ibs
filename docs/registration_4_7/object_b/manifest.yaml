@@ -1,0 +1,126 @@
+object:
+  id: B
+  working_title: "Медицинская информационная система ведения терапии варфарином"
+  official_title: null
+  description: >
+    Медицинская информационная система ведения пациентов и терапии варфарином:
+    реестр пациентов и медицинского персонала, назначения и приёмы, история
+    анализов и диагнозов, управление лечением, коммуникации и разграничение
+    доступа, а также клиентская часть для работы врача.
+  focus:
+    - "Ведение пациентов и медицинского персонала"
+    - "Назначения, лечение и приёмы"
+    - "История анализов и диагнозов"
+    - "Коммуникации и разграничение доступа"
+    - "Клиентская часть для работы врача"
+
+application_data:
+  owner: null
+  authors: []
+  creation_date: null
+  contacts: null
+
+source:
+  include_extensions:
+    - ".php"
+    - ".js"
+    - ".vue"
+  exclude_patterns:
+    - "*.spec.js"
+    - "*.spec.jsx"
+    - "*.spec.ts"
+    - "*.spec.tsx"
+    - "*.test.js"
+    - "*.test.jsx"
+    - "*.test.ts"
+    - "*.test.tsx"
+    - "*.md"
+  backend:
+    - path: "api/src/Ibs/Context/PatientManagement"
+      type: directory
+    - path: "api/src/Ibs/Context/TreatmentTherapy"
+      type: directory
+    - path: "api/src/Ibs/Context/Communication"
+      type: directory
+    - path: "api/src/Ibs/Context/SecurityIdentity"
+      type: directory
+    - path: "api/src/Ibs/Shared"
+      type: directory
+  frontend:
+    - path: "frontend/src/modules/patientManagement"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/PatientCard"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/TreatmentCard"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/MedicalTable"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/AppointmentAdd"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/TestAddModal"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/RiskScale"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/CollapsibleSection"
+      type: directory
+    - path: "frontend/src/modules/shared/layout"
+      type: directory
+    - path: "frontend/src/modules/shared/stores"
+      type: directory
+    - path: "frontend/src/modules/shared/api/client.js"
+      type: file
+    - path: "frontend/src/modules/shared/api/patients.js"
+      type: file
+    - path: "frontend/src/modules/shared/api/treatments.js"
+      type: file
+    - path: "frontend/src/modules/shared/api/drug.js"
+      type: file
+    - path: "frontend/src/modules/shared/api/hospitals.js"
+      type: file
+    - path: "frontend/src/modules/shared/api/mkb10.js"
+      type: file
+    - path: "frontend/src/modules/shared/api/testHistory.js"
+      type: file
+
+printout:
+  target_max_pages: 65
+  format:
+    page_size: "A4"
+    orientation: "portrait"
+    margins:
+      top: "20 мм"
+      right: "20 мм"
+      bottom: "20 мм"
+      left: "25 мм"
+    font_size: "12 pt"
+    page_numbering:
+      start_from: 2
+      note: >
+        Первая страница (титульный лист) оформляется патентоведом и не входит
+        в распечатку исходного кода. Сквозная нумерация страниц распечатки
+        начинается с цифры 2.
+    line_wrap: true
+  selection:
+    strategy: fragments
+    priority:
+      - "**/Service/**"
+      - "**/State/**"
+      - "**/Resource/**"
+      - "**/Repository/**"
+      - "**/Filter/**"
+      - "**/Entity/Treatment.php"
+      - "**/Entity/Patient.php"
+      - "**/Entity/Appointment.php"
+      - "**/Entity/TestHistory.php"
+      - "**/Entity/User.php"
+      - "**/Entity/MedicalPersonnel.php"
+      - "**/Entity/Hospital.php"
+      - "**/Entity/Drug.php"
+      - "**/Entity/DrugGroup.php"
+      - "**/Entity/Mkb10.php"
+      - "**/stores/*.js"
+      - "**/components/**/*.script.js"
+      - "**/utils/*.js"
+      - "**/composables/*.js"
+      - "**/api/*.js"
+      - "**/Entity/**"

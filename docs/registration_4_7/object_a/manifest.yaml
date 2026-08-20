@@ -1,0 +1,85 @@
+object:
+  id: A
+  working_title: "Модуль поддержки принятия врачебных решений по дозированию варфарина"
+  official_title: null
+  description: >
+    Модуль поддержки принятия врачебных решений (CDSS), включающий расчёт
+    рекомендаций по дозированию варфарина на основе МНО и фармакогенетических
+    данных, а также работу с витальными показателями пациента.
+  focus:
+    - "Расчёт рекомендаций по дозированию варфарина"
+    - "Фармакогенетические факторы и генетические маркеры"
+    - "Витальные показатели пациента"
+
+application_data:
+  owner: null
+  authors: []
+  creation_date: null
+  contacts: null
+
+source:
+  include_extensions:
+    - ".php"
+    - ".js"
+    - ".vue"
+  exclude_patterns:
+    - "*.spec.js"
+    - "*.spec.jsx"
+    - "*.spec.ts"
+    - "*.spec.tsx"
+    - "*.test.js"
+    - "*.test.jsx"
+    - "*.test.ts"
+    - "*.test.tsx"
+    - "*.md"
+  backend:
+    - path: "api/src/Ibs/Context/AICDSS"
+      type: directory
+    - path: "api/src/Ibs/Context/LabIoTGateway"
+      type: directory
+  frontend:
+    - path: "frontend/src/modules/medicalHistory/components/Pharmacogenetics"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/MnoChart"
+      type: directory
+    - path: "frontend/src/modules/medicalHistory/components/VitalsCard"
+      type: directory
+    - path: "frontend/src/modules/shared/api/pharmacogenetics.js"
+      type: file
+    - path: "frontend/src/modules/shared/api/vitals.js"
+      type: file
+    - path: "frontend/src/modules/shared/utils/vitalsHelpers.js"
+      type: file
+
+printout:
+  target_max_pages: 65
+  format:
+    page_size: "A4"
+    orientation: "portrait"
+    margins:
+      top: "20 мм"
+      right: "20 мм"
+      bottom: "20 мм"
+      left: "25 мм"
+    font_size: "12 pt"
+    page_numbering:
+      start_from: 2
+      note: >
+        Первая страница (титульный лист) оформляется патентоведом и не входит
+        в распечатку исходного кода. Сквозная нумерация страниц распечатки
+        начинается с цифры 2.
+    line_wrap: true
+  selection:
+    strategy: all
+    priority:
+      - "**/Service/**"
+      - "**/State/**"
+      - "**/Resource/**"
+      - "**/Repository/**"
+      - "**/Filter/**"
+      - "**/Entity/**"
+      - "**/stores/*.js"
+      - "**/components/**/*.script.js"
+      - "**/utils/*.js"
+      - "**/composables/*.js"
+      - "**/api/*.js"
