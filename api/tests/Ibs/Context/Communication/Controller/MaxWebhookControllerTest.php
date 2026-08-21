@@ -6,6 +6,8 @@ namespace App\Tests\Ibs\Context\Communication\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ibs\Context\Communication\Controller\MaxWebhookController;
+use Ibs\Context\Communication\Entity\MaxDeepLink;
+use Ibs\Context\Communication\Repository\MaxDeepLinkRepository;
 use Ibs\Context\Communication\Repository\PatientChannelIdentityRepository;
 use Ibs\Context\Communication\Service\MaxUpdateProcessor;
 use PHPUnit\Framework\TestCase;
@@ -18,10 +20,19 @@ class MaxWebhookControllerTest extends TestCase
         string $secret,
         PatientChannelIdentityRepository $identities,
         EntityManagerInterface $entityManager,
+        ?MaxDeepLinkRepository $deeplinks = null,
     ): MaxWebhookController {
-        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $processor = new MaxUpdateProcessor($identities, $deeplinks ?? $this->stubDeeplinks(), $entityManager);
 
         return new MaxWebhookController($processor, $secret);
+    }
+
+    private function stubDeeplinks(): MaxDeepLinkRepository
+    {
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
+        $deeplinks->method('findByToken')->willReturn(new MaxDeepLink(999011, 'token-42'));
+
+        return $deeplinks;
     }
 
     private function request(string $secret, string $body): Request
@@ -44,7 +55,7 @@ class MaxWebhookControllerTest extends TestCase
         $controller = $this->controller('top-secret', $identities, $entityManager);
         $response = $controller->__invoke($this->request(
             'top-secret',
-            json_encode(['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => '999011'], JSON_THROW_ON_ERROR),
+            json_encode(['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => 'token-42'], JSON_THROW_ON_ERROR),
         ));
 
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
@@ -59,7 +70,7 @@ class MaxWebhookControllerTest extends TestCase
         $controller = $this->controller('top-secret', $identities, $entityManager);
         $response = $controller->__invoke($this->request(
             'wrong-secret',
-            json_encode(['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => '999011'], JSON_THROW_ON_ERROR),
+            json_encode(['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => 'token-42'], JSON_THROW_ON_ERROR),
         ));
 
         self::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());

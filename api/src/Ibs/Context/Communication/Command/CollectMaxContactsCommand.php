@@ -15,14 +15,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Опрашивает MAX GET /updates и автоматически сохраняет контакты пациентов.
  *
- * Сценарий: пациенту выдаётся диплинк `https://max.ru/<bot>?start=<patientId>`.
+ * Сценарий: пациенту выдаётся диплинк `https://max.ru/<bot>?start=<token>`.
  * Когда пациент открывает бота, MAX присылает событие `bot_started` с
- * `payload = <patientId>` и `chat_id` диалога. Команда сохраняет
- * PatientChannelIdentity (channelType = 'max', value = chat_id).
+ * `payload = <token>` и `chat_id` диалога. Токен резолвится в patientId через
+ * MaxDeepLinkRepository, после чего команда сохраняет PatientChannelIdentity
+ * (channelType = 'max', value = chat_id).
  */
 #[AsCommand(
     name: 'app:communication:collect-max-contacts',
-    description: 'Опрашивает MAX GET /updates и сохраняет chat_id контактов пациентов (диплинк payload = patientId).',
+    description: 'Опрашивает MAX GET /updates и сохраняет chat_id контактов пациентов (диплинк payload = токен).',
 )]
 final class CollectMaxContactsCommand extends Command
 {
