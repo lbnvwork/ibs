@@ -31,3 +31,17 @@ docker-compose.override.yml
 .env
 
 frontend/.env.production
+
+# Python (скрипты регистрации 4.7)
+.venv/
+__pycache__/
+*.pyc
+
+# Obsidian — локальное состояние UI (не коммитим)
+docs/.obsidian/workspace.json
+
+# Секреты и доступы — не в git
+docs/Доступы/
+
+# Локальная конфигурация агентов (Cline)
+.cline/
