@@ -16,6 +16,7 @@ services:
       MAX_API_URL: ${MAX_API_URL}
       MAX_BOT_TOKEN: ${MAX_BOT_TOKEN}
       MAX_WEBHOOK_SECRET: ${MAX_WEBHOOK_SECRET:-}
+      MAX_BOT_NICKNAME: ${MAX_BOT_NICKNAME:-}
       COMPOSER_ALLOW_SUPERUSER: 1
     depends_on:
       db:

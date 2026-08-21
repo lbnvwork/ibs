@@ -12,7 +12,7 @@
 
 | Файл | Назначение | Попадает в git? |
 |---|---|---|
-| `.env` (корень проекта) | Реальные `MAX_API_URL`, `MAX_BOT_TOKEN`, `MAX_WEBHOOK_SECRET` | ❌ нет (в `.gitignore`) |
+| `.env` (корень проекта) | Реальные `MAX_API_URL`, `MAX_BOT_TOKEN`, `MAX_WEBHOOK_SECRET`, `MAX_BOT_NICKNAME` | ❌ нет (в `.gitignore`) |
 | `.env.dist` (корень проекта) | Шаблон с плейсхолдерами для разработчиков | ✅ да |
 | `api/.env` | Общие настройки Symfony (БЕЗ секретов MAX) | ✅ да |
 | `api/.env.test` | Заглушки `MAX_API_URL=test` / `MAX_BOT_TOKEN=test` для тестов | ✅ да |
@@ -29,6 +29,7 @@
 MAX_API_URL=https://platform-api2.max.ru
 MAX_BOT_TOKEN=<реальный токен бота>
 MAX_WEBHOOK_SECRET=<секрет вебхука — задаётся на деплое>
+MAX_BOT_NICKNAME=<ник бота — из публичной ссылки max.ru/<ник>>
 ```
 
 > ⚠️ **Важно про `MAX_API_URL`.** Это БАЗОВЫЙ URL API, к которому `MaxChannel`
@@ -148,19 +149,39 @@ curl "https://platform-api2.max.ru/updates?types=message_created" \
 ### Автоматический сбор контактов через диплинк
 
 Вместо ручного получения `chat_id` можно выдавать пациенту диплинк — контакт
-сохранится автоматически. Примеры для тестового бота:
+сохранится автоматически. В диплинке передаётся **не** `patientId`, а случайный
+защищённый токен:
 
 ```text
-https://max.ru/id463246156997_bot?start=999011    # пациент 999011
-https://max.ru/id463246156997_bot?start=<patientId>
+https://max.ru/id463246156997_bot?start=<token>
 ```
 
-1. Пациент открывает бота по диплинку — MAX присылает событие `bot_started`
-   с `payload = <patientId>` и `chat_id` диалога.
-2. Команда `app:communication:collect-max-contacts` опрашивает `GET /updates`
-   и сохраняет/обновляет контакт `PatientChannelIdentity`
-   (`channelType = "max"`, `value = chat_id`) для пациента `patientId`.
-3. Маркер последнего обработанного обновления хранится в файле
+Токен генерируется на сервере (`bin2hex(random_bytes(16))` — 32 hex-символа) и
+хранится в таблице `max_deeplinks` (`patient_id`, `token`, `created_at`) с
+уникальными индексами на `patient_id` и `token`. Пациент видит только токен и
+никогда не узнаёт свой `patientId`, поэтому подобрать чужой диплинк перебором
+нельзя.
+
+Диплинк для пациента выдаёт эндпоинт `GET /api/patients/{id}/max-deeplink`
+(требует JWT-токен врача). Он возвращает готовую ссылку:
+
+```bash
+curl -H "Authorization: Bearer $JWT" https://<домен>/api/patients/999011/max-deeplink
+# → {"url": "https://max.ru/id463246156997_bot?start=<token>"}
+```
+
+Сценарий привязки:
+
+1. Врач через API получает диплинк и передаёт его пациенту.
+2. Пациент открывает бота по диплинку — MAX присылает событие `bot_started`
+   с `payload = <token>` (значение `start`) и `chat_id` диалога.
+3. Обработчик резолвит токен в `patientId` через
+   `MaxDeepLinkRepository::findByToken()`. Если токен не найден — событие
+   молча игнорируется.
+4. Команда `app:communication:collect-max-contacts` (Long Polling) или Webhook
+   сохраняют/обновляют контакт `PatientChannelIdentity`
+   (`channelType = "max"`, `value = chat_id`) для пациента из диплинка.
+5. Маркер последнего обработанного обновления хранится в файле
    `var/max_updates_marker` (чтобы не обрабатывать события повторно).
 
 #### Контейнер-слушатель (Long Polling)

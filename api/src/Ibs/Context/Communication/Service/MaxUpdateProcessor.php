@@ -6,6 +6,7 @@ namespace Ibs\Context\Communication\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ibs\Context\Communication\Entity\PatientChannelIdentity;
+use Ibs\Context\Communication\Repository\MaxDeepLinkRepository;
 use Ibs\Context\Communication\Repository\PatientChannelIdentityRepository;
 
 /**
@@ -18,6 +19,7 @@ final class MaxUpdateProcessor
 {
     public function __construct(
         private readonly PatientChannelIdentityRepository $identities,
+        private readonly MaxDeepLinkRepository $deeplinks,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -26,7 +28,9 @@ final class MaxUpdateProcessor
      * Обрабатывает объект Update из MAX.
      *
      * Сохраняет/обновляет PatientChannelIdentity (channelType = 'max',
-     * value = chat_id) для пациента из payload (диплинк ?start=<patientId>).
+     * value = chat_id) для пациента из payload — токена диплинка
+     * `?start=<token>`, который резолвится в patientId через
+     * MaxDeepLinkRepository::findByToken().
      *
      * @param array<mixed, mixed> $update
      *
@@ -44,11 +48,16 @@ final class MaxUpdateProcessor
         }
         $chatId = (string) $chatId;
 
-        if (!\is_string($payload) || !\is_numeric($payload)) {
+        if (!\is_string($payload) || '' === $payload) {
             return null;
         }
-        $patientId = (int) $payload;
 
+        $deeplink = $this->deeplinks->findByToken($payload);
+        if (null === $deeplink) {
+            return null;
+        }
+
+        $patientId = $deeplink->getPatientId();
         $this->upsertContact($patientId, $chatId);
 
         return ['patientId' => $patientId, 'chatId' => $chatId];

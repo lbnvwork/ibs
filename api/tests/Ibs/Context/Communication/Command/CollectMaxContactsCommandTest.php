@@ -6,7 +6,9 @@ namespace App\Tests\Ibs\Context\Communication\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ibs\Context\Communication\Command\CollectMaxContactsCommand;
+use Ibs\Context\Communication\Entity\MaxDeepLink;
 use Ibs\Context\Communication\Entity\PatientChannelIdentity;
+use Ibs\Context\Communication\Repository\MaxDeepLinkRepository;
 use Ibs\Context\Communication\Repository\PatientChannelIdentityRepository;
 use Ibs\Context\Communication\Service\MaxUpdatePoller;
 use Ibs\Context\Communication\Service\MaxUpdateProcessor;
@@ -66,6 +68,7 @@ class CollectMaxContactsCommandTest extends TestCase
         ?string $marker,
         PatientChannelIdentityRepository $identities,
         EntityManagerInterface $entityManager,
+        ?MaxDeepLinkRepository $deeplinks = null,
     ): CommandTester {
         $httpClient = new MockHttpClient(
             new MockResponse(
@@ -75,10 +78,18 @@ class CollectMaxContactsCommandTest extends TestCase
         );
 
         $poller = new MaxUpdatePoller($httpClient, 'https://platform-api2.max.ru', 'test-token');
-        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $processor = new MaxUpdateProcessor($identities, $deeplinks ?? $this->stubDeeplinks(), $entityManager);
         $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
 
         return new CommandTester($command);
+    }
+
+    private function stubDeeplinks(?MaxDeepLink $deeplink = null): MaxDeepLinkRepository
+    {
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
+        $deeplinks->method('findByToken')->willReturn($deeplink ?? new MaxDeepLink(999011, 'token-42'));
+
+        return $deeplinks;
     }
 
     public function testSavesContactFromBotStartedUpdate(): void
@@ -101,7 +112,7 @@ class CollectMaxContactsCommandTest extends TestCase
         $entityManager->expects(self::once())->method('flush');
 
         $tester = $this->tester(
-            [['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => '999011']],
+            [['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => 'token-42']],
             'marker-1',
             $identities,
             $entityManager,
@@ -115,20 +126,25 @@ class CollectMaxContactsCommandTest extends TestCase
         self::assertSame('marker-1', trim((string) file_get_contents($this->tempDir . '/var/max_updates_marker')));
     }
 
-    public function testSkipsUpdateWithoutNumericPayload(): void
+    public function testSkipsUpdateWithUnknownToken(): void
     {
         $identities = $this->createStub(PatientChannelIdentityRepository::class);
+
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
+        $deeplinks->method('findByToken')->willReturn(null);
+
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects(self::never())->method('persist');
 
         $tester = $this->tester(
             [
-                ['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => 'not-a-number'],
+                ['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => 'unknown'],
                 ['update_type' => 'message_created', 'chat_id' => 'chat-43'],
             ],
             'marker-2',
             $identities,
             $entityManager,
+            $deeplinks,
         );
 
         $exitCode = $tester->execute([]);
@@ -152,7 +168,7 @@ class CollectMaxContactsCommandTest extends TestCase
         $entityManager->expects(self::once())->method('flush');
 
         $tester = $this->tester(
-            [['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => '999011']],
+            [['update_type' => 'bot_started', 'chat_id' => 'chat-42', 'payload' => 'token-42']],
             'marker-3',
             $identities,
             $entityManager,
@@ -168,8 +184,9 @@ class CollectMaxContactsCommandTest extends TestCase
         $poller = new MaxUpdatePoller(new MockHttpClient(), '', '');
         $identities = $this->createStub(PatientChannelIdentityRepository::class);
         $entityManager = $this->createStub(EntityManagerInterface::class);
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
 
-        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $processor = new MaxUpdateProcessor($identities, $deeplinks, $entityManager);
         $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
         $tester = new CommandTester($command);
 
@@ -195,8 +212,9 @@ class CollectMaxContactsCommandTest extends TestCase
 
         $identities = $this->createStub(PatientChannelIdentityRepository::class);
         $entityManager = $this->createStub(EntityManagerInterface::class);
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
         $poller = new MaxUpdatePoller($httpClient, 'https://platform-api2.max.ru', 'test-token');
-        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $processor = new MaxUpdateProcessor($identities, $deeplinks, $entityManager);
         $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
         $tester = new CommandTester($command);
 
@@ -223,8 +241,9 @@ class CollectMaxContactsCommandTest extends TestCase
 
         $identities = $this->createStub(PatientChannelIdentityRepository::class);
         $entityManager = $this->createStub(EntityManagerInterface::class);
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
         $poller = new MaxUpdatePoller($httpClient, 'https://platform-api2.max.ru', 'test-token');
-        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $processor = new MaxUpdateProcessor($identities, $deeplinks, $entityManager);
         $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
         $tester = new CommandTester($command);
 
@@ -238,8 +257,9 @@ class CollectMaxContactsCommandTest extends TestCase
     {
         $identities = $this->createStub(PatientChannelIdentityRepository::class);
         $entityManager = $this->createStub(EntityManagerInterface::class);
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
         $poller = new MaxUpdatePoller(new MockHttpClient(), 'https://platform-api2.max.ru', 'test-token');
-        $processor = new MaxUpdateProcessor($identities, $entityManager);
+        $processor = new MaxUpdateProcessor($identities, $deeplinks, $entityManager);
         $command = new CollectMaxContactsCommand($poller, $processor, $this->tempDir);
         $tester = new CommandTester($command);
 
