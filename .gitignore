@@ -37,10 +37,8 @@ frontend/.env.production
 __pycache__/
 *.pyc
 
-# Obsidian — локальное состояние и персональные настройки UI (не коммитим)
-docs/.obsidian/workspace.json
-docs/.obsidian/app.json
-docs/.obsidian/appearance.json
+# Obsidian — конфигурация хранилища (локальная, не коммитим)
+docs/.obsidian/
 
 # Секреты и доступы — не в git
 docs/09-Служебное/Доступы/
