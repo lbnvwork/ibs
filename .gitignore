@@ -43,7 +43,7 @@ docs/.obsidian/app.json
 docs/.obsidian/appearance.json
 
 # Секреты и доступы — не в git
-docs/Доступы/
+docs/09-Служебное/Доступы/
 
 # Локальная конфигурация агентов (Cline)
 .cline/
