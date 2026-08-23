@@ -71,4 +71,4 @@ docker compose exec db psql -U symfony -d symfony -c \
 - `MAX_ENV` из раннего плана в реализации не используется — фактически работают `MAX_WEBHOOK_SECRET` (webhook) и `MAX_BOT_NICKNAME` (диплинк).
 - MAX не возвращает id сообщения в ответе на `POST /messages` → `external_id=null`, успех трактуется как `sent`.
 - HTTPS к MAX — по цепочке сертификатов Минцифры (`Russian Trusted Root CA` → `Russian Trusted Sub CA`), они уже добавлены в образ при сборке.
-- Подробное руководство по тестированию: `docs/max-integration-testing.md`.
+- Подробное руководство по тестированию: `docs/06-DevOps/Инструкции/Тестирование интеграции с MAX.md` (INS-004).
