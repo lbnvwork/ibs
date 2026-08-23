@@ -44,4 +44,6 @@ docs/.obsidian/
 docs/09-Служебное/Доступы/
 
 # Локальная конфигурация агентов (Cline)
-.cline/
+.cline/*
+!.cline/skills/
+.clinerules/00-role.md
