@@ -1,0 +1,4 @@
+# Не тянем локальные артефакты и зависимости в build-контекст
+node_modules
+test-results
+playwright-report

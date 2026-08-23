@@ -47,3 +47,8 @@ docs/09-Служебное/Доступы/
 .cline/*
 !.cline/skills/
 .clinerules/00-role.md
+
+# Playwright E2E (зависимости и артефакты — не в git)
+tests/e2e/node_modules/
+tests/e2e/test-results/
+tests/e2e/playwright-report/
