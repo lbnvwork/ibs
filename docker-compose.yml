@@ -101,9 +101,27 @@ services:
       - default
     restart: unless-stopped
 
+  # E2E-стенд (Playwright). Запускается по требованию:
+  #   docker compose run --rm e2e npx playwright test
+  # Имя образа формируется автоматически: ${COMPOSE_PROJECT_NAME}-e2e.
+  e2e:
+    build: ./tests/e2e
+    container_name: ibs-e2e
+    working_dir: /e2e
+    volumes:
+      - ./tests/e2e:/e2e
+      - e2e_node_modules:/e2e/node_modules
+    networks:
+      - default
+    # Chromium в Docker требует общего IPC, иначе возможны падения по памяти.
+    ipc: host
+    command: npx playwright test
+    restart: "no"
+
 volumes:
   db_data:
   frontend_dist:
+  e2e_node_modules:
 
 networks:
   default:
