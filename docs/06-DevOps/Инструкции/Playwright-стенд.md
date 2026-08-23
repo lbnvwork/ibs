@@ -39,5 +39,6 @@ author: ibs-devops-jul
 - [ ] `tests/e2e/test-results/` содержит `trace.zip` и скриншоты
 
 ## Примечания
+- Сервис `e2e` — в профиле `e2e`: `docker compose up` его не стартует; тесты гоняются только по требованию (`docker compose run --rm e2e ...`).
 - Версия `@playwright/test` (`tests/e2e/package.json`) обязана совпадать с версией браузеров в `tests/e2e/Dockerfile` (`FROM mcr.microsoft.com/playwright:v1.62.0-noble`).
 - После смены зависимостей пересобери образ: `docker compose build e2e`; для сброса закешированного volume — `docker compose down -v` (volume `e2e_node_modules`).

@@ -106,6 +106,8 @@ services:
   # Имя образа формируется автоматически: ${COMPOSE_PROJECT_NAME}-e2e.
   e2e:
     build: ./tests/e2e
+    # Профиль: `docker compose up` не стартует e2e — тесты гоняются по требованию.
+    profiles: ["e2e"]
     container_name: ibs-e2e
     working_dir: /e2e
     volumes:
