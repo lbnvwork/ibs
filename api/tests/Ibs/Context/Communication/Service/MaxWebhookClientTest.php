@@ -49,7 +49,20 @@ class MaxWebhookClientTest extends TestCase
 
         $client = new MaxWebhookClient($httpClient, 'https://platform-api2.max.ru', 'test-token');
 
-        self::assertSame(['subscriptions' => []], $client->list());
+        self::assertSame(['subscriptions' => [], 'success' => true], $client->list());
+    }
+
+    public function testSubscribeReturnsFailureOnHttpError(): void
+    {
+        $httpClient = new MockHttpClient(
+            new MockResponse('{"error":"bad request"}', ['http_code' => 400]),
+        );
+
+        $client = new MaxWebhookClient($httpClient, 'https://platform-api2.max.ru', 'test-token');
+        $result = $client->subscribe('https://example.com/api/max/webhook', ['bot_started'], 'secret');
+
+        self::assertFalse($result['success'] ?? null);
+        self::assertSame('MAX API returned HTTP 400.', $result['message'] ?? null);
     }
 
     public function testSubscribeReturnsFailureWhenNotConfigured(): void

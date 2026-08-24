@@ -96,6 +96,21 @@ class MaxUpdateProcessorTest extends TestCase
         self::assertSame(['patientId' => 999011, 'chatId' => 'chat-42'], $result);
     }
 
+    public function testProcessSkipsEmptyChatId(): void
+    {
+        $identities = $this->createStub(PatientChannelIdentityRepository::class);
+        $deeplinks = $this->createStub(MaxDeepLinkRepository::class);
+        $deeplinks->method('findByToken')->willReturn(new MaxDeepLink(999011, 'token-42'));
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::never())->method('persist');
+
+        $processor = $this->processor($identities, $deeplinks, $entityManager);
+
+        self::assertNull($processor->process(['chat_id' => '', 'payload' => 'token-42']));
+        self::assertNull($processor->process(['chat_id' => '   ', 'payload' => 'token-42']));
+    }
+
     public function testProcessAcceptsIntChatId(): void
     {
         $identities = $this->createStub(PatientChannelIdentityRepository::class);

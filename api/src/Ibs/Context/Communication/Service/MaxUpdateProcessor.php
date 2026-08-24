@@ -48,6 +48,11 @@ final class MaxUpdateProcessor
         }
         $chatId = (string) $chatId;
 
+        // Не сохраняем пустой chat_id — иначе в patient_channel_identities попадёт пустой контакт.
+        if ('' === trim($chatId)) {
+            return null;
+        }
+
         if (!\is_string($payload) || '' === $payload) {
             return null;
         }

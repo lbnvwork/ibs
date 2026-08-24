@@ -47,13 +47,14 @@ class PatientChannelIdentity
 
     #[Assert\NotBlank(message: 'patient_channel_identity.channel_type.not_blank')]
     #[Assert\Length(max: 32, maxMessage: 'patient_channel_identity.channel_type.length')]
+    #[Assert\Choice(choices: ['sms', 'email', 'push', 'max'], message: 'patient_channel_identity.channel_type.choice')]
     #[ORM\Column(type: 'string', length: 32, nullable: false)]
     #[Groups(['patient_channel_identity:read', 'patient_channel_identity:write'])]
     private string $channelType;
 
     #[Assert\NotBlank(message: 'patient_channel_identity.value.not_blank')]
     #[Assert\Length(max: 255, maxMessage: 'patient_channel_identity.value.length')]
-    #[Assert\Regex(pattern: '/^[^\s]+$/', message: 'patient_channel_identity.value.regex')]
+    #[Assert\Regex(pattern: '/^[^\s<>]+$/', message: 'patient_channel_identity.value.regex')]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     #[Groups(['patient_channel_identity:read', 'patient_channel_identity:write'])]
     private string $value;

@@ -65,18 +65,26 @@ final class MaxWebhookClient
 
         try {
             $response = $this->httpClient->request($method, rtrim($this->maxApiUrl, '/') . $path, $options);
-            $content = $response->getContent();
+            $statusCode = $response->getStatusCode();
+            $content = $response->getContent(false);
         } catch (\Throwable $exception) {
             return ['success' => false, 'message' => $exception->getMessage()];
+        }
+
+        // Успех определяем по HTTP-статусу, а не по наличию поля в теле ответа MAX.
+        if ($statusCode < 200 || $statusCode >= 300) {
+            return ['success' => false, 'message' => \sprintf('MAX API returned HTTP %d.', $statusCode)];
         }
 
         $payload = json_decode($content, true);
 
         if (!\is_array($payload)) {
-            return ['success' => false, 'message' => 'Invalid response.'];
+            $payload = [];
         }
 
         /** @var array<string, mixed> $payload */
+        $payload['success'] = true;
+
         return $payload;
     }
 }
