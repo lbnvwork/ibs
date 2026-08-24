@@ -13,6 +13,10 @@ services:
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
       CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN}
+      MAX_API_URL: ${MAX_API_URL}
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN}
+      MAX_WEBHOOK_SECRET: ${MAX_WEBHOOK_SECRET:-}
+      MAX_BOT_NICKNAME: ${MAX_BOT_NICKNAME:-}
       COMPOSER_ALLOW_SUPERUSER: 1
     depends_on:
       db:
@@ -40,6 +44,8 @@ services:
       APP_DEBUG: ${APP_DEBUG}
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
+      MAX_API_URL: ${MAX_API_URL}
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN}
     depends_on:
       db:
         condition: service_healthy
@@ -51,6 +57,34 @@ services:
     # time-limit recycles the worker periodically to shed accumulated memory; restart: unless-stopped brings it back up.
     command: >
       sh -c "php bin/console messenger:consume async failed --time-limit=3600 --memory-limit=128M -vv --env=prod"
+    restart: unless-stopped
+
+  max-updates-listener:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: ibs-max-updates-listener
+    working_dir: /var/www/html
+    volumes:
+      - ./api:/var/www/html
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      MAX_API_URL: ${MAX_API_URL}
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN}
+    depends_on:
+      db:
+        condition: service_healthy
+      php:
+        condition: service_started
+    networks:
+      - default
+    # Непрерывный Long Polling: опрашивает GET /updates и сохраняет контакты
+    # пациентов, подключающихся к боту по диплинку.
+    command: >
+      sh -c "php bin/console app:communication:collect-max-contacts --loop --timeout=25 --env=prod"
     restart: unless-stopped
 
   db:

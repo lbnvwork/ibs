@@ -1,3 +1,16 @@
+parameters:
+    max_api_url: '%env(default:max_api_url_default:MAX_API_URL)%'
+    max_bot_token: '%env(default:max_bot_token_default:MAX_BOT_TOKEN)%'
+    max_webhook_secret: '%env(default:max_webhook_secret_default:MAX_WEBHOOK_SECRET)%'
+    max_bot_nickname: '%env(default:max_bot_nickname_default:MAX_BOT_NICKNAME)%'
+
+    # Пустые значения по умолчанию: когда переменные MAX не заданы,
+    # MaxChannel сообщает isAvailable() === false, а не падает с TypeError.
+    max_api_url_default: ''
+    max_bot_token_default: ''
+    max_webhook_secret_default: ''
+    max_bot_nickname_default: ''
+
 services:
     _defaults:
         autowire: true
@@ -42,6 +55,37 @@ services:
         resource: '../src/Ibs/Context/Communication/'
         exclude:
             - '../src/Ibs/Context/Communication/{DependencyInjection,Entity,Model}'
+
+    Ibs\Context\Communication\Service\MaxChannel:
+        arguments:
+            $maxApiUrl: '%max_api_url%'
+            $maxBotToken: '%max_bot_token%'
+
+    Ibs\Context\Communication\Service\MaxUpdatePoller:
+        arguments:
+            $maxApiUrl: '%max_api_url%'
+            $maxBotToken: '%max_bot_token%'
+
+    Ibs\Context\Communication\Service\MaxWebhookClient:
+        arguments:
+            $maxApiUrl: '%max_api_url%'
+            $maxBotToken: '%max_bot_token%'
+
+    Ibs\Context\Communication\Service\MaxDeepLinkGenerator:
+        arguments:
+            $botNickname: '%max_bot_nickname%'
+
+    Ibs\Context\Communication\Controller\MaxWebhookController:
+        arguments:
+            $webhookSecret: '%max_webhook_secret%'
+
+    Ibs\Context\Communication\Command\CollectMaxContactsCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    Ibs\Context\Communication\Command\MaxWebhookSubscribeCommand:
+        arguments:
+            $webhookSecret: '%max_webhook_secret%'
 
     Ibs\Context\SecurityIdentity\:
         resource: '../src/Ibs/Context/SecurityIdentity/'

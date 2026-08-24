@@ -14,6 +14,12 @@ RUN apt-get update && apt-get install -y \
 # Устанавливаем расширения PHP
 RUN docker-php-ext-install pdo pdo_pgsql mysqli mbstring exif pcntl bcmath gd
 
+# Добавляем корневые сертификаты Минцифры — они нужны для HTTPS-запросов
+# к API MAX (https://platform-api2.max.ru), чей сертификат выпущен
+# «Russian Trusted Sub CA» → «Russian Trusted Root CA».
+COPY docker/php/certs/ /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+
 # Устанавливаем Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('communication.channel')]
 interface ChannelInterface
 {
-    public function send(Recipient $recipient, NotificationMessage $message): SendResult;
+    public function send(Recipient $recipient, string $address, NotificationMessage $message): SendResult;
 
     public function isAvailable(): bool;
 

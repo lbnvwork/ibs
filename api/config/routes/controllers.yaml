@@ -1,0 +1,5 @@
+controllers:
+    resource:
+        path: ../../src/Ibs/Context/Communication/Controller/
+        namespace: Ibs\Context\Communication\Controller
+    type: attribute

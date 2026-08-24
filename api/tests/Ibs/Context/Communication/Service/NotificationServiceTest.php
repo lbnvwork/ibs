@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace App\Tests\Ibs\Context\Communication\Service;
 
 use Ibs\Context\Communication\Entity\NotificationLog;
+use Ibs\Context\Communication\Entity\PatientChannelIdentity;
 use Ibs\Context\Communication\Model\NotificationMessage;
 use Ibs\Context\Communication\Model\Priority;
+use Ibs\Context\Communication\Model\SendResult;
 use Ibs\Context\Communication\Model\Recipient;
 use Ibs\Context\Communication\Repository\NotificationLogRepository;
 use Ibs\Context\Communication\Repository\NotificationTemplateRepository;
+use Ibs\Context\Communication\Repository\PatientChannelIdentityRepository;
+use Ibs\Context\Communication\Service\PatientContactResolver;
+use Ibs\Context\Communication\Service\ChannelInterface;
 use Ibs\Context\Communication\Service\ChannelRegistry;
+use Ibs\Context\Communication\Service\RetrySleeperInterface;
 use Ibs\Context\Communication\Service\Exception\ChannelNotFoundException;
 use Ibs\Context\Communication\Service\Exception\NoChannelsConfiguredException;
 use Ibs\Context\Communication\Service\Exception\NotificationDeliveryException;
@@ -54,16 +60,45 @@ class NotificationServiceTest extends TestCase
         return new TemplateResolver($templates);
     }
 
+    /**
+     * @param array<string, string> $addresses карта «канал => адрес»
+     */
+    private function contactResolver(array $addresses = []): PatientContactResolver
+    {
+        $repository = $this->createStub(PatientChannelIdentityRepository::class);
+        $repository->method('findOneByPatientAndChannel')
+            ->willReturnCallback(function (int $patientId, string $channelType) use ($addresses): ?PatientChannelIdentity {
+                $address = $addresses[$channelType] ?? null;
+                if (null === $address) {
+                    return null;
+                }
+
+                return (new PatientChannelIdentity())
+                    ->setPatientId($patientId)
+                    ->setChannelType($channelType)
+                    ->setValue($address);
+            });
+
+        return new PatientContactResolver($repository);
+    }
+
+    /**
+     * @param iterable<ChannelInterface> $channels
+     */
     private function newService(
         iterable $channels,
         ?MessageBusInterface $messageBus = null,
-        ?NotificationLogRepository $logRepository = null
+        ?NotificationLogRepository $logRepository = null,
+        ?PatientContactResolver $contactResolver = null,
+        ?RetrySleeperInterface $retrySleeper = null,
     ): NotificationService {
         return new NotificationService(
             new ChannelRegistry($channels),
             $this->templateResolver(),
+            $contactResolver ?? $this->contactResolver(),
             $logRepository ?? $this->logRepository,
             $messageBus,
+            $retrySleeper ?? new ImmediateRetrySleeper(),
         );
     }
 
@@ -74,20 +109,57 @@ class NotificationServiceTest extends TestCase
     public function testSendRoutineWithoutMessenger(): void
     {
         $sms = FakeChannel::succeeding('sms');
-        $service = $this->newService([$sms], messageBus: null);
+        $service = $this->newService([$sms], messageBus: null, contactResolver: $this->contactResolver(['sms' => '+70000000000']));
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Не забудьте принять лекарство');
 
         $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
 
         self::assertCount(1, $sms->calls);
+        self::assertSame('+70000000000', $sms->calls[0]['address']);
         self::assertCount(1, $this->savedLogs);
         self::assertSame('sent', $this->savedLogs[0]->getStatus());
         self::assertSame('sms', $this->savedLogs[0]->getChannelType());
         self::assertSame(Priority::ROUTINE->value, $this->savedLogs[0]->getPriority());
         self::assertSame(1, $this->savedLogs[0]->getPatientId());
         self::assertSame('+70000000000', $this->savedLogs[0]->getRecipientAddress());
+    }
+
+    public function testSendLogsFailedWhenAddressNotConfiguredForRoutine(): void
+    {
+        $sms = FakeChannel::succeeding('sms');
+        $service = $this->newService([$sms], messageBus: null, contactResolver: $this->contactResolver([]));
+
+        $recipient = new Recipient(patientId: 1);
+        $message = new NotificationMessage(body: 'Не забудьте принять лекарство');
+
+        $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
+
+        self::assertCount(0, $sms->calls);
+        self::assertCount(1, $this->savedLogs);
+        self::assertSame('failed', $this->savedLogs[0]->getStatus());
+        self::assertStringContainsString('Address not configured for channel "sms".', $this->savedLogs[0]->getErrorMessage() ?? '');
+        self::assertNull($this->savedLogs[0]->getRecipientAddress());
+    }
+
+    public function testImmediateRejectsWhenAddressNotConfiguredForChannel(): void
+    {
+        $sms = FakeChannel::succeeding('sms');
+        $service = $this->newService([$sms], contactResolver: $this->contactResolver([]));
+
+        $recipient = new Recipient(patientId: 1);
+        $message = new NotificationMessage(body: 'Критический алерт');
+
+        $this->expectException(NotificationDeliveryException::class);
+
+        try {
+            $service->send($recipient, $message, ['sms'], Priority::IMMEDIATE);
+        } finally {
+            self::assertCount(0, $sms->calls);
+            self::assertSame('failed', $this->savedLogs[0]->getStatus());
+            self::assertStringContainsString('Address not configured for channel "sms".', $this->savedLogs[0]->getErrorMessage() ?? '');
+        }
     }
 
     /**
@@ -120,15 +192,23 @@ class NotificationServiceTest extends TestCase
     {
         $push = FakeChannel::succeeding('push');
         $email = FakeChannel::succeeding('email');
-        $service = $this->newService([$push, $email]);
+        $service = $this->newService(
+            [$push, $email],
+            contactResolver: $this->contactResolver([
+                'push' => 'push-token-123',
+                'email' => 'patient@example.test',
+            ]),
+        );
 
-        $recipient = new Recipient(patientId: 5, email: 'patient@example.test', pushToken: 'token-123');
+        $recipient = new Recipient(patientId: 5);
         $message = new NotificationMessage(body: 'Напоминание о приёме');
 
         $service->send($recipient, $message, ['push', 'email'], Priority::ROUTINE);
 
         self::assertCount(1, $push->calls);
         self::assertCount(1, $email->calls);
+        self::assertSame('push-token-123', $push->calls[0]['address']);
+        self::assertSame('patient@example.test', $email->calls[0]['address']);
         self::assertCount(2, $this->savedLogs);
 
         $channelTypes = array_map(static fn (NotificationLog $log) => $log->getChannelType(), $this->savedLogs);
@@ -160,10 +240,11 @@ class NotificationServiceTest extends TestCase
         $service = new NotificationService(
             new ChannelRegistry([$sms]),
             new TemplateResolver($templates),
+            $this->contactResolver(['sms' => '+70000000000']),
             $this->logRepository,
         );
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'ignored', template: 'reminder_24h', data: ['patient_name' => 'Иван']);
 
         $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
@@ -176,9 +257,9 @@ class NotificationServiceTest extends TestCase
     public function testImmediatePriorityRethrowsChannelFailure(): void
     {
         $sms = FakeChannel::failing('sms', 'Provider timeout');
-        $service = $this->newService([$sms]);
+        $service = $this->newService([$sms], contactResolver: $this->contactResolver(['sms' => '+70000000000']));
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Критический алерт');
 
         $this->expectException(NotificationDeliveryException::class);
@@ -196,9 +277,9 @@ class NotificationServiceTest extends TestCase
     public function testRoutinePriorityDoesNotRethrowChannelFailure(): void
     {
         $sms = FakeChannel::failing('sms', 'Provider timeout');
-        $service = $this->newService([$sms]);
+        $service = $this->newService([$sms], contactResolver: $this->contactResolver(['sms' => '+70000000000']));
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Напоминание');
 
         // не должно бросить исключение, несмотря на неудачу канала
@@ -210,9 +291,9 @@ class NotificationServiceTest extends TestCase
     public function testChannelExceptionIsCaughtAndLoggedAsFailure(): void
     {
         $sms = FakeChannel::succeeding('sms')->throwing(new \RuntimeException('Connection refused'));
-        $service = $this->newService([$sms]);
+        $service = $this->newService([$sms], contactResolver: $this->contactResolver(['sms' => '+70000000000']));
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Напоминание');
 
         $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
@@ -226,7 +307,7 @@ class NotificationServiceTest extends TestCase
         $sms = FakeChannel::unavailable('sms');
         $service = $this->newService([$sms]);
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Напоминание');
 
         $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
@@ -242,7 +323,7 @@ class NotificationServiceTest extends TestCase
         $sms = FakeChannel::unavailable('sms');
         $service = $this->newService([$sms]);
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Критический алерт');
 
         $this->expectException(NotificationDeliveryException::class);
@@ -260,7 +341,7 @@ class NotificationServiceTest extends TestCase
     {
         $service = $this->newService([]);
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Критический алерт');
 
         $this->expectException(ChannelNotFoundException::class);
@@ -285,7 +366,7 @@ class NotificationServiceTest extends TestCase
 
         $service = $this->newService([$sms], $messageBus);
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Напоминание');
 
         $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
@@ -298,9 +379,9 @@ class NotificationServiceTest extends TestCase
     public function testHandleEnvelopeDeliversWithoutRethrowing(): void
     {
         $sms = FakeChannel::failing('sms', 'Provider timeout');
-        $service = $this->newService([$sms]);
+        $service = $this->newService([$sms], contactResolver: $this->contactResolver(['sms' => '+70000000000']));
 
-        $recipient = new Recipient(patientId: 1, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 1);
         $message = new NotificationMessage(body: 'Напоминание');
         $envelope = new SendNotificationEnvelope($recipient, $message, ['sms'], Priority::ROUTINE);
 
@@ -308,6 +389,103 @@ class NotificationServiceTest extends TestCase
 
         self::assertCount(1, $sms->calls);
         self::assertSame('failed', $this->savedLogs[0]->getStatus());
+    }
+
+    public function testRetriesTemporaryFailuresUpToThreeTimes(): void
+    {
+        $sms = FakeChannel::failingRetryable('sms', 'Temporary error');
+        $retrySleeper = new ImmediateRetrySleeper();
+        $service = $this->newService(
+            [$sms],
+            messageBus: null,
+            contactResolver: $this->contactResolver(['sms' => '+70000000000']),
+            retrySleeper: $retrySleeper,
+        );
+
+        $recipient = new Recipient(patientId: 1);
+        $message = new NotificationMessage(body: 'Напоминание');
+
+        $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
+
+        self::assertCount(4, $sms->calls);
+        self::assertSame([0, 1, 2], $retrySleeper->waitedRetryNumbers);
+        self::assertSame('failed', $this->savedLogs[0]->getStatus());
+        self::assertSame('Temporary error', $this->savedLogs[0]->getErrorMessage());
+    }
+
+    public function testDoesNotRetryCriticalFailures(): void
+    {
+        $sms = FakeChannel::failing('sms', 'Critical error');
+        $retrySleeper = new ImmediateRetrySleeper();
+        $service = $this->newService(
+            [$sms],
+            messageBus: null,
+            contactResolver: $this->contactResolver(['sms' => '+70000000000']),
+            retrySleeper: $retrySleeper,
+        );
+
+        $recipient = new Recipient(patientId: 1);
+        $message = new NotificationMessage(body: 'Напоминание');
+
+        $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
+
+        self::assertCount(1, $sms->calls);
+        self::assertSame([], $retrySleeper->waitedRetryNumbers);
+        self::assertSame('failed', $this->savedLogs[0]->getStatus());
+    }
+
+    public function testRetriesUntilSuccess(): void
+    {
+        $sms = FakeChannel::succeeding('sms')
+            ->withResults(
+                SendResult::failure('Temporary error', retryable: true),
+                SendResult::success(),
+            );
+        $service = $this->newService(
+            [$sms],
+            messageBus: null,
+            contactResolver: $this->contactResolver(['sms' => '+70000000000']),
+            retrySleeper: new ImmediateRetrySleeper(),
+        );
+
+        $recipient = new Recipient(patientId: 1);
+        $message = new NotificationMessage(body: 'Напоминание');
+
+        $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
+
+        self::assertCount(2, $sms->calls);
+        self::assertSame('sent', $this->savedLogs[0]->getStatus());
+    }
+
+    public function testLogsExternalIdOnSuccess(): void
+    {
+        $sms = FakeChannel::succeedingWithExternalId('sms', 'msg-123');
+        $service = $this->newService(
+            [$sms],
+            messageBus: null,
+            contactResolver: $this->contactResolver(['sms' => '+70000000000']),
+        );
+
+        $recipient = new Recipient(patientId: 1);
+        $message = new NotificationMessage(body: 'Напоминание');
+
+        $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
+
+        self::assertSame('msg-123', $this->savedLogs[0]->getExternalId());
+    }
+
+    public function testRoutineUnregisteredChannelSkipsAndLogs(): void
+    {
+        $service = $this->newService([]);
+
+        $recipient = new Recipient(patientId: 1);
+        $message = new NotificationMessage(body: 'Напоминание');
+
+        $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
+
+        self::assertCount(1, $this->savedLogs);
+        self::assertSame('failed', $this->savedLogs[0]->getStatus());
+        self::assertStringContainsString('Channel "sms" is not registered.', $this->savedLogs[0]->getErrorMessage() ?? '');
     }
 
     public function testGetHistoryForPatientDelegatesToRepository(): void

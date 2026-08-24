@@ -28,7 +28,7 @@ class NotificationServiceMessengerRoutingTest extends KernelTestCase
         $transport = $container->get('messenger.transport.async');
         $service = $container->get(NotificationService::class);
 
-        $recipient = new Recipient(patientId: 555555, phone: '+70000000000');
+        $recipient = new Recipient(patientId: 555555);
         $message = new NotificationMessage(body: 'Напоминание о приёме');
 
         $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
@@ -39,5 +39,31 @@ class NotificationServiceMessengerRoutingTest extends KernelTestCase
 
         // Ничего не обработало сообщение синхронно — история пуста, пока очередь не будет вычитана воркером.
         self::assertCount(0, $service->getHistoryForPatient(555555));
+    }
+
+    public function testRoutineEnvelopeContainsExpectedData(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+
+        /** @var InMemoryTransport $transport */
+        $transport = $container->get('messenger.transport.async');
+        $service = $container->get(NotificationService::class);
+
+        $recipient = new Recipient(patientId: 555555);
+        $message = new NotificationMessage(body: 'Напоминание о приёме');
+
+        $service->send($recipient, $message, ['sms'], Priority::ROUTINE);
+
+        $sent = $transport->getSent();
+        self::assertCount(1, $sent);
+
+        /** @var SendNotificationEnvelope $envelope */
+        $envelope = $sent[0]->getMessage();
+        self::assertInstanceOf(SendNotificationEnvelope::class, $envelope);
+        self::assertSame(555555, $envelope->recipient->patientId);
+        self::assertSame(['sms'], $envelope->channels);
+        self::assertSame(Priority::ROUTINE, $envelope->priority);
+        self::assertSame('Напоминание о приёме', $envelope->message->body);
     }
 }
