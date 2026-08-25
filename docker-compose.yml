@@ -92,6 +92,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -107,6 +109,8 @@ services:
     volumes:
       - ./frontend:/app
       - frontend_dist:/app/dist
+    ports:
+      - "${FRONTEND_PORT:-5174}:5173"
     command: sh -c "npm ci && npm run build"
     networks:
       - default
