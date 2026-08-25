@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: ibs-php
     working_dir: /var/www/html
     volumes:
       - ./api:/var/www/html
@@ -35,7 +34,6 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: ibs-messenger-worker
     working_dir: /var/www/html
     volumes:
       - ./api:/var/www/html
@@ -63,7 +61,6 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: ibs-max-updates-listener
     working_dir: /var/www/html
     volumes:
       - ./api:/var/www/html
@@ -89,7 +86,6 @@ services:
 
   db:
     image: postgres:15
-    container_name: ibs-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -107,7 +103,6 @@ services:
 
   node:
     image: node:20-alpine
-    container_name: ibs-node
     working_dir: /app
     volumes:
       - ./frontend:/app
@@ -119,13 +114,12 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: ibs-nginx
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./api/public:/var/www/html/public:ro
       - frontend_dist:/var/www/html/frontend:ro
     ports:
-      - "8081:80"
+      - "${APP_PORT:-8081}:80"
     depends_on:
       php:
         condition: service_started
@@ -142,7 +136,6 @@ services:
     build: ./tests/e2e
     # Профиль: `docker compose up` не стартует e2e — тесты гоняются по требованию.
     profiles: ["e2e"]
-    container_name: ibs-e2e
     working_dir: /e2e
     volumes:
       - ./tests/e2e:/e2e
