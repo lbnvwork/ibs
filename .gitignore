@@ -54,5 +54,11 @@ tests/e2e/node_modules/
 tests/e2e/test-results/
 tests/e2e/playwright-report/
 
+# Postman (локальное окружение с кредами — в git не идут; коллекция коммитится)
+api/postman/*.postman_environment.json
+
+# Postman CLI — артефакты прогона
+postman-cli-reports/
+
 # Документация — вынесена в отдельный репо ibs-docs
 docs/
