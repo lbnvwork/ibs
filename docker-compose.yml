@@ -111,6 +111,8 @@ services:
       - frontend_dist:/app/dist
     ports:
       - "${FRONTEND_PORT:-5174}:5173"
+    environment:
+      VITE_API_URL: "http://localhost:${APP_PORT}/api"
     command: sh -c "npm ci && npm run build"
     networks:
       - default
