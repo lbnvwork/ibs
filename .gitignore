@@ -31,6 +31,7 @@ docker-compose.override.yml
 .env
 
 frontend/.env.production
+frontend/.env.local
 
 # Python (скрипты регистрации 4.7)
 .venv/
