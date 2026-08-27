@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use Ibs\Context\Communication\State\PatientChannelIdentityProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,9 +20,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(),
+        new Post(processor: PatientChannelIdentityProcessor::class),
         new Get(),
-        new Put(),
+        new Put(processor: PatientChannelIdentityProcessor::class),
         new Delete(),
     ],
     normalizationContext: ['groups' => ['patient_channel_identity:read']],
