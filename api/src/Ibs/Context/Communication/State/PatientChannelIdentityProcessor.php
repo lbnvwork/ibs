@@ -14,6 +14,9 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 /**
  * Оборачивает persist PatientChannelIdentity и маппит нарушение уникальности
  * (patient_id, channel_type) в HTTP 409 Conflict вместо 500.
+ *
+ * Ловим только UniqueConstraintViolationException: прочие нарушения БД
+ * (not-null, FK) остаются 500 — для данного бага достаточно.
  */
 final class PatientChannelIdentityProcessor implements ProcessorInterface
 {

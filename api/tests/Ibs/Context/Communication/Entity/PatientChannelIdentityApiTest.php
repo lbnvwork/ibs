@@ -6,6 +6,7 @@ namespace App\Tests\Ibs\Context\Communication\Entity;
 
 use App\Tests\Support\AuthenticatesUsers;
 use Doctrine\ORM\EntityManagerInterface;
+use Ibs\Context\Communication\Entity\PatientChannelIdentity;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -72,5 +73,13 @@ class PatientChannelIdentityApiTest extends WebTestCase
 
         $this->client->request('POST', '/api/patient_channel_identities', server: $server, content: $body);
         $this->assertSame(409, $this->client->getResponse()->getStatusCode());
+
+        // Дубликат не создал вторую запись — в БД остался ровно 1 контакт.
+        $this->entityManager->clear();
+        $count = $this->entityManager->getRepository(PatientChannelIdentity::class)->count([
+            'patientId' => 42,
+            'channelType' => 'max',
+        ]);
+        $this->assertSame(1, $count);
     }
 }
