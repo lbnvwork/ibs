@@ -7,3 +7,4 @@
 - Фронтенд: `docker compose exec node npm run test:unit`.
 - E2E — Playwright (сценарии в `docs/05-Тестирование/Сценарии-E2E/`).
 - Тесты зелёные — обязательное условие перед PR.
+- CI (GitHub Actions) недоступен из-за биллинга → локальный прогон ОБЯЗАТЕЛЕН перед передачей на коммит/PR: `phpunit` + `phpstan analyse` (бэкенд) + `npm run test:unit` (фронтенд). Результат — обязательное поле отчёта и PR: `phpunit OK (N tests)` · `phpstan analyse OK` · `npm run test:unit OK (N tests)`. Без зелёного прогона коммит/PR не передаётся.

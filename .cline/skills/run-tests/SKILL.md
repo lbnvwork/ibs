@@ -5,6 +5,6 @@ description: Запуск тестов проекта (бэкенд и фрон�
 
 # Run-tests
 
-- Бэкенд: `docker compose exec php vendor/bin/phpunit`
-- Фронтенд: `docker compose exec node npm run test:unit`
-- Тесты зелёные — обязательное условие перед PR. Если падают — чини.
+- Бэкенд: `docker compose exec php vendor/bin/phpunit` + `docker compose exec php vendor/bin/phpstan analyse --no-progress`.
+- Фронтенд: `docker compose exec node npm run test:unit`.
+- Тесты/phpstan зелёные — обязательное условие перед PR. Если падают — чини. Результат прогона (`phpunit N/N` · `phpstan OK` · `npm run test:unit N/N`) запиши в отчёт (СДЕЛАНО) и в PR (секция «Тесты»).
