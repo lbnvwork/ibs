@@ -131,7 +131,7 @@ class MaxChannelTest extends TestCase
         self::assertSame('external-id', $result->externalId);
     }
 
-    public function testMissingExternalIdIsNull(): void
+    public function testMissingExternalIdFallsBackToUuid(): void
     {
         $httpClient = new MockHttpClient(new MockResponse(
             json_encode(['status' => 'sent'], JSON_THROW_ON_ERROR),
@@ -142,7 +142,11 @@ class MaxChannelTest extends TestCase
         $result = $channel->send(new Recipient(patientId: 1), 'chat-42', new NotificationMessage(body: 'Привет'));
 
         self::assertTrue($result->success);
-        self::assertNull($result->externalId);
+        self::assertNotNull($result->externalId);
+        self::assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
+            (string) $result->externalId,
+        );
     }
 
     public function testHttp401FailureIsNotRetryableAndExtractsErrorMessage(): void
