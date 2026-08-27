@@ -189,9 +189,15 @@ final class MaxChannel implements ChannelInterface
         }
 
         // Фактический id сообщения MAX лежит вложенно — message.body.mid (mid.<hex>).
-        $mid = $payload['message']['body']['mid'] ?? null;
-        if (\is_string($mid) && '' !== $mid) {
-            return $mid;
+        $message = $payload['message'] ?? null;
+        if (\is_array($message)) {
+            $body = $message['body'] ?? null;
+            if (\is_array($body)) {
+                $mid = $body['mid'] ?? null;
+                if (\is_string($mid) && '' !== $mid) {
+                    return $mid;
+                }
+            }
         }
 
         // Фолбэк — свой UUID, чтобы external_id никогда не был null.
