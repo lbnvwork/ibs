@@ -60,11 +60,25 @@ final class LoadReferenceFixturesCommand extends Command
             'Каталог с SQL-артефактами (относительно корня проекта).',
             self::DEFAULT_DIR,
         );
+        $this->addOption(
+            'mode',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Режим загрузки: insert (по умолчанию) или upsert (INSERT … ON CONFLICT (id) DO UPDATE).',
+            'insert',
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $dir = rtrim($this->projectDir, '/') . '/' . trim((string) $input->getOption('dir'), '/');
+        $dir = rtrim($this->projectDir, '/') . '/' . trim($this->stringOption($input, 'dir', self::DEFAULT_DIR), '/');
+
+        $mode = $this->stringOption($input, 'mode', 'insert');
+        if (!\in_array($mode, ['insert', 'upsert'], true)) {
+            $output->writeln(sprintf('<error>Неизвестный режим: %s (допустимо insert|upsert).</error>', $mode));
+
+            return Command::INVALID;
+        }
 
         if (!is_dir($dir)) {
             $output->writeln(sprintf('<error>Каталог фикстур не найден: %s</error>', $dir));
@@ -79,31 +93,102 @@ final class LoadReferenceFixturesCommand extends Command
             return Command::FAILURE;
         }
 
-        foreach ($files as $file) {
-            $sql = file_get_contents($file);
-            if (false === $sql) {
-                $output->writeln(sprintf('<error>Не удалось прочитать: %s</error>', $file));
+        $searchPath = $this->connection->fetchOne("SELECT current_setting('search_path')");
+        $originalSearchPath = \is_string($searchPath) ? $searchPath : 'public';
 
-                return Command::FAILURE;
+        try {
+            foreach ($files as $file) {
+                $sql = file_get_contents($file);
+                if (false === $sql) {
+                    $output->writeln(sprintf('<error>Не удалось прочитать: %s</error>', $file));
+
+                    return Command::FAILURE;
+                }
+
+                if ('upsert' === $mode) {
+                    $sql = $this->toUpsert($sql);
+                }
+
+                $this->connection->beginTransaction();
+                try {
+                    $this->connection->executeStatement($sql);
+                    $this->connection->commit();
+                } catch (\Throwable $e) {
+                    $this->connection->rollBack();
+                    $output->writeln(sprintf('<error>Ошибка загрузки %s: %s</error>', basename($file), $e->getMessage()));
+
+                    return Command::FAILURE;
+                }
+
+                $output->writeln(sprintf('  <info>%s</info>', basename($file)));
             }
 
-            $this->connection->beginTransaction();
+            $output->writeln(sprintf('<info>Справочники загружены: %d файл(ов).</info>', count($files)));
+
+            return Command::SUCCESS;
+        } finally {
+            // pg_dump выставляет search_path='' (session-level); возвращаем исходный,
+            // чтобы команда не «протекала» состоянием сессии в вызывающий код (тесты, воркеры).
             try {
-                $this->connection->executeStatement($sql);
-                $this->connection->commit();
-            } catch (\Throwable $e) {
-                $this->connection->rollBack();
-                $output->writeln(sprintf('<error>Ошибка загрузки %s: %s</error>', basename($file), $e->getMessage()));
-
-                return Command::FAILURE;
+                $this->connection->executeStatement(
+                    "SELECT pg_catalog.set_config('search_path', ?, false)",
+                    [$originalSearchPath],
+                );
+            } catch (\Throwable) {
+                // Не маскируем исходный результат/ошибку загрузки.
             }
-
-            $output->writeln(sprintf('  <info>%s</info>', basename($file)));
         }
+    }
 
-        $output->writeln(sprintf('<info>Справочники загружены: %d файл(ов).</info>', count($files)));
+    private function stringOption(InputInterface $input, string $name, string $default): string
+    {
+        $value = $input->getOption($name);
 
-        return Command::SUCCESS;
+        return \is_string($value) ? $value : $default;
+    }
+
+    /**
+     * Преобразует INSERT-строки в upsert (INSERT … ON CONFLICT (id) DO UPDATE SET …),
+     * чтобы повторный запуск обновлял существующие строки, а не падал на дубликатах id.
+     */
+    private function toUpsert(string $sql): string
+    {
+        $result = preg_replace_callback(
+            '/^INSERT INTO public\.(\w+) \(([^)]*)\) VALUES (.*);$/m',
+            static function (array $matches): string {
+                $table = $matches[1];
+                $columns = array_map('trim', explode(',', $matches[2]));
+                $values = $matches[3];
+
+                $updates = [];
+                foreach ($columns as $column) {
+                    if ('id' === $column) {
+                        continue;
+                    }
+                    $updates[] = $column . ' = EXCLUDED.' . $column;
+                }
+
+                if ([] === $updates) {
+                    return sprintf(
+                        'INSERT INTO public.%s (%s) VALUES %s ON CONFLICT (id) DO NOTHING;',
+                        $table,
+                        $matches[2],
+                        $values,
+                    );
+                }
+
+                return sprintf(
+                    'INSERT INTO public.%s (%s) VALUES %s ON CONFLICT (id) DO UPDATE SET %s;',
+                    $table,
+                    $matches[2],
+                    $values,
+                    implode(', ', $updates),
+                );
+            },
+            $sql,
+        );
+
+        return null === $result ? $sql : $result;
     }
 
     /**

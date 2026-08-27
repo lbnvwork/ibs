@@ -165,6 +165,43 @@ final class LoadReferenceFixturesCommandTest extends TestCase
         self::assertStringContainsString('Ошибка загрузки', $tester->getDisplay());
     }
 
+    public function testUpsertModeTransformsInsertsToOnConflict(): void
+    {
+        file_put_contents(
+            $this->projectDir . '/fixtures/reference/drug_groups.sql',
+            "INSERT INTO public.drug_groups (id, name, full_name) VALUES (1, 'АВК', 'Антагонисты витамина К');\n",
+        );
+
+        $executed = [];
+        $connection = $this->createStub(Connection::class);
+        $connection->method('executeStatement')->willReturnCallback(
+            static function (string $sql) use (&$executed): int {
+                $executed[] = $sql;
+
+                return 1;
+            },
+        );
+
+        $exitCode = $this->tester($connection)->execute(['--mode' => 'upsert']);
+
+        self::assertSame(ConsoleCommand::SUCCESS, $exitCode);
+        self::assertStringContainsString('ON CONFLICT (id) DO UPDATE SET', $executed[0]);
+        self::assertStringContainsString('name = EXCLUDED.name', $executed[0]);
+        self::assertStringContainsString('full_name = EXCLUDED.full_name', $executed[0]);
+        self::assertStringNotContainsString('id = EXCLUDED.id', $executed[0]);
+    }
+
+    public function testInvalidModeReturnsInvalid(): void
+    {
+        $connection = $this->createStub(Connection::class);
+
+        $tester = $this->tester($connection);
+        $exitCode = $tester->execute(['--mode' => 'bogus']);
+
+        self::assertSame(ConsoleCommand::INVALID, $exitCode);
+        self::assertStringContainsString('Неизвестный режим', $tester->getDisplay());
+    }
+
     /**
      * @param list<string> $sqls
      *
@@ -174,8 +211,9 @@ final class LoadReferenceFixturesCommandTest extends TestCase
     {
         $tables = [];
         foreach ($sqls as $sql) {
-            preg_match('/INSERT INTO public\.(\w+)/', $sql, $matches);
-            $tables[] = $matches[1] ?? '';
+            if (preg_match('/INSERT INTO public\.(\w+)/', $sql, $matches)) {
+                $tables[] = $matches[1];
+            }
         }
 
         return $tables;
