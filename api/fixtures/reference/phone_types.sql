@@ -21,11 +21,11 @@ SET row_security = off;
 -- Data for Name: phone_types; Type: TABLE DATA; Schema: public; Owner: symfony
 --
 
-INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (1, '2012-08-06 01:59:26', 'Мобильный', '8(999)999-99-99', 'Номер мобильного телефона (Россия)');
-INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (2, '2014-11-30 12:17:39', 'Домашний - 5 цифр', '9-99-99', 'Домашний телефон из 5 цифр');
-INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (3, '2014-11-30 12:18:00', 'Домашний - 6 цифр', '99-99-99', 'Домашний телефон из 6 цифр');
-INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (4, '2014-11-30 12:20:27', 'Домашний - 5 цифр с кодом района', '8(49999)9-99-99', 'Домашний телефон из 5 цифр с кодом района');
-INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (5, '2014-11-30 12:20:27', 'Домашний - 6 цифр с кодом района', '8(4999)99-99-99', 'Домашний телефон из 6 цифр с кодом района');
+INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (1, NULL, 'Мобильный', '8(999)999-99-99', 'Номер мобильного телефона (Россия)');
+INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (2, NULL, 'Домашний - 5 цифр', '9-99-99', 'Домашний телефон из 5 цифр');
+INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (3, NULL, 'Домашний - 6 цифр', '99-99-99', 'Домашний телефон из 6 цифр');
+INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (4, NULL, 'Домашний - 5 цифр с кодом района', '8(49999)9-99-99', 'Домашний телефон из 5 цифр с кодом района');
+INSERT INTO public.phone_types (id, mod_dt, name, mask, comment) VALUES (5, NULL, 'Домашний - 6 цифр с кодом района', '8(4999)99-99-99', 'Домашний телефон из 6 цифр с кодом района');
 
 
 --

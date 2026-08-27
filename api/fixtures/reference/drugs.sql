@@ -21,8 +21,8 @@ SET row_security = off;
 -- Data for Name: drugs; Type: TABLE DATA; Schema: public; Owner: symfony
 --
 
-INSERT INTO public.drugs (id, mod_dt, nominative, genitive, group_id) VALUES (1, '2014-11-30 12:10:13', 'варфарин', 'варфарина', 1);
-INSERT INTO public.drugs (id, mod_dt, nominative, genitive, group_id) VALUES (2, '2014-11-30 12:10:13', 'фенилин', 'фенилина', 1);
+INSERT INTO public.drugs (id, mod_dt, nominative, genitive, group_id) VALUES (1, NULL, 'варфарин', 'варфарина', 1);
+INSERT INTO public.drugs (id, mod_dt, nominative, genitive, group_id) VALUES (2, NULL, 'фенилин', 'фенилина', 1);
 INSERT INTO public.drugs (id, mod_dt, nominative, genitive, group_id) VALUES (3, NULL, 'дабигатран', 'дабигатрана', 2);
 INSERT INTO public.drugs (id, mod_dt, nominative, genitive, group_id) VALUES (4, NULL, 'ривароксабан', 'ривароксабана', 2);
 INSERT INTO public.drugs (id, mod_dt, nominative, genitive, group_id) VALUES (5, NULL, 'апиксабан', 'апиксабана', 2);
