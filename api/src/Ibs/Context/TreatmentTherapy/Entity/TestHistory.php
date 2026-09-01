@@ -35,48 +35,48 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'test_history')]
+#[ORM\Table(name: 'test_history', options: ['comment' => 'Анализы (история МНО)'])]
 #[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['creationDt'])]
 class TestHistory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'ID SMS'])]
     private ?int $smsId = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'float', nullable: false)]
+    #[ORM\Column(type: 'float', nullable: false, options: ['comment' => 'МНО'])]
     #[Assert\NotBlank(message: 'Значение МНО обязательно')]
     #[Assert\GreaterThanOrEqual(value: 0.8, message: 'МНО должно быть не менее 0.8')]
     #[Assert\LessThanOrEqual(value: 10.0, message: 'МНО должно быть не более 10.0')]
     private float $mno = 0.0;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Лечение'])]
     private ?Treatment $treatment = null;
 
     #[ORM\ManyToOne(targetEntity: Drug::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Препарат'])]
     private ?Drug $drug = null;
 
-    #[ORM\Column(type: 'float', nullable: false)]
+    #[ORM\Column(type: 'float', nullable: false, options: ['comment' => 'Доза'])]
     #[Assert\NotBlank(message: 'Доза обязательна')]
     #[Assert\Positive(message: 'Доза должна быть положительной')]
     private float $doze = 0.0;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1, 'comment' => 'Доза (2)'])]
     private int $doze2 = -1;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
     // ----- lifecycle callbacks -----
