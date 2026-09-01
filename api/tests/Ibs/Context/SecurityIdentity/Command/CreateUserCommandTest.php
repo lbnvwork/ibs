@@ -173,4 +173,29 @@ class CreateUserCommandTest extends TestCase
         $tester->execute(['--password' => 'secret', '--role' => ['ROLE_ADMIN']]);
         self::assertSame(Command::INVALID, $tester->getStatusCode());
     }
+
+    public function testPasswordNotInOutput(): void
+    {
+        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher->method('hashPassword')->willReturn('hashed-password');
+
+        $repo = $this->createMock(EntityRepository::class);
+        $repo->method('findOneBy')->willReturn(null);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repo);
+        $em->expects(self::once())->method('persist');
+        $em->expects(self::once())->method('flush');
+
+        $command = new CreateUserCommand($em, $hasher);
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--login' => 'secuser',
+            '--password' => 'secret-password-123',
+            '--role' => ['ROLE_USER'],
+        ]);
+
+        self::assertSame(0, $tester->getStatusCode());
+        self::assertStringNotContainsString('secret-password-123', $tester->getDisplay());
+    }
 }
