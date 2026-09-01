@@ -73,7 +73,7 @@ class TestHistory
     #[Assert\Positive(message: 'Доза должна быть положительной')]
     private float $doze = 0.0;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1, 'comment' => 'Доза (2)'])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1, 'comment' => 'Вторая доза (чередование)'])]
     private int $doze2 = -1;
 
     #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]

@@ -57,7 +57,7 @@ class Appointment
     #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1, 'comment' => 'Доза (2)'])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1, 'comment' => 'Вторая доза (чередование)'])]
     private int $doze2 = -1;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class)]

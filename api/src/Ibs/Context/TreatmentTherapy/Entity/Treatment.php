@@ -108,7 +108,7 @@ class Treatment
     #[ORM\Column(name: 'diagnosis_code', type: 'string', length: 255, nullable: true, options: ['comment' => 'Код диагноза'])]
     private ?string $diagnosisCode = null;
 
-    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'PIN'])]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'PIN-код'])]
     private ?int $pin = null;
 
     #[ORM\ManyToOne(targetEntity: Mkb10::class)]
