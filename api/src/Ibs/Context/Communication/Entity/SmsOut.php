@@ -9,30 +9,30 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'sms_out')]
+#[ORM\Table(name: 'sms_out', options: ['comment' => 'Исходящие SMS'])]
 class SmsOut
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'ID лечения'])]
     private ?int $treatmentId = null;
 
-    #[ORM\Column(type: 'string', length: 11, nullable: true)]
+    #[ORM\Column(type: 'string', length: 11, nullable: true, options: ['comment' => 'Источник SMS'])]
     private ?string $smsSource = null;
 
-    #[ORM\Column(type: 'string', length: 11)]
+    #[ORM\Column(type: 'string', length: 11, options: ['comment' => 'Целевой номер'])]
     private string $smsTarget;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text', nullable: false, options: ['comment' => 'Текст'])]
     private string $text;
 
     public function getId(): ?int

@@ -10,31 +10,31 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'medical_personnel')]
+#[ORM\Table(name: 'medical_personnel', options: ['comment' => 'Медицинский персонал'])]
 class MedicalPersonnel
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'ФИО'])]
     private ?string $name = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Должность'])]
     private ?string $post = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Адрес'])]
     private ?string $address = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
     #[ORM\ManyToOne(targetEntity: Hospital::class)]
-    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', options: ['comment' => 'Больница'])]
     private ?Hospital $hospital = null;
 
     public function getId(): ?int

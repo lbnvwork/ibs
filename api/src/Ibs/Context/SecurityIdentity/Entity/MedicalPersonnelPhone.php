@@ -10,29 +10,29 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'med_personnel_phones')]
+#[ORM\Table(name: 'med_personnel_phones', options: ['comment' => 'Телефоны медперсонала'])]
 class MedicalPersonnelPhone
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Номер телефона'])]
     private ?string $number = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
     #[ORM\ManyToOne(targetEntity: PhoneType::class)]
-    #[ORM\JoinColumn(name: 'phone_type_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'phone_type_id', referencedColumnName: 'id', options: ['comment' => 'Тип телефона'])]
     private ?PhoneType $phoneType = null;
 
     #[ORM\ManyToOne(targetEntity: MedicalPersonnel::class)]
-    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'person_id', referencedColumnName: 'id', options: ['comment' => 'Медицинский персонал'])]
     private ?MedicalPersonnel $person = null;
 
     public function getId(): ?int
