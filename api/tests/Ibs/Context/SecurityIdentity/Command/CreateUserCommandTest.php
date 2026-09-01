@@ -84,4 +84,39 @@ class CreateUserCommandTest extends TestCase
         self::assertNotNull($capturedUser->getMedicalPersonnel());
         self::assertSame('Иванов Иван', $capturedUser->getMedicalPersonnel()?->getName());
     }
+
+    public function testMultipleRoles(): void
+    {
+        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher->method('hashPassword')->willReturn('hashed-password');
+
+        $repo = $this->createMock(EntityRepository::class);
+        $repo->method('findOneBy')->willReturn(null);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repo);
+
+        $capturedUser = null;
+        $em->expects(self::once())
+            ->method('persist')
+            ->with(self::callback(static function (object $entity) use (&$capturedUser): bool {
+                $capturedUser = $entity;
+
+                return $entity instanceof User;
+            }));
+        $em->expects(self::once())->method('flush');
+
+        $command = new CreateUserCommand($em, $hasher);
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--login' => 'multi',
+            '--password' => 'p',
+            '--role' => ['ROLE_USER', 'ROLE_ADMIN'],
+        ]);
+
+        self::assertSame(0, $tester->getStatusCode());
+        self::assertInstanceOf(User::class, $capturedUser);
+        self::assertContains('ROLE_USER', $capturedUser->getRoles());
+        self::assertContains('ROLE_ADMIN', $capturedUser->getRoles());
+    }
 }
