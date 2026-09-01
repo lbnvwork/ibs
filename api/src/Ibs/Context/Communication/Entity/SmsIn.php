@@ -9,39 +9,39 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'sms_in')]
+#[ORM\Table(name: 'sms_in', options: ['comment' => 'Входящие SMS'])]
 class SmsIn
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'ID лечения'])]
     private ?int $treatmentId = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'ID сервера'])]
     private ?int $serverId = null;
 
-    #[ORM\Column(type: 'string', length: 11, nullable: true)]
+    #[ORM\Column(type: 'string', length: 11, nullable: true, options: ['comment' => 'Источник SMS'])]
     private ?string $smsSource = null;
 
-    #[ORM\Column(type: 'string', length: 11, nullable: true)]
+    #[ORM\Column(type: 'string', length: 11, nullable: true, options: ['comment' => 'Номер'])]
     private ?string $num = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Текст'])]
     private ?string $text = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Статус'])]
     private ?int $status = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата'])]
     private ?\DateTimeInterface $dt = null;
 
     public function getId(): ?int

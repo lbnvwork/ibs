@@ -16,27 +16,27 @@ use ApiPlatform\Metadata\Get;
     ]
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'genetic_markers')]
+#[ORM\Table(name: 'genetic_markers', options: ['comment' => 'Генетические маркеры'])]
 class GeneticMarker
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 30)]
+    #[ORM\Column(type: 'string', length: 30, options: ['comment' => 'Обозначение маркера'])]
     private string $geneSymbol;
 
-    #[ORM\Column(type: 'string', length: 150)]
+    #[ORM\Column(type: 'string', length: 150, options: ['comment' => 'Полное название'])]
     private string $fullName;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true, options: ['comment' => 'rs-идентификатор (SNP)'])]
     private ?string $rsId = null;
 
     #[ORM\OneToMany(targetEntity: GeneticMarkerValue::class, mappedBy: 'marker', cascade: ['persist'])]
     private Collection $possibleValues;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Описание'])]
     private ?string $description = null;
 
     public function __construct()

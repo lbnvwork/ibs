@@ -35,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'treatments')]
+#[ORM\Table(name: 'treatments', options: ['comment' => 'Лечения'])]
 #[ORM\Index(name: 'idx_treatment_patient_id', columns: ['patient_id'])]
 #[ORM\Index(name: 'idx_treatment_patient_beg_dt', columns: ['patient_id', 'beg_dt'])]
 #[ORM\Index(name: 'idx_treatment_drug_id', columns: ['drug_id'])]
@@ -48,71 +48,71 @@ class Treatment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', unique: true, nullable: true)]
+    #[ORM\Column(type: 'integer', unique: true, nullable: true, options: ['comment' => 'Код лечения'])]
     private ?int $code = null;
 
     #[Assert\NotBlank(message: 'treatment.diagnosis.not_blank')]
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text', nullable: false, options: ['comment' => 'Диагноз'])]
     private string $diagnosis;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Сопутствующие заболевания'])]
     private ?string $comorbidities = null;
 
     #[Assert\GreaterThan(0, message: 'treatment.mnoFrom.greater_than_zero')]
-    #[ORM\Column(type: 'float', nullable: false)]
+    #[ORM\Column(type: 'float', nullable: false, options: ['comment' => 'Целевой диапазон МНО (от)'])]
     private float $mnoFrom;
 
     #[Assert\GreaterThan(0, message: 'treatment.mnoTo.greater_than_zero')]
-    #[ORM\Column(type: 'float', nullable: false)]
+    #[ORM\Column(type: 'float', nullable: false, options: ['comment' => 'Целевой диапазон МНО (до)'])]
     private float $mnoTo;
 
     #[Assert\Type(\DateTimeInterface::class, message: 'treatment.begDt.type')]
-    #[ORM\Column(type: 'datetime', nullable: false)]
+    #[ORM\Column(type: 'datetime', nullable: false, options: ['comment' => 'Дата начала лечения'])]
     private \DateTimeInterface $begDt;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Плановая дата окончания'])]
     private ?\DateTimeInterface $planEndDt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Фактическая дата окончания'])]
     private ?\DateTimeInterface $realEndDt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Причина остановки'])]
     private ?string $stoppingReason = null;
 
     #[ORM\ManyToOne(targetEntity: Patient::class)]
-    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Пациент'])]
     private ?Patient $patient = null;
     
     #[Assert\NotBlank(message: 'treatment.drug.not_blank')]
     #[ORM\ManyToOne(targetEntity: Drug::class)]
-    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Препарат'])]
     private ?Drug $drug = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0, 'comment' => 'Кровотечения'])]
     private int $hemorrhages = 0;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0, 'comment' => 'Флаги'])]
     private int $flags = 0;
 
     #[Assert\NotBlank(message: 'treatment.diagnosisCode.not_blank')]
     #[Assert\Length(max: 255, maxMessage: 'treatment.diagnosisCode.length')]
-    #[ORM\Column(name: 'diagnosis_code', type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'diagnosis_code', type: 'string', length: 255, nullable: true, options: ['comment' => 'Код диагноза'])]
     private ?string $diagnosisCode = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'PIN-код'])]
     private ?int $pin = null;
 
     #[ORM\ManyToOne(targetEntity: Mkb10::class)]
-    #[ORM\JoinColumn(name: 'mkb10_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'mkb10_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Код МКБ-10'])]
     private ?Mkb10 $mkb10 = null;
 
     public function getId(): ?int

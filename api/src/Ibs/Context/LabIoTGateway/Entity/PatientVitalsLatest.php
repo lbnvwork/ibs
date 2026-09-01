@@ -25,38 +25,38 @@ use Ibs\Context\LabIoTGateway\State\PatientVitalsLatestBatchProvider;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['patient' => 'exact'])]
 #[ORM\Entity]
-#[ORM\Table(name: 'patient_vitals_latest')]
+#[ORM\Table(name: 'patient_vitals_latest', options: ['comment' => 'Последние витальные показатели'])]
 #[ORM\UniqueConstraint(name: 'uniq_patient_id', columns: ['patient_id'])]
 class PatientVitalsLatest
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
     #[ORM\OneToOne(targetEntity: Patient::class)]
-    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, unique: true, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, unique: true, onDelete: 'CASCADE', options: ['comment' => 'Пациент'])]
     private Patient $patient;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true, options: ['comment' => 'Гемоглобин'])]
     private ?float $hb = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Пульс'])]
     private ?int $heartRate = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Систолическое давление'])]
     private ?int $systolicPressure = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Диастолическое давление'])]
     private ?int $diastolicPressure = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Сатурация'])]
     private ?int $saturation = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true, options: ['comment' => 'Вес'])]
     private ?float $weight = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата последнего обновления'])]
     private \DateTimeInterface $lastUpdated;
 
     public function __construct(Patient $patient)

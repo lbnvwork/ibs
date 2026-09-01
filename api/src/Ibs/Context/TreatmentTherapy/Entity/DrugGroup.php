@@ -9,18 +9,18 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'drug_groups')]
+#[ORM\Table(name: 'drug_groups', options: ['comment' => 'Группы препаратов'])]
 class DrugGroup
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50, options: ['comment' => 'Название'])]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Полное название'])]
     private ?string $fullName = null;
 
     public function getId(): ?int

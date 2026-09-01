@@ -10,23 +10,23 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'supervisors')]
+#[ORM\Table(name: 'supervisors', options: ['comment' => 'Кураторы'])]
 class Supervisor
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', options: ['comment' => 'Куратор (пользователь)'])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: HospitalTestPlan::class)]
-    #[ORM\JoinColumn(name: 'plan_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'plan_id', referencedColumnName: 'id', options: ['comment' => 'План анализов больницы'])]
     private ?HospitalTestPlan $hospitalTestPlan = null;
 
     public function getId(): ?int

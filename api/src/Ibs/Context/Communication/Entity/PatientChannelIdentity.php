@@ -31,40 +31,40 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(SearchFilter::class, properties: ['patientId' => 'exact'])]
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
-#[ORM\Table(name: 'patient_channel_identities')]
+#[ORM\Table(name: 'patient_channel_identities', options: ['comment' => 'Контакты каналов связи пациентов'])]
 #[ORM\UniqueConstraint(name: 'uniq_patient_channel_identity', columns: ['patient_id', 'channel_type'])]
 class PatientChannelIdentity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     #[Groups(['patient_channel_identity:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'patient_channel_identity.patient_id.not_blank')]
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['comment' => 'ID пациента'])]
     #[Groups(['patient_channel_identity:read', 'patient_channel_identity:write'])]
     private int $patientId;
 
     #[Assert\NotBlank(message: 'patient_channel_identity.channel_type.not_blank')]
     #[Assert\Length(max: 32, maxMessage: 'patient_channel_identity.channel_type.length')]
     #[Assert\Choice(choices: ['sms', 'email', 'push', 'max'], message: 'patient_channel_identity.channel_type.choice')]
-    #[ORM\Column(type: 'string', length: 32, nullable: false)]
+    #[ORM\Column(type: 'string', length: 32, nullable: false, options: ['comment' => 'Тип канала'])]
     #[Groups(['patient_channel_identity:read', 'patient_channel_identity:write'])]
     private string $channelType;
 
     #[Assert\NotBlank(message: 'patient_channel_identity.value.not_blank')]
     #[Assert\Length(max: 255, maxMessage: 'patient_channel_identity.value.length')]
     #[Assert\Regex(pattern: '/^[^\s<>]+$/', message: 'patient_channel_identity.value.regex')]
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'string', length: 255, nullable: false, options: ['comment' => 'Значение'])]
     #[Groups(['patient_channel_identity:read', 'patient_channel_identity:write'])]
     private string $value;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата создания'])]
     #[Groups(['patient_channel_identity:read'])]
     private \DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата изменения'])]
     #[Groups(['patient_channel_identity:read'])]
     private \DateTimeInterface $updatedAt;
 

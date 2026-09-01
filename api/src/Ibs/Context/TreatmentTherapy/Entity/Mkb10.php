@@ -35,7 +35,7 @@ use Doctrine\ORM\Mapping as ORM;
     paginationEnabled: false,
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'mkb10')]
+#[ORM\Table(name: 'mkb10', options: ['comment' => 'Коды МКБ-10'])]
 #[ApiFilter(SearchFilter::class, properties: [
     'mkbCode' => 'ipartial',
     'mkbName' => 'ipartial',
@@ -43,28 +43,28 @@ use Doctrine\ORM\Mapping as ORM;
 class Mkb10
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true, options: ['comment' => 'Код записи'])]
     private ?string $recCode = null;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true, options: ['comment' => 'Код МКБ-10'])]
     private ?string $mkbCode = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Название МКБ-10'])]
     private ?string $mkbName = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Родительская запись'])]
     private ?int $idParent = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Дополнительный код'])]
     private ?int $addlCode = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Актуальность'])]
     private ?int $actual = null;
 
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true, options: ['comment' => 'Дата'])]
     private ?string $date = null;
 
     public function getId(): ?int

@@ -11,33 +11,33 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'test_histories_by_assistant')]
+#[ORM\Table(name: 'test_histories_by_assistant', options: ['comment' => 'Анализы (данные ассистента)'])]
 class TestHistoryByAssistant
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
     #[ORM\ManyToOne(targetEntity: TestHistory::class)]
-    #[ORM\JoinColumn(name: 'test_history_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'test_history_id', referencedColumnName: 'id', options: ['comment' => 'Анализ (история МНО)'])]
     private ?TestHistory $testHistory = null;
 
     #[ORM\ManyToOne(targetEntity: MedicalPersonnel::class)]
-    #[ORM\JoinColumn(name: 'assistant_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'assistant_id', referencedColumnName: 'id', options: ['comment' => 'Ассистент (медперсонал)'])]
     private ?MedicalPersonnel $assistant = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', options: ['comment' => 'Пользователь'])]
     private ?User $user = null;
 
     public function getId(): ?int
