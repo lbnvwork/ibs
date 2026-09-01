@@ -17,10 +17,10 @@ class CreateUserCommandTest extends TestCase
 {
     public function testCreatesUser(): void
     {
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher = $this->createStub(UserPasswordHasherInterface::class);
         $hasher->method('hashPassword')->willReturn('hashed-password');
 
-        $repo = $this->createMock(EntityRepository::class);
+        $repo = $this->createStub(EntityRepository::class);
         $repo->method('findOneBy')->willReturn(null);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -54,10 +54,10 @@ class CreateUserCommandTest extends TestCase
 
     public function testCreatesMedicalPersonnel(): void
     {
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher = $this->createStub(UserPasswordHasherInterface::class);
         $hasher->method('hashPassword')->willReturn('hashed-password');
 
-        $repo = $this->createMock(EntityRepository::class);
+        $repo = $this->createStub(EntityRepository::class);
         $repo->method('findOneBy')->willReturn(null);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -82,16 +82,17 @@ class CreateUserCommandTest extends TestCase
 
         self::assertSame(0, $tester->getStatusCode());
         self::assertInstanceOf(User::class, $capturedUser);
-        self::assertNotNull($capturedUser->getMedicalPersonnel());
-        self::assertSame('Иванов Иван', $capturedUser->getMedicalPersonnel()?->getName());
+        $medicalPersonnel = $capturedUser->getMedicalPersonnel();
+        self::assertNotNull($medicalPersonnel);
+        self::assertSame('Иванов Иван', $medicalPersonnel->getName());
     }
 
     public function testMultipleRoles(): void
     {
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher = $this->createStub(UserPasswordHasherInterface::class);
         $hasher->method('hashPassword')->willReturn('hashed-password');
 
-        $repo = $this->createMock(EntityRepository::class);
+        $repo = $this->createStub(EntityRepository::class);
         $repo->method('findOneBy')->willReturn(null);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -129,7 +130,7 @@ class CreateUserCommandTest extends TestCase
         $existing = new User();
         $existing->setLogin('admin');
 
-        $repo = $this->createMock(EntityRepository::class);
+        $repo = $this->createStub(EntityRepository::class);
         $repo->method('findOneBy')->willReturn($existing);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -176,10 +177,10 @@ class CreateUserCommandTest extends TestCase
 
     public function testPasswordNotInOutput(): void
     {
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher = $this->createStub(UserPasswordHasherInterface::class);
         $hasher->method('hashPassword')->willReturn('hashed-password');
 
-        $repo = $this->createMock(EntityRepository::class);
+        $repo = $this->createStub(EntityRepository::class);
         $repo->method('findOneBy')->willReturn(null);
 
         $em = $this->createMock(EntityManagerInterface::class);
