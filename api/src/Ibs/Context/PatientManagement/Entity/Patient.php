@@ -26,15 +26,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(PatientDrugFilter::class, properties: ['drug'])]
 #[ApiFilter(PatientDiagnosisFilter::class, properties: ['diagnosisCode'])]
 #[ORM\Entity]
-#[ORM\Table(name: 'patients')]
+#[ORM\Table(name: 'patients', options: ['comment' => 'Пациенты'])]
 class Patient
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
     #[Assert\NotBlank(message: 'patient.firstname.not_blank')]
@@ -44,7 +44,7 @@ class Patient
         minMessage: 'patient.firstname.length', 
         maxMessage: 'patient.firstname.length'
     )]
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text', nullable: false, options: ['comment' => 'Имя'])]
     private string $firstname;
 
     #[Assert\Length(
@@ -53,7 +53,7 @@ class Patient
         minMessage: 'patient.secondName.length', 
         maxMessage: 'patient.secondName.length'
     )]
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Отчество'])]
     private ?string $secondName = null;
 
     #[Assert\NotBlank(message: 'patient.lastname.not_blank')]
@@ -63,53 +63,53 @@ class Patient
         minMessage: 'patient.lastname.length', 
         maxMessage: 'patient.lastname.length'
     )]
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text', nullable: false, options: ['comment' => 'Фамилия'])]
     private string $lastname;
 
     #[Assert\NotBlank(message: 'patient.birthday.not_blank')]
     #[Assert\Type(\DateTimeInterface::class, message: 'patient.birthday.type')]
     #[Assert\LessThanOrEqual(value: 'today', message: 'patient.birthday.max')]
     #[Assert\GreaterThanOrEqual(value: '-120 years', message: 'patient.birthday.min')]
-    #[ORM\Column(type: 'datetime', nullable: false)]
+    #[ORM\Column(type: 'datetime', nullable: false, options: ['comment' => 'Дата рождения'])]
     private \DateTimeInterface $birthday;
 
     #[Assert\NotBlank(message: 'patient.sex.not_blank')]
     #[Assert\Type(type: 'integer', message: 'patient.sex.type')]
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0, 'comment' => 'Пол'])]
     private int $sex = 0;
 
     #[Assert\NotBlank(message: 'patient.smsPhone.not_blank')]
     #[Assert\Regex(pattern: '/^8\(\d{3}\)\d{3}-\d{2}-\d{2}$/', message: 'patient.smsPhone.regex')]
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text', nullable: false, options: ['comment' => 'Телефон для SMS'])]
     private string $smsPhone;
 
     #[Assert\NotBlank(message: 'patient.address.not_blank')]
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Адрес'])]
     private ?string $address = null;
 
     #[Assert\NotBlank(message: 'patient.passport.not_blank')]
     #[Assert\Regex(pattern: '/^\d{4} \d{6}$/', message: 'patient.passport.regex')]
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Паспорт'])]
     private ?string $passport = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Полис ОМС'])]
     private ?string $healthInsurance = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
     #[Assert\NotBlank(message: 'patient.snils.not_blank')]
     #[Assert\Regex(pattern: '/^\d{3}-\d{3}-\d{3} \d{2}$/', message: 'patient.snils.regex')]
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'СНИЛС'])]
     private ?string $snils = null;
 
-    #[ORM\Column(type: 'string', length: 180, nullable: true)]
+    #[ORM\Column(type: 'string', length: 180, nullable: true, options: ['comment' => 'Email'])]
     #[Assert\Email(message: 'patient.email.invalid')]
     private ?string $email = null;
 
     #[Assert\NotBlank(message: 'patient.hospital.not_blank')]
     #[ORM\ManyToOne(targetEntity: Hospital::class)]
-    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Больница'])]
     private ?Hospital $hospital = null;
 
     public function getId(): ?int
