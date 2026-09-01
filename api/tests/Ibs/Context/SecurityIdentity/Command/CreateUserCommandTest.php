@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Ibs\Context\SecurityIdentity\Command\CreateUserCommand;
 use Ibs\Context\SecurityIdentity\Entity\User;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -146,5 +147,30 @@ class CreateUserCommandTest extends TestCase
 
         self::assertSame(0, $tester->getStatusCode());
         self::assertStringContainsString('уже существует', $tester->getDisplay());
+    }
+
+    public function testMissingLoginOrPassword(): void
+    {
+        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher->expects(self::never())->method('hashPassword');
+
+        $repo = $this->createMock(EntityRepository::class);
+        $repo->expects(self::never())->method('findOneBy');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repo);
+        $em->expects(self::never())->method('persist');
+        $em->expects(self::never())->method('flush');
+
+        $command = new CreateUserCommand($em, $hasher);
+        $tester = new CommandTester($command);
+
+        // Без --password
+        $tester->execute(['--login' => 'admin', '--role' => ['ROLE_ADMIN']]);
+        self::assertSame(Command::INVALID, $tester->getStatusCode());
+
+        // Без --login
+        $tester->execute(['--password' => 'secret', '--role' => ['ROLE_ADMIN']]);
+        self::assertSame(Command::INVALID, $tester->getStatusCode());
     }
 }
