@@ -50,4 +50,38 @@ class CreateUserCommandTest extends TestCase
         self::assertNotSame('secret', $capturedUser->getPassword());
         self::assertContains('ROLE_ADMIN', $capturedUser->getRoles());
     }
+
+    public function testCreatesMedicalPersonnel(): void
+    {
+        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher->method('hashPassword')->willReturn('hashed-password');
+
+        $repo = $this->createMock(EntityRepository::class);
+        $repo->method('findOneBy')->willReturn(null);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repo);
+
+        $capturedUser = null;
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$capturedUser): void {
+            if ($entity instanceof User) {
+                $capturedUser = $entity;
+            }
+        });
+        $em->expects(self::once())->method('flush');
+
+        $command = new CreateUserCommand($em, $hasher);
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--login' => 'doc',
+            '--password' => 'p',
+            '--role' => ['ROLE_USER'],
+            '--name' => 'Иванов Иван',
+        ]);
+
+        self::assertSame(0, $tester->getStatusCode());
+        self::assertInstanceOf(User::class, $capturedUser);
+        self::assertNotNull($capturedUser->getMedicalPersonnel());
+        self::assertSame('Иванов Иван', $capturedUser->getMedicalPersonnel()?->getName());
+    }
 }
