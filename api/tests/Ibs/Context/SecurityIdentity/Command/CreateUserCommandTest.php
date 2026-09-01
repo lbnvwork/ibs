@@ -119,4 +119,32 @@ class CreateUserCommandTest extends TestCase
         self::assertContains('ROLE_USER', $capturedUser->getRoles());
         self::assertContains('ROLE_ADMIN', $capturedUser->getRoles());
     }
+
+    public function testIdempotent(): void
+    {
+        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher->expects(self::never())->method('hashPassword');
+
+        $existing = new User();
+        $existing->setLogin('admin');
+
+        $repo = $this->createMock(EntityRepository::class);
+        $repo->method('findOneBy')->willReturn($existing);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repo);
+        $em->expects(self::never())->method('persist');
+        $em->expects(self::never())->method('flush');
+
+        $command = new CreateUserCommand($em, $hasher);
+        $tester = new CommandTester($command);
+        $tester->execute([
+            '--login' => 'admin',
+            '--password' => 'secret',
+            '--role' => ['ROLE_ADMIN'],
+        ]);
+
+        self::assertSame(0, $tester->getStatusCode());
+        self::assertStringContainsString('уже существует', $tester->getDisplay());
+    }
 }
