@@ -31,7 +31,7 @@ use ApiPlatform\Metadata\ApiFilter;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
 #[ORM\Entity]
-#[ORM\Table(name: 'patient_vitals')]
+#[ORM\Table(name: 'patient_vitals', options: ['comment' => 'Витальные показатели'])]
 #[ORM\Index(
     name: 'idx_vitals_patient_record',
     columns: ['patient_id', 'record_dt'],
@@ -43,78 +43,78 @@ class PatientVitals
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     #[Groups(['vitals:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Patient::class)]
-    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE', options: ['comment' => 'Пациент'])]
     #[Assert\NotNull]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?Patient $patient = null;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class)]
-    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL', options: ['comment' => 'Лечение'])]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?Treatment $treatment = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата и время записи'])]
     #[Assert\NotBlank]
     #[Assert\Type(\DateTimeInterface::class)]
     #[Groups(['vitals:read', 'vitals:write'])]
     private \DateTimeInterface $recordDt;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true, options: ['comment' => 'Гемоглобин'])]
     #[Assert\Positive]
     #[Assert\Range(min: 50, max: 250)]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?float $hb = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Пульс'])]
     #[Assert\Positive]
     #[Assert\Range(min: 30, max: 250)]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?int $heartRate = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Систолическое давление'])]
     #[Assert\Positive]
     #[Assert\Range(min: 70, max: 250)]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?int $systolicPressure = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Диастолическое давление'])]
     #[Assert\Positive]
     #[Assert\Range(min: 70, max: 250)]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?int $diastolicPressure = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Сатурация'])]
     #[Assert\Positive]
     #[Assert\Range(min: 50, max: 100)]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?int $saturation = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?string $comment = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата создания'])]
     #[Groups(['vitals:read'])]
     private \DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата изменения'])]
     #[Groups(['vitals:read'])]
     private \DateTimeInterface $updatedAt;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Кем создано'])]
     #[Ignore]
     private ?string $createdBy = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Кем изменено'])]
     #[Ignore]
     private ?string $updatedBy = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true, options: ['comment' => 'Вес'])]
     #[Assert\Positive]
     #[Assert\Range(min: 20, max: 300)]
     #[Groups(['vitals:read', 'vitals:write'])]

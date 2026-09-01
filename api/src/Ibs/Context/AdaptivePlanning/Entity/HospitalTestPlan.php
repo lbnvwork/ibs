@@ -10,31 +10,31 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'hospital_test_plans')]
+#[ORM\Table(name: 'hospital_test_plans', options: ['comment' => 'Планы анализов по больницам'])]
 class HospitalTestPlan
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата явки (замера)'])]
     private ?\DateTimeInterface $testDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Статус'])]
     private ?int $status = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
     #[ORM\ManyToOne(targetEntity: Hospital::class)]
-    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', options: ['comment' => 'Больница (ЛПУ)'])]
     private ?Hospital $hospital = null;
 
     public function getId(): ?int

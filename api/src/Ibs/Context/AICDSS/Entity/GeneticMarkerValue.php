@@ -14,25 +14,25 @@ use ApiPlatform\Metadata\Get;
     ]
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'genetic_marker_values')]
+#[ORM\Table(name: 'genetic_marker_values', options: ['comment' => 'Значения генетических маркеров'])]
 class GeneticMarkerValue
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: GeneticMarker::class, inversedBy: 'possibleValues')]
-    #[ORM\JoinColumn(name: 'marker_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'marker_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'Генетический маркер'])]
     private ?GeneticMarker $marker = null;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 50, options: ['comment' => 'Генотип'])]
     private string $value;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, options: ['comment' => 'Метка'])]
     private string $label;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Описание'])]
     private ?string $description = null;
 
     public function getId(): ?int
