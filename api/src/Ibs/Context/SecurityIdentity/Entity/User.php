@@ -39,36 +39,36 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'users')]
+#[ORM\Table(name: 'users', options: ['comment' => 'Пользователи'])]
 #[ORM\Index(name: 'idx_users_medpers', columns: ['medical_personnel_id'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     #[Groups(['user:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Логин'])]
     #[Groups(['user:read', 'user:write'])]
     private ?string $login = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Пароль'])]
     private ?string $password = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Имя пользователя'])]
     #[Groups(['user:read', 'user:write'])]
     private ?string $userName = null;
 
-    #[ORM\Column(type: 'json', nullable: false, options: ['default' => '[]'])]
+    #[ORM\Column(type: 'json', nullable: false, options: ['default' => '[]', 'comment' => 'Роли'])]
     #[Groups(['user:read'])]
     private array $roles = [];
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
     #[ORM\ManyToOne(targetEntity: MedicalPersonnel::class)]
-    #[ORM\JoinColumn(name: 'medical_personnel_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'medical_personnel_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Медицинский персонал'])]
     #[Groups(['user:read'])]
     private ?MedicalPersonnel $medicalPersonnel = null;
 

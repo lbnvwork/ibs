@@ -9,27 +9,27 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'holidays')]
+#[ORM\Table(name: 'holidays', options: ['comment' => 'Праздничные и выходные дни'])]
 class Holiday
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['comment' => 'Месяц'])]
     private int $hMonth;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['comment' => 'День'])]
     private int $hDay;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 2015])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 2015, 'comment' => 'Год'])]
     private int $hYear = 2015;
 
     public function getId(): ?int

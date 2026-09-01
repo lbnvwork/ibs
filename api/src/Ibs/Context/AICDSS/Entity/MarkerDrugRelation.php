@@ -8,21 +8,21 @@ use Ibs\Context\TreatmentTherapy\Entity\Drug;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'marker_drug_relations')]
+#[ORM\Table(name: 'marker_drug_relations', options: ['comment' => 'Связи маркеров и препаратов'])]
 #[ORM\UniqueConstraint(name: 'uniq_marker_drug', columns: ['marker_id', 'drug_id'])]
 class MarkerDrugRelation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: GeneticMarker::class)]
-    #[ORM\JoinColumn(name: 'marker_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'marker_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'Генетический маркер'])]
     private ?GeneticMarker $marker = null;
 
     #[ORM\ManyToOne(targetEntity: Drug::class)]
-    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'Препарат'])]
     private ?Drug $drug = null;
 
     public function getId(): ?int

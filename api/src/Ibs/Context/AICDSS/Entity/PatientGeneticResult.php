@@ -27,39 +27,39 @@ use Symfony\Component\Serializer\Annotation\Ignore;
     ]
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'patient_genetic_results')]
+#[ORM\Table(name: 'patient_genetic_results', options: ['comment' => 'Результаты фармакогенетики'])]
 #[ORM\UniqueConstraint(name: 'uniq_patient_marker', columns: ['patient_id', 'marker_id'])]
 #[ApiFilter(SearchFilter::class, properties: ['patient' => 'exact'])]
 class PatientGeneticResult
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Patient::class)]
-    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE', options: ['comment' => 'Пациент'])]
     private ?Patient $patient = null;
 
     #[ORM\ManyToOne(targetEntity: GeneticMarker::class)]
-    #[ORM\JoinColumn(name: 'marker_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'marker_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'Генетический маркер'])]
     private ?GeneticMarker $marker = null;
 
     #[ORM\ManyToOne(targetEntity: GeneticMarkerValue::class)]
-    #[ORM\JoinColumn(name: 'marker_value_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'marker_value_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'Значение маркера'])]
     private ?GeneticMarkerValue $markerValue = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата создания'])]
     private \DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата изменения'])]
     private \DateTimeInterface $updatedAt;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Кем создано'])]
     #[Ignore] // не принимать от клиента
     private ?string $createdBy = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Кем изменено'])]
     #[Ignore] // не принимать от клиента
     private ?string $updatedBy = null;
 

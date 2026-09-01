@@ -160,5 +160,4 @@ volumes:
 
 networks:
   default:
-    external: true
-    name: app-network
+    name: ${COMPOSE_PROJECT_NAME:-ibs}_network

@@ -131,7 +131,7 @@ class MaxChannelTest extends TestCase
         self::assertSame('external-id', $result->externalId);
     }
 
-    public function testMissingExternalIdIsNull(): void
+    public function testMissingExternalIdFallsBackToUuid(): void
     {
         $httpClient = new MockHttpClient(new MockResponse(
             json_encode(['status' => 'sent'], JSON_THROW_ON_ERROR),
@@ -142,7 +142,11 @@ class MaxChannelTest extends TestCase
         $result = $channel->send(new Recipient(patientId: 1), 'chat-42', new NotificationMessage(body: 'Привет'));
 
         self::assertTrue($result->success);
-        self::assertNull($result->externalId);
+        self::assertNotNull($result->externalId);
+        self::assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
+            (string) $result->externalId,
+        );
     }
 
     public function testHttp401FailureIsNotRetryableAndExtractsErrorMessage(): void
@@ -264,5 +268,52 @@ class MaxChannelTest extends TestCase
         $channel = new MaxChannel($this->createStub(HttpClientInterface::class), self::API_URL, self::BOT_TOKEN);
 
         self::assertSame('max', $channel->getChannelType());
+    }
+
+    public function testSuccessfulSendExtractsMidFromNestedBody(): void
+    {
+        $httpClient = new MockHttpClient(
+            new MockResponse(
+                json_encode([
+                    'message' => [
+                        'recipient' => ['chat_id' => 42342534, 'chat_type' => 'dialog', 'user_id' => 358006435],
+                        'timestamp' => 1787757944656,
+                        'body' => [
+                            'mid' => 'mid.000000000286188601a03ead5f5053f7',
+                            'seq' => 117162504660997111,
+                            'text' => 'Тест',
+                        ],
+                        'sender' => ['user_id' => 358006435],
+                    ],
+                ], JSON_THROW_ON_ERROR),
+                ['http_code' => 200],
+            ),
+        );
+
+        $channel = new MaxChannel($httpClient, self::API_URL, self::BOT_TOKEN);
+        $result = $channel->send(new Recipient(patientId: 1), 'chat-42', new NotificationMessage(body: 'Тест'));
+
+        self::assertTrue($result->success);
+        self::assertSame('mid.000000000286188601a03ead5f5053f7', $result->externalId);
+    }
+
+    public function testExternalIdFallsBackToUuidWhenMidMissing(): void
+    {
+        $httpClient = new MockHttpClient(
+            new MockResponse(
+                json_encode(['message' => ['body' => ['text' => 'Тест']]], JSON_THROW_ON_ERROR),
+                ['http_code' => 200],
+            ),
+        );
+
+        $channel = new MaxChannel($httpClient, self::API_URL, self::BOT_TOKEN);
+        $result = $channel->send(new Recipient(patientId: 1), 'chat-42', new NotificationMessage(body: 'Тест'));
+
+        self::assertTrue($result->success);
+        self::assertNotNull($result->externalId);
+        self::assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
+            (string) $result->externalId,
+        );
     }
 }

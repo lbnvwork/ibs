@@ -1,4 +1,6 @@
 {
+    "name": "ibs/cardionavigator",
+    "description": "КардиоНавигатор — система ведения пациентов (антикоагулянтная терапия)",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
@@ -13,7 +15,7 @@
         "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6.2",
-        "lexik/jwt-authentication-bundle": "*",
+        "lexik/jwt-authentication-bundle": "^3.2",
         "nelmio/cors-bundle": "^2.6.1",
         "phpdocumentor/reflection-docblock": "^5.6.6",
         "phpstan/phpdoc-parser": "^2.3.2",
@@ -34,6 +36,7 @@
         "symfony/serializer": "7.3.*",
         "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
+        "symfony/uid": "7.3.*",
         "symfony/validator": "7.3.*",
         "symfony/yaml": "7.3.*"
     },

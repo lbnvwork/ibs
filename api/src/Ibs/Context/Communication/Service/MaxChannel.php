@@ -7,6 +7,7 @@ namespace Ibs\Context\Communication\Service;
 use Ibs\Context\Communication\Model\NotificationMessage;
 use Ibs\Context\Communication\Model\Recipient;
 use Ibs\Context\Communication\Model\SendResult;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -21,8 +22,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *   body:   {"text": "<plain text, <= 4000 символов>"}
  *
  * Ответ (200) — объект Message (sender, recipient, timestamp, body, link, stat,
- * url). Идентификатор сообщения и статус доставки в ответе не возвращаются,
- * поэтому externalId остаётся null, а успех трактуется как 'sent'.
+ * url). Идентификатор сообщения возвращается вложенно в message.body.mid
+ * (mid.<hex>); если его нет — external_id генерируется как UUID (v4).
  */
 final class MaxChannel implements ChannelInterface
 {
@@ -173,7 +174,7 @@ final class MaxChannel implements ChannelInterface
     /**
      * @param array<string, mixed> $payload
      */
-    private function extractExternalId(array $payload): ?string
+    private function extractExternalId(array $payload): string
     {
         foreach (['external_id', 'message_id', 'id'] as $key) {
             $value = $payload[$key] ?? null;
@@ -187,7 +188,20 @@ final class MaxChannel implements ChannelInterface
             }
         }
 
-        return null;
+        // Фактический id сообщения MAX лежит вложенно — message.body.mid (mid.<hex>).
+        $message = $payload['message'] ?? null;
+        if (\is_array($message)) {
+            $body = $message['body'] ?? null;
+            if (\is_array($body)) {
+                $mid = $body['mid'] ?? null;
+                if (\is_string($mid) && '' !== $mid) {
+                    return $mid;
+                }
+            }
+        }
+
+        // Фолбэк — свой UUID, чтобы external_id никогда не был null.
+        return Uuid::v4()->toRfc4122();
     }
 
     private function extractErrorMessage(string $content, int $statusCode): string
