@@ -32,6 +32,7 @@ const demo = {
   patientId: null as string | null,
   treatmentIri: null as string | null,
   treatmentId: null as string | null,
+  appointmentIri: null as string | null,
 };
 
 /**
@@ -335,5 +336,41 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     // После сохранения форма закрывается, показатели отображаются.
     await expect(page.getByText(/122\/80 мм рт. ст./)).toBeVisible();
     await expect(page.getByText(/Последнее измерение/)).toBeVisible();
+  });
+
+  /**
+   * Шаг 6 — СЦ-10 Назначение дозы (СППВР) + контрольная явка.
+   * Карточка → «Добавить назначение» → «Рассчитать дозу (AI)» → «Сохранить».
+   */
+  test('Шаг 6 — СЦ-10 Доза СППВР (назначение + явка)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Ждём загрузки карточки (кнопка «Добавить назначение»).
+    const addAppointmentBtn = page.getByRole('button', { name: 'Добавить назначение' });
+    await expect(addAppointmentBtn).toBeVisible();
+    await addAppointmentBtn.click();
+
+    const modal = page.locator('.modal-content', { hasText: 'Новое назначение' });
+
+    // ИИ-подсказка: расчёт дозы.
+    await page.getByRole('button', { name: /Рассчитать дозу/ }).click();
+    const doseInput = modal.locator('input[type="number"][step="0.25"]').first();
+    await expect(doseInput).toHaveValue(/.+/); // доза рассчитана и подставлена
+
+    // Сохраняем назначение (захватываем id из ответа POST /api/appointments).
+    const [resp] = await Promise.all([
+      page.waitForResponse(
+        (r) => r.url().includes('/api/appointments') && r.request().method() === 'POST',
+      ),
+      modal.locator('.btn-save').click(),
+    ]);
+    const appointment = await resp.json();
+    demo.appointmentIri = `/api/appointments/${appointment.id}`;
+
+    // Модалка закрылась.
+    await expect(modal).toBeHidden();
+
+    console.log('[шаг6]', { appointmentIri: demo.appointmentIri });
   });
 });
