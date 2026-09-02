@@ -442,4 +442,36 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг7а] персональные данные отредактированы');
   });
+
+  /**
+   * Шаг 7б — СЦ-7 Лечение (inline edit).
+   * Раздел «Лечение» → ✎ → изменить осложнения → «Сохранить» (PATCH /api/treatments/{id}).
+   */
+  test('Шаг 7б — СЦ-7 Лечение (inline edit)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Раскрыть раздел «Лечение».
+    await page.locator('.section-title', { hasText: 'Лечение' }).click();
+
+    const treatmentSection = page.locator('.collapsible-section', { hasText: 'Лечение' });
+
+    // Редактирование (карандаш ✎ с title «Редактировать лечение»).
+    await treatmentSection.getByTitle('Редактировать лечение').click();
+
+    // Изменить осложнения (уникальное поле, без маски).
+    await treatmentSection.locator('.info-group', { hasText: 'Осложнения' }).locator('input').fill('Артериальная гипертензия');
+
+    // Сохранить (захватываем PATCH).
+    const [resp] = await Promise.all([
+      page.waitForResponse((r) => r.url().includes('/api/treatments/') && r.request().method() === 'PATCH'),
+      treatmentSection.locator('.btn-save-treatment').click(),
+    ]);
+    expect(resp.ok()).toBeTruthy();
+
+    // Изменение отобразилось.
+    await expect(treatmentSection.getByText('Артериальная гипертензия')).toBeVisible();
+
+    console.log('[шаг7б] лечение отредактировано');
+  });
 });
