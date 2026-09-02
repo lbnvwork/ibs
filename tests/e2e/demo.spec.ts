@@ -1,4 +1,4 @@
-import { test, expect, request } from '@playwright/test';
+import { test, expect, request, type Page } from '@playwright/test';
 
 // ===== Конфиг демо-прогона (env) =====
 // E2E_BASE_URL — базовый URL (локально http://nginx, демо https://test.bloodcontrol.ru).
@@ -15,14 +15,21 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'demo12345';
 const DOCTOR_LOGIN = process.env.DOCTOR_LOGIN || 'demo.doctor';
 const DOCTOR_PASSWORD = process.env.DOCTOR_PASSWORD || 'demo12345';
 
+// ФИО демо-пациента (СЦ-5). Для демо — фиксированное имя.
+const PATIENT_LASTNAME = process.env.PATIENT_LASTNAME || 'Демо';
+const PATIENT_FIRSTNAME = process.env.PATIENT_FIRSTNAME || 'Пациент';
+
 // Общее состояние сценария (заполняется в шагах, переиспользуется далее).
 const demo = {
   hospitalIri: null as string | null,
+  hospitalId: null as number | null,
   supervisorIri: null as string | null,
   doctorPersonnelIri: null as string | null,
   doctorUserIri: null as string | null,
   adminToken: null as string | null,
   doctorToken: null as string | null,
+  patientIri: null as string | null,
+  patientId: null as string | null,
 };
 
 /**
@@ -82,6 +89,26 @@ async function apiPatch<T>(token: string, path: string, data: object): Promise<T
   return body as T;
 }
 
+/**
+ * Логин врача через UI. Каждый UI-шаг получает свежий `page`,
+ * поэтому авторизация повторяется в начале шага.
+ */
+async function loginAsDoctor(page: Page): Promise<void> {
+  // Неавторизованный переход на рабочий стол → редирект на логин.
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/login/);
+
+  await page.getByLabel('Логин').fill(DOCTOR_LOGIN);
+  await page.getByLabel('Пароль').fill(DOCTOR_PASSWORD);
+  await page.getByRole('button', { name: 'Войти' }).click();
+  await page.waitForURL('/');
+
+  // JWT сохранён в localStorage.
+  const token = await page.evaluate(() => localStorage.getItem('token'));
+  expect(token, 'JWT не сохранён после логина').toBeTruthy();
+  demo.doctorToken = token;
+}
+
 test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
   /**
    * Шаг 0 — Setup через API: тестовый Hospital и Supervisor.
@@ -98,6 +125,7 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
       region: 'Москва',
     });
     demo.hospitalIri = `/api/hospitals/${hospital.id}`;
+    demo.hospitalId = hospital.id;
 
     // 2. Находим заранее созданного врача (app:create-user) по логину.
     // GET /api/users (без Accept: ld+json) отдаёт плоский JSON-массив.
@@ -138,19 +166,45 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
    * Неавторизованный переход на / → редирект /login; логин → / + JWT в localStorage.
    */
   test('Шаг 1 — СЦ-1 Авторизация врача', async ({ page }) => {
-    // Неавторизованный переход на рабочий стол → редирект на логин.
-    await page.goto('/');
-    await expect(page).toHaveURL(/\/login/);
+    await loginAsDoctor(page);
+  });
 
-    // Логин врача.
-    await page.getByLabel('Логин').fill(DOCTOR_LOGIN);
-    await page.getByLabel('Пароль').fill(DOCTOR_PASSWORD);
-    await page.getByRole('button', { name: 'Войти' }).click();
-    await page.waitForURL('/');
+  /**
+   * Шаг 2 — СЦ-5 Создание пациента.
+   * /patient/add → заполнение формы → «Сохранить» → редирект /patient/{id}/treatment/add.
+   */
+  test('Шаг 2 — СЦ-5 Создание пациента', async ({ page }) => {
+    await loginAsDoctor(page);
 
-    // JWT сохранён в localStorage.
-    const token = await page.evaluate(() => localStorage.getItem('token'));
-    expect(token, 'JWT не сохранён после логина').toBeTruthy();
-    demo.doctorToken = token;
+    await page.goto('/patient/add');
+
+    // Больница — демо-больница из шага 0 (по id).
+    const hospital = page.getByLabel('Больница', { exact: false });
+    await expect(hospital.locator('option')).not.toHaveCount(0);
+    await hospital.selectOption(String(demo.hospitalId));
+
+    await page.getByLabel('Фамилия', { exact: false }).fill(PATIENT_LASTNAME);
+    await page.getByLabel('Имя', { exact: false }).fill(PATIENT_FIRSTNAME);
+    await page.getByLabel('Отчество', { exact: false }).fill('Демонстрационный');
+    await page.getByLabel('Дата рождения', { exact: false }).fill('1958-03-15');
+    await page.getByLabel('Пол', { exact: true }).selectOption({ label: 'Мужской' });
+    await page.getByLabel('Телефон', { exact: false }).fill('8(911)222-33-44');
+    await page.getByLabel('Адрес', { exact: false }).fill('г. Москва, ул. Демо, д. 5');
+    await page.getByLabel('Паспорт', { exact: false }).fill('4509 123456');
+    await page.getByLabel('СНИЛС', { exact: false }).fill('112-233-445 95');
+    await page.getByLabel('Полис', { exact: false }).fill('7711 2233445566');
+    await page.locator('input[type="email"]').fill('demo.patient@example.com');
+    await page.getByLabel('Комментарий', { exact: false }).fill('Демо-пациент для куратора');
+
+    await page.getByRole('button', { name: 'Сохранить', exact: true }).click();
+
+    // Пациент создан → редирект на добавление лечения.
+    await page.waitForURL(/\/patient\/\d+\/treatment\/add/);
+    const patientId = page.url().match(/\/patient\/(\d+)\//)?.[1];
+    expect(patientId, 'не удалось извлечь id пациента из URL').toBeTruthy();
+    demo.patientId = patientId!;
+    demo.patientIri = `/api/patients/${patientId}`;
+
+    console.log('[шаг2]', { patientId, patientIri: demo.patientIri });
   });
 });
