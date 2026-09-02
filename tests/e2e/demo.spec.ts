@@ -553,4 +553,29 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг9] карточка: история + график МНО');
   });
+
+  /**
+   * Шаг 11 — СЦ-3+4 Рабочий список (вкладка + фильтр по препарату) + поиск пациента.
+   */
+  test('Шаг 11 — СЦ-3+4 Рабочий список + поиск', async ({ page }) => {
+    await loginAsDoctor(page);
+
+    // --- СЦ-4: поиск пациента в боковой панели → переход на карточку ---
+    // В списке имя аббревиировано: «Демо П. Д.» (transformForListPanel).
+    await page.getByPlaceholder('Поиск пациентов...').fill(PATIENT_LASTNAME);
+    const patientItem = page.locator('.patient-item', { hasText: PATIENT_LASTNAME }).first();
+    await expect(patientItem).toBeVisible();
+    await patientItem.click();
+    await page.waitForURL(new RegExp(`/patient/${demo.patientId}(?:$|[/?#])`));
+
+    // --- СЦ-3: рабочий список — вкладка + препарат «Варфарин» ---
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Работа со списком пациентов' }).click();
+    await page.getByRole('button', { name: 'Варфарин' }).click();
+
+    const patientRow = page.locator('tr', { hasText: `${PATIENT_LASTNAME} ${PATIENT_FIRSTNAME}` });
+    await expect(patientRow).toBeVisible();
+
+    console.log('[шаг11] рабочий список + поиск');
+  });
 });
