@@ -26,7 +26,8 @@ class AtLeastOneVitalSignValidator extends ConstraintValidator
             $value->getSystolicPressure() === null &&
             $value->getDiastolicPressure() === null &&
             $value->getSaturation() === null &&
-            $value->getWeight() === null
+            $value->getWeight() === null &&
+            $value->getCreatinine() === null
         ) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation();

@@ -17,6 +17,10 @@ class PatientVitalsSyncService
     public function syncFromVitals(PatientVitals $vitals): void
     {
         $patient = $vitals->getPatient();
+        if ($patient === null) {
+            return;
+        }
+
         $latest = $this->entityManager->getRepository(PatientVitalsLatest::class)
             ->findOneBy(['patient' => $patient]);
 
@@ -42,6 +46,9 @@ class PatientVitalsSyncService
         }
         if ($vitals->getWeight() !== null) {
             $latest->setWeight($vitals->getWeight());
+        }
+        if ($vitals->getCreatinine() !== null) {
+            $latest->setCreatinine($vitals->getCreatinine());
         }
 
         $latest->setLastUpdated(new \DateTime());
