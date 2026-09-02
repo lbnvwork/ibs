@@ -188,6 +188,47 @@ class PatientAnamnesisApiTest extends WebTestCase
         $this->assertSame(422, $this->client->getResponse()->getStatusCode());
     }
 
+    /**
+     * СЦ-3.31.5 (негатив): шкала CHA₂DS₂-VASc выше 9 → 422.
+     */
+    public function testScaleAboveNineIsRejected(): void
+    {
+        $token = $this->createAuthenticatedClient($this->client, $this->entityManager);
+        $patient = $this->createPatient();
+        $this->entityManager->flush();
+
+        $this->client->request(
+            'POST',
+            '/api/patient_anamneses',
+            server: array_merge($this->authHeader($token), ['CONTENT_TYPE' => 'application/json']),
+            content: json_encode([
+                'patient' => '/api/patients/'.$patient->getId(),
+                'cha2ds2Vasc' => 10,
+            ], JSON_THROW_ON_ERROR)
+        );
+
+        $this->assertSame(422, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * СЦ-3.31.1 (негатив): анамнез без пациента → 422 (NotNull), а не 500 от БД.
+     */
+    public function testMissingPatientIsRejected(): void
+    {
+        $token = $this->createAuthenticatedClient($this->client, $this->entityManager);
+
+        $this->client->request(
+            'POST',
+            '/api/patient_anamneses',
+            server: array_merge($this->authHeader($token), ['CONTENT_TYPE' => 'application/json']),
+            content: json_encode([
+                'mk' => true,
+            ], JSON_THROW_ON_ERROR)
+        );
+
+        $this->assertSame(422, $this->client->getResponse()->getStatusCode());
+    }
+
     private function createPatient(): Patient
     {
         $patient = new Patient();

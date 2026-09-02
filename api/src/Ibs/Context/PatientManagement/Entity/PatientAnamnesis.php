@@ -33,6 +33,7 @@ class PatientAnamnesis
 
     #[ORM\OneToOne(targetEntity: Patient::class)]
     #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', nullable: false, unique: true, onDelete: 'CASCADE', options: ['comment' => 'Пациент'])]
+    #[Assert\NotNull(message: 'patient_anamnesis.patient.not_null')]
     private ?Patient $patient = null;
 
     #[ORM\Column(type: 'boolean', nullable: true, options: ['comment' => 'Митральный клапан'])]
@@ -66,10 +67,12 @@ class PatientAnamnesis
     private ?Mkb10 $acs = null;
 
     #[Assert\PositiveOrZero(message: 'patient_anamnesis.cha2ds2Vasc.positive_or_zero')]
+    #[Assert\LessThanOrEqual(value: 9, message: 'patient_anamnesis.cha2ds2Vasc.max')]
     #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Шкала CHA₂DS₂-VASc (риск инсульта, 0..9)'])]
     private ?int $cha2ds2Vasc = null;
 
     #[Assert\PositiveOrZero(message: 'patient_anamnesis.hasBled.positive_or_zero')]
+    #[Assert\LessThanOrEqual(value: 9, message: 'patient_anamnesis.hasBled.max')]
     #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Шкала HAS-BLED (риск кровотечения, 0..9)'])]
     private ?int $hasBled = null;
 

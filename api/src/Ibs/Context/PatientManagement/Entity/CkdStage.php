@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Ibs\Context\PatientManagement\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Справочник стадий хронической болезни почек (ХБП): 1..5.
  * Отсутствие ХБП кодируется отсутствием ссылки (null) в PatientAnamnesis.ckdStage.
  */
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(),
+    ]
+)]
 #[ORM\Entity]
 #[ORM\Table(name: 'ckd_stages', options: ['comment' => 'Стадии хронической болезни почек (справочник)'])]
 class CkdStage

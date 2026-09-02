@@ -17,6 +17,10 @@ class PatientVitalsSyncService
     public function syncFromVitals(PatientVitals $vitals): void
     {
         $patient = $vitals->getPatient();
+        if ($patient === null) {
+            return;
+        }
+
         $latest = $this->entityManager->getRepository(PatientVitalsLatest::class)
             ->findOneBy(['patient' => $patient]);
 

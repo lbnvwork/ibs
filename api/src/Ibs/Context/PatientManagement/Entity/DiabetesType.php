@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Ibs\Context\PatientManagement\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Справочник типов сахарного диабета (СД): 1 — СД 1 типа, 2 — СД 2 типа.
  * «Нет диабета» кодируется отсутствием ссылки (null) в PatientAnamnesis.diabetes.
  */
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(),
+    ]
+)]
 #[ORM\Entity]
 #[ORM\Table(name: 'diabetes_types', options: ['comment' => 'Типы сахарного диабета (справочник)'])]
 class DiabetesType
