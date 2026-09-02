@@ -112,6 +112,12 @@ class Patient
     #[ORM\JoinColumn(name: 'hospital_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Больница'])]
     private ?Hospital $hospital = null;
 
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['comment' => 'Согласие пациента (информированное добровольное согласие)'])]
+    private ?bool $consent = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['comment' => 'Наличие мессенджера MAX'])]
+    private ?bool $maxMessenger = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -257,6 +263,28 @@ class Patient
     public function setHospital(?Hospital $hospital): self
     {
         $this->hospital = $hospital;
+        return $this;
+    }
+
+    public function getConsent(): ?bool
+    {
+        return $this->consent;
+    }
+
+    public function setConsent(?bool $consent): self
+    {
+        $this->consent = $consent;
+        return $this;
+    }
+
+    public function getMaxMessenger(): ?bool
+    {
+        return $this->maxMessenger;
+    }
+
+    public function setMaxMessenger(?bool $maxMessenger): self
+    {
+        $this->maxMessenger = $maxMessenger;
         return $this;
     }
 

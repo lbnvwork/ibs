@@ -56,6 +56,9 @@ class PatientVitalsLatest
     #[ORM\Column(type: 'float', nullable: true, options: ['comment' => 'Вес'])]
     private ?float $weight = null;
 
+    #[ORM\Column(type: 'float', nullable: true, options: ['comment' => 'Креатинин (мкмоль/л)'])]
+    private ?float $creatinine = null;
+
     #[ORM\Column(type: 'datetime', options: ['comment' => 'Дата последнего обновления'])]
     private \DateTimeInterface $lastUpdated;
 
@@ -138,6 +141,17 @@ class PatientVitalsLatest
     public function setWeight(?float $weight): self
     {
         $this->weight = $weight;
+        return $this;
+    }
+
+    public function getCreatinine(): ?float
+    {
+        return $this->creatinine;
+    }
+
+    public function setCreatinine(?float $creatinine): self
+    {
+        $this->creatinine = $creatinine;
         return $this;
     }
 

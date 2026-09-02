@@ -39,6 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(name: 'idx_treatment_patient_id', columns: ['patient_id'])]
 #[ORM\Index(name: 'idx_treatment_patient_beg_dt', columns: ['patient_id', 'beg_dt'])]
 #[ORM\Index(name: 'idx_treatment_drug_id', columns: ['drug_id'])]
+#[ORM\Index(name: 'idx_treatment_antiplatelet_drug_id', columns: ['antiplatelet_drug_id'])]
 #[ApiFilter(ActiveTreatmentFilter::class)]
 #[ApiFilter(SearchFilter::class, properties: [
     'patient' => 'exact',
@@ -114,6 +115,13 @@ class Treatment
     #[ORM\ManyToOne(targetEntity: Mkb10::class)]
     #[ORM\JoinColumn(name: 'mkb10_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Код МКБ-10'])]
     private ?Mkb10 $mkb10 = null;
+
+    #[ORM\ManyToOne(targetEntity: Drug::class)]
+    #[ORM\JoinColumn(name: 'antiplatelet_drug_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL', options: ['comment' => 'Антиагрегант'])]
+    private ?Drug $antiplateletDrug = null;
+
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Доза антиагреганта'])]
+    private ?string $antiplateletDoze = null;
 
     public function getId(): ?int
     {
@@ -315,6 +323,28 @@ class Treatment
     public function setMkb10(?Mkb10 $mkb10): self
     {
         $this->mkb10 = $mkb10;
+        return $this;
+    }
+
+    public function getAntiplateletDrug(): ?Drug
+    {
+        return $this->antiplateletDrug;
+    }
+
+    public function setAntiplateletDrug(?Drug $antiplateletDrug): self
+    {
+        $this->antiplateletDrug = $antiplateletDrug;
+        return $this;
+    }
+
+    public function getAntiplateletDoze(): ?string
+    {
+        return $this->antiplateletDoze;
+    }
+
+    public function setAntiplateletDoze(?string $antiplateletDoze): self
+    {
+        $this->antiplateletDoze = $antiplateletDoze;
         return $this;
     }
 

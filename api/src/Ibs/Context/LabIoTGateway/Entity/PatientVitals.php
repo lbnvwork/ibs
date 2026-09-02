@@ -120,6 +120,11 @@ class PatientVitals
     #[Groups(['vitals:read', 'vitals:write'])]
     private ?float $weight = null;
 
+    #[ORM\Column(type: 'float', nullable: true, options: ['comment' => 'Креатинин (мкмоль/л)'])]
+    #[Assert\Positive]
+    #[Groups(['vitals:read', 'vitals:write'])]
+    private ?float $creatinine = null;
+
     public function __construct()
     {
         $this->recordDt = new \DateTime();
@@ -278,5 +283,16 @@ class PatientVitals
     { 
         $this->weight = $weight;
         return $this; 
+    }
+
+    public function getCreatinine(): ?float
+    {
+        return $this->creatinine;
+    }
+
+    public function setCreatinine(?float $creatinine): self
+    {
+        $this->creatinine = $creatinine;
+        return $this;
     }
 }

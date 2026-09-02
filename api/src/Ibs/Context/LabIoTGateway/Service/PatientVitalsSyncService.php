@@ -43,6 +43,9 @@ class PatientVitalsSyncService
         if ($vitals->getWeight() !== null) {
             $latest->setWeight($vitals->getWeight());
         }
+        if ($vitals->getCreatinine() !== null) {
+            $latest->setCreatinine($vitals->getCreatinine());
+        }
 
         $latest->setLastUpdated(new \DateTime());
         $this->entityManager->flush();
