@@ -8,8 +8,9 @@ export default defineConfig({
   retries: 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    // Внутри сети docker-compose приложение доступно по имени сервиса nginx.
-    baseURL: 'http://nginx',
+    // Внутри docker-сети приложение доступно по имени сервиса nginx.
+    // Для демо-прогона на тест-сервере: E2E_BASE_URL=https://test.bloodcontrol.ru
+    baseURL: process.env.E2E_BASE_URL || 'http://nginx',
     headless: true,
     screenshot: 'on',
     trace: 'on',
