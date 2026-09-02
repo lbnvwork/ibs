@@ -30,6 +30,8 @@ const demo = {
   doctorToken: null as string | null,
   patientIri: null as string | null,
   patientId: null as string | null,
+  treatmentIri: null as string | null,
+  treatmentId: null as string | null,
 };
 
 /**
@@ -206,5 +208,50 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     demo.patientIri = `/api/patients/${patientId}`;
 
     console.log('[шаг2]', { patientId, patientIri: demo.patientIri });
+  });
+
+  /**
+   * Шаг 3 — СЦ-6 Назначение лечения.
+   * /patient/{id}/treatment/add → препарат (варфарин) + МКБ-10 + целевой МНО → «Сохранить лечение».
+   */
+  test('Шаг 3 — СЦ-6 Назначение лечения', async ({ page }) => {
+    await loginAsDoctor(page);
+
+    await page.goto(`/patient/${demo.patientId}/treatment/add`);
+
+    // Препарат — варфарин (дождаться загрузки справочника).
+    const drug = page.getByLabel('Препарат', { exact: false });
+    await expect(drug.locator('option')).not.toHaveCount(0);
+    await drug.selectOption({ label: 'варфарин' });
+
+    // Диагноз по МКБ-10: поиск «фибрилляция» → выбор I48.
+    await page.getByPlaceholder('Поиск или выберите...').fill('фибрилляция');
+    const mkbOption = page.locator('input[type="checkbox"][value="I48"]');
+    await mkbOption.waitFor({ state: 'visible', timeout: 10000 });
+    await mkbOption.check();
+    // Ждём автозаполнение диагноза из справочника.
+    await expect(page.getByLabel('Диагноз (текст)', { exact: false })).toHaveValue(/.+/);
+
+    // Целевой диапазон МНО.
+    await page.getByLabel('Целевой МНО от', { exact: true }).fill('2');
+    await page.getByLabel('Целевой МНО до', { exact: true }).fill('3');
+
+    await page.getByLabel('Комментарий к лечению', { exact: false }).fill('Старт терапии варфарином (демо)');
+
+    // «Сохранить лечение» → захватываем id созданного лечения из ответа API.
+    const [resp] = await Promise.all([
+      page.waitForResponse(
+        (r) => r.url().includes('/api/treatments') && r.request().method() === 'POST',
+      ),
+      page.getByRole('button', { name: 'Сохранить лечение' }).click(),
+    ]);
+    const created = await resp.json();
+    demo.treatmentId = String(created.id);
+    demo.treatmentIri = `/api/treatments/${created.id}`;
+
+    // Лечение создано → редирект на карточку пациента.
+    await page.waitForURL(new RegExp(`/patient/${demo.patientId}(?:$|[/?#])`));
+
+    console.log('[шаг3]', { treatmentId: demo.treatmentId, treatmentIri: demo.treatmentIri });
   });
 });
