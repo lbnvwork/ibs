@@ -407,4 +407,39 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг7] фармакогенетика сохранена');
   });
+
+  /**
+   * Шаг 7а — СЦ-7 Персональные данные (inline edit).
+   * Раздел «Персональные данные» → ✎ → изменить поля → «Сохранить» (PATCH /api/patients/{id}).
+   */
+  test('Шаг 7а — СЦ-7 Персональные данные (inline edit)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Раскрыть раздел «Персональные данные».
+    await page.locator('.section-title', { hasText: 'Персональные данные' }).click();
+
+    const patientCard = page.locator('.patient-info-compact');
+    await expect(patientCard).toBeVisible();
+
+    // Режим редактирования (карандаш ✎).
+    await patientCard.locator('.btn-edit-treatment').click();
+
+    // Изменить адрес и комментарий.
+    await patientCard.locator('.info-group', { hasText: 'Проживание' }).locator('input').fill('г. Москва, ул. Обновлённая, д. 9');
+    await patientCard.locator('.info-group', { hasText: 'Комментарий' }).locator('input').fill('Демо-пациент (отредактировано)');
+
+    // Сохранить (захватываем PATCH).
+    const [resp] = await Promise.all([
+      page.waitForResponse((r) => r.url().includes('/api/patients/') && r.request().method() === 'PATCH'),
+      patientCard.locator('.btn-save-treatment').click(),
+    ]);
+    expect(resp.ok()).toBeTruthy();
+
+    // Изменения отобразились в режиме просмотра.
+    await expect(patientCard.getByText('г. Москва, ул. Обновлённая, д. 9')).toBeVisible();
+    await expect(patientCard.getByText('Демо-пациент (отредактировано)')).toBeVisible();
+
+    console.log('[шаг7а] персональные данные отредактированы');
+  });
 });
