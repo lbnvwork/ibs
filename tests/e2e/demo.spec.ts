@@ -93,6 +93,19 @@ async function apiPatch<T>(token: string, path: string, data: object): Promise<T
 }
 
 /**
+ * DELETE-запрос к API с Bearer-токеном.
+ */
+async function apiDelete(token: string, path: string): Promise<void> {
+  const ctx = await request.newContext({
+    baseURL: BASE_URL,
+    extraHTTPHeaders: { Authorization: `Bearer ${token}` },
+  });
+  const resp = await ctx.delete(path);
+  expect(resp.ok(), `DELETE ${path} → ${resp.status()}: ${await resp.text()}`).toBeTruthy();
+  await ctx.dispose();
+}
+
+/**
  * Дата N дней назад (локальная, формат YYYY-MM-DD для <input type="date">).
  */
 function dateDaysAgo(days: number): string {
@@ -665,5 +678,42 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     await expect(page).toHaveURL(/\/treatment\/add/);
 
     console.log('[Н-6.2] валидация лечения');
+  });
+
+  /**
+   * Шаг 14 — Teardown: удаление демо-данных в обратном порядке (если не DEMO=1).
+   */
+  test.afterAll(async () => {
+    if (DEMO) return; // в режиме DEMO данные остаются для куратора
+    const token = demo.adminToken;
+    if (!token) return;
+
+    // 1. Сбросить привязку профиля врача к демо-больнице.
+    if (demo.doctorPersonnelIri) {
+      await apiPatch(token, demo.doctorPersonnelIri, { hospital: null });
+    }
+
+    // 2. Дочерние сущности (FK NO ACTION на treatment).
+    if (demo.treatmentIri) {
+      const histories = await apiGet<Array<{ id: number }>>(
+        token,
+        `/api/test_histories?treatment=${demo.treatmentIri}`,
+      );
+      for (const h of histories) await apiDelete(token, `/api/test_histories/${h.id}`);
+
+      const appointments = await apiGet<Array<{ id: number }>>(
+        token,
+        `/api/appointments?treatment=${demo.treatmentIri}`,
+      );
+      for (const a of appointments) await apiDelete(token, `/api/appointments/${a.id}`);
+    }
+
+    // 3. Верхнеуровневые (обратный порядок). patient → каскад genetic_results + vitals.
+    if (demo.treatmentIri) await apiDelete(token, demo.treatmentIri);
+    if (demo.patientIri) await apiDelete(token, demo.patientIri);
+    if (demo.supervisorIri) await apiDelete(token, demo.supervisorIri);
+    if (demo.hospitalIri) await apiDelete(token, demo.hospitalIri);
+
+    console.log('[teardown] демо-данные удалены');
   });
 });
