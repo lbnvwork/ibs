@@ -681,6 +681,51 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
   });
 
   /**
+   * Н-8.1 — валидация анализа: МНО вне диапазона 0.8–10.0 → ошибка, POST не уходит.
+   */
+  test('Н-8.1: валидация анализа (МНО вне 0.8–10.0)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    const addTestBtn = page.getByRole('button', { name: 'Добавить анализ' });
+    await expect(addTestBtn).toBeVisible();
+    await addTestBtn.click();
+
+    const modal = page.locator('.modal-content');
+    await modal.locator('input[type="number"][step="0.1"]').fill('0.5'); // МНО < 0.8
+    await modal.locator('input[type="number"][step="0.25"]').fill('5');
+
+    await modal.getByRole('button', { name: 'Сохранить' }).click();
+
+    await expect(modal.getByText(/МНО должно быть в диапазоне/)).toBeVisible();
+    await expect(modal).toBeVisible(); // модалка не закрылась
+
+    console.log('[Н-8.1] валидация анализа (МНО)');
+  });
+
+  /**
+   * Н-10.1 — валидация назначения: доза не кратна 0.25 → ошибка, POST не уходит.
+   */
+  test('Н-10.1: валидация назначения (доза не кратна 0.25)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    const addAppointmentBtn = page.getByRole('button', { name: 'Добавить назначение' });
+    await expect(addAppointmentBtn).toBeVisible();
+    await addAppointmentBtn.click();
+
+    const modal = page.locator('.modal-content', { hasText: 'Новое назначение' });
+    await modal.locator('input[type="number"][step="0.25"]').first().fill('1.1'); // не кратна 0.25
+
+    await modal.locator('.btn-save').click();
+
+    await expect(modal.getByText(/кратна 0\.25/)).toBeVisible();
+    await expect(modal).toBeVisible();
+
+    console.log('[Н-10.1] валидация назначения (доза)');
+  });
+
+  /**
    * Шаг 14 — Teardown: удаление демо-данных в обратном порядке (если не DEMO=1).
    */
   test.afterAll(async () => {
