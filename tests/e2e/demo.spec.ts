@@ -509,4 +509,27 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг7в] назначение из сайдбара, id:', appointment.id);
   });
+
+  /**
+   * Шаг 8 — СЦ-2 Мониторинг (светофор/триаж).
+   * Рабочий стол → вкладка «Варфарин» → строка демо-пациента подсвечена красным (МНО 3.5 > 3.0).
+   */
+  test('Шаг 8 — СЦ-2 Мониторинг (светофор/триаж)', async ({ page }) => {
+    await loginAsDoctor(page);
+
+    // Выбрать вкладку препарата «Варфарин».
+    await page.getByRole('button', { name: 'Варфарин' }).click();
+
+    // Дождаться загрузки таблицы и найти строку демо-пациента.
+    const patientRow = page.locator('tr', { hasText: `${PATIENT_LASTNAME} ${PATIENT_FIRSTNAME}` });
+    await expect(patientRow).toBeVisible();
+
+    // Красная подсветка: последний МНО 3.5 выше целевого диапазона (2–3).
+    await expect(patientRow).toHaveClass(/highlight-red/);
+
+    // Диагноз отображается.
+    await expect(patientRow.getByText('Фибрилляция и трепетание предсердий')).toBeVisible();
+
+    console.log('[шаг8] светофор: красная подсветка демо-пациента');
+  });
 });
