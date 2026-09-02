@@ -242,8 +242,9 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     const mkbOption = page.locator('input[type="checkbox"][value="I48"]');
     await mkbOption.waitFor({ state: 'visible', timeout: 10000 });
     await mkbOption.check();
-    // Ждём автозаполнение диагноза из справочника.
-    await expect(page.getByLabel('Диагноз (текст)', { exact: false })).toHaveValue(/.+/);
+    // Автоподстановка из справочника: имя диагноза + код МКБ-10.
+    await expect(page.locator('#diagnosis')).toHaveValue('Фибрилляция и трепетание предсердий');
+    await expect(page.locator('#diagnosisCode')).toHaveValue('I48');
 
     // Целевой диапазон МНО.
     await page.getByLabel('Целевой МНО от', { exact: true }).fill('2');
@@ -607,5 +608,62 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     expect(pharm.markers.length).toBe(4);
 
     console.log('[шаг12] справочники: препараты/МКБ-10/больницы/маркеры');
+  });
+
+  /**
+   * Н-5.3 — валидация формы создания пациента (дата рождения в будущем).
+   * POST не уходит, остаёмся на форме, ошибка видна.
+   */
+  test('Н-5.3: валидация создания пациента (дата в будущем)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto('/patient/add');
+
+    const hospital = page.getByLabel('Больница', { exact: false });
+    await expect(hospital.locator('option')).not.toHaveCount(0);
+    await hospital.selectOption({ index: 0 });
+
+    await page.getByLabel('Фамилия', { exact: false }).fill('Валидация');
+    await page.getByLabel('Имя', { exact: false }).fill('Тест');
+    await page.getByLabel('Дата рождения', { exact: false }).fill('2999-01-01');
+    await page.getByLabel('Телефон', { exact: false }).fill('8(900)123-45-67');
+    await page.getByLabel('Адрес', { exact: false }).fill('г. Москва, ул. Тестовая');
+    await page.getByLabel('Паспорт', { exact: false }).fill('1234 567890');
+    await page.getByLabel('СНИЛС', { exact: false }).fill('123-456-789 95');
+
+    await page.getByRole('button', { name: 'Сохранить', exact: true }).click();
+
+    await expect(page.getByText(/не может быть в будущем/)).toBeVisible();
+    await expect(page).toHaveURL(/\/patient\/add/);
+
+    console.log('[Н-5.3] валидация создания пациента');
+  });
+
+  /**
+   * Н-6.2 — валидация лечения: МНО «от» ≥ «до» → ошибка, POST не уходит.
+   */
+  test('Н-6.2: валидация лечения (МНО от ≥ до)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}/treatment/add`);
+
+    const drug = page.getByLabel('Препарат', { exact: false });
+    await expect(drug.locator('option')).not.toHaveCount(0);
+    await drug.selectOption({ label: 'варфарин' });
+
+    await page.getByPlaceholder('Поиск или выберите...').fill('фибрилляция');
+    const mkbOption = page.locator('input[type="checkbox"][value="I48"]');
+    await mkbOption.waitFor({ state: 'visible', timeout: 10000 });
+    await mkbOption.check();
+    await expect(page.locator('#diagnosis')).toHaveValue(/.+/);
+
+    // МНО «от» больше «до» — невалидно.
+    await page.getByLabel('Целевой МНО от', { exact: true }).fill('3');
+    await page.getByLabel('Целевой МНО до', { exact: true }).fill('2');
+
+    await page.getByRole('button', { name: 'Сохранить лечение' }).click();
+
+    await expect(page.getByText(/МНО «от» не может быть больше МНО «до»/)).toBeVisible();
+    await expect(page).toHaveURL(/\/treatment\/add/);
+
+    console.log('[Н-6.2] валидация лечения');
   });
 });
