@@ -474,4 +474,39 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг7б] лечение отредактировано');
   });
+
+  /**
+   * Шаг 7в — Назначение из боковой панели (сайдбар «Сформировать рекомендации пациенту»).
+   * Отличается от шага 6 точкой входа: полная модалка AppointmentAdd (showAppointmentModal).
+   */
+  test('Шаг 7в — Назначение из боковой панели', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Кнопка сайдбара «Сформировать рекомендации пациенту» (иконка, без текста).
+    // Дождаться, пока лечение загрузится и кнопка станет активной (isTreatmentActive).
+    const recommendBtn = page.getByTitle('Сформировать рекомендации пациенту');
+    await expect(recommendBtn).not.toHaveClass(/disabled-button/);
+    await recommendBtn.click();
+
+    const modal = page.locator('.modal-content', { hasText: 'Новое назначение' });
+    await expect(modal).toBeVisible();
+
+    // Рассчитать дозу.
+    await page.getByRole('button', { name: /Рассчитать дозу/ }).click();
+    const doseInput = modal.locator('input[type="number"][step="0.25"]').first();
+    await expect(doseInput).toHaveValue(/.+/);
+
+    // Сохранить.
+    const [resp] = await Promise.all([
+      page.waitForResponse((r) => r.url().includes('/api/appointments') && r.request().method() === 'POST'),
+      modal.locator('.btn-save').click(),
+    ]);
+    const appointment = await resp.json();
+
+    // Модалка закрылась.
+    await expect(modal).toBeHidden();
+
+    console.log('[шаг7в] назначение из сайдбара, id:', appointment.id);
+  });
 });
