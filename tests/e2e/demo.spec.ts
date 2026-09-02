@@ -532,4 +532,25 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг8] светофор: красная подсветка демо-пациента');
   });
+
+  /**
+   * Шаг 9 — СЦ-7 Карточка: полная история + график МНО.
+   * Таблица «Медицинские данные» (анализы + назначения) + график МНО (canvas).
+   */
+  test('Шаг 9 — СЦ-7 Карточка: история + график МНО', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Ждём загрузки «Медицинские данные» (история).
+    const medicalData = page.locator('.medical-data');
+    await expect(medicalData).toBeVisible();
+
+    // График МНО отрисован (canvas).
+    await expect(page.locator('.mno-chart-container canvas')).toBeVisible();
+
+    // 3 анализа МНО в таблице.
+    await expect(page.locator('.indicator-mno')).toHaveCount(3);
+
+    console.log('[шаг9] карточка: история + график МНО');
+  });
 });
