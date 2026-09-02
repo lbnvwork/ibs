@@ -1,1 +1,0 @@
-/home/max/work/ibs/projects/ibs-agents/clinerules/30-tdd.md
