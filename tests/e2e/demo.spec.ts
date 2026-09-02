@@ -304,4 +304,36 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг4]', { анализов: histories.length });
   });
+
+  /**
+   * Шаг 5 — СЦ-9 Витальные показатели.
+   * Ручной ввод через UI: раздел «Витальные показатели» → карандаш ✎ → форма → «Сохранить».
+   */
+  test('Шаг 5 — СЦ-9 Витальные показатели', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Раскрываем раздел «Витальные показатели» (заголовок секции, не VitalsCard).
+    await page.locator('.section-title', { hasText: 'Витальные показатели' }).click();
+
+    const vitalsCard = page.locator('.vitals-card');
+
+    // Переход в режим редактирования (карандаш ✎).
+    await vitalsCard.locator('.btn-icon-edit').click();
+
+    // Заполняем форму (поля привязаны по тексту label в .form-row).
+    const form = vitalsCard.locator('.vitals-form');
+    await form.locator('.form-row', { hasText: 'Hb' }).locator('input').fill('132');
+    await form.locator('.form-row', { hasText: 'ЧСС' }).locator('input').fill('76');
+    await form.locator('.form-row', { hasText: 'Систолическое АД' }).locator('input').fill('122');
+    await form.locator('.form-row', { hasText: 'Диастолическое АД' }).locator('input').fill('80');
+    await form.locator('.form-row', { hasText: 'SpO₂' }).locator('input').fill('97');
+    await form.locator('.form-row', { hasText: 'Вес' }).locator('input').fill('82');
+
+    await vitalsCard.locator('.btn-save').click();
+
+    // После сохранения форма закрывается, показатели отображаются.
+    await expect(page.getByText(/122\/80 мм рт. ст./)).toBeVisible();
+    await expect(page.getByText(/Последнее измерение/)).toBeVisible();
+  });
 });
