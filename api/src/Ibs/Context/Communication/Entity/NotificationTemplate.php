@@ -9,28 +9,28 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'notification_templates')]
+#[ORM\Table(name: 'notification_templates', options: ['comment' => 'Шаблоны уведомлений'])]
 #[ORM\UniqueConstraint(name: 'uniq_notification_template_code_channel', columns: ['code', 'channel'])]
 class NotificationTemplate
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 128)]
+    #[ORM\Column(type: 'string', length: 128, options: ['comment' => 'Код'])]
     private string $code;
 
-    #[ORM\Column(type: 'string', length: 16)]
+    #[ORM\Column(type: 'string', length: 16, options: ['comment' => 'Канал'])]
     private string $channel;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Тема'])]
     private ?string $subjectTemplate = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Тело'])]
     private ?string $bodyTemplate = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Описание'])]
     private ?string $description = null;
 
     public function __construct(string $code, string $channel)

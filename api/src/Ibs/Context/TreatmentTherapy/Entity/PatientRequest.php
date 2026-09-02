@@ -9,25 +9,25 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: 'patient_requests')]
+#[ORM\Table(name: 'patient_requests', options: ['comment' => 'Обращения пациентов'])]
 class PatientRequest
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Причина'])]
     private ?string $reason = null;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class)]
-    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', options: ['comment' => 'Лечение'])]
     private ?Treatment $treatment = null;
 
     public function getId(): ?int

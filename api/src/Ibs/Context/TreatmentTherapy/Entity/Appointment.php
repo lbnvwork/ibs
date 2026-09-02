@@ -29,47 +29,47 @@ use Doctrine\ORM\Mapping\PreUpdate;
     ],
 )]
 #[ORM\Entity]
-#[ORM\Table(name: 'appointments')]
+#[ORM\Table(name: 'appointments', options: ['comment' => 'Назначения'])]
 #[ApiFilter(SearchFilter::class, properties: ['treatment' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['appointmentDt'])]
 class Appointment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true, options: ['comment' => 'Идентификатор'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата изменения'])]
     private ?\DateTimeInterface $modDt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: false)]
+    #[ORM\Column(type: 'datetime', nullable: false, options: ['comment' => 'Дата назначения'])]
     private \DateTimeInterface $appointmentDt;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
-    #[ORM\Column(type: 'float', nullable: false)]
+    #[ORM\Column(type: 'float', nullable: false, options: ['comment' => 'Доза'])]
     private float $doze;
 
-    #[ORM\Column(type: 'text', nullable: false)]
+    #[ORM\Column(type: 'text', nullable: false, options: ['comment' => 'ФИО врача'])]
     private string $doctorName;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1])]
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1, 'comment' => 'Вторая доза (чередование)'])]
     private int $doze2 = -1;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class)]
-    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Лечение'])]
     private ?Treatment $treatment = null;
 
     #[ORM\ManyToOne(targetEntity: SmsOut::class)]
-    #[ORM\JoinColumn(name: 'sms_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'sms_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'SMS'])]
     private ?SmsOut $sms = null;
 
     #[ORM\ManyToOne(targetEntity: Drug::class)]
-    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(name: 'drug_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Препарат'])]
     private ?Drug $drug = null;
 
     public function getId(): ?int
