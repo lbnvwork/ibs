@@ -373,4 +373,38 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг6]', { appointmentIri: demo.appointmentIri });
   });
+
+  /**
+   * Шаг 7 — СЦ-11 Фармакогенетика (CYP2C9*2, CYP2C9*3, VKORC1).
+   * Раздел «Фармакогенетика» → ✎ → выбор генотипов → «Сохранить».
+   */
+  test('Шаг 7 — СЦ-11 Фармакогенетика', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Раскрыть раздел «Фармакогенетика».
+    await page.locator('.section-title', { hasText: 'Фармакогенетика' }).click();
+
+    const pharm = page.locator('.pharmacogenetics-section');
+
+    // Дождаться загрузки 4 маркеров для варфарина.
+    await expect(pharm.locator('.marker-item')).toHaveCount(4);
+
+    // Редактирование.
+    await pharm.locator('.btn-icon-edit').click();
+
+    // Выбор генотипов.
+    await pharm.locator('.marker-item', { hasText: 'CYP2C9_2' }).locator('select').selectOption({ label: 'Гетерозигота' });
+    await pharm.locator('.marker-item', { hasText: 'CYP2C9_3' }).locator('select').selectOption({ label: 'Норма' });
+    await pharm.locator('.marker-item', { hasText: 'VKORC1_3673' }).locator('select').selectOption({ label: 'Гетерозигота' });
+    await pharm.locator('.marker-item', { hasText: 'VKORC1_3730' }).locator('select').selectOption({ label: 'Норма' });
+
+    await pharm.locator('.btn-save').click();
+
+    // После сохранения маркеры отображают выбранные генотипы.
+    await expect(pharm.locator('.marker-item', { hasText: 'CYP2C9_2' }).locator('.genotype')).toContainText('Гетерозигота');
+    await expect(pharm.locator('.marker-item', { hasText: 'CYP2C9_3' }).locator('.genotype')).toContainText('Норма');
+
+    console.log('[шаг7] фармакогенетика сохранена');
+  });
 });
