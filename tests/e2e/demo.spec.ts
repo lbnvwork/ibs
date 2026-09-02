@@ -726,6 +726,122 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
   });
 
   /**
+   * Н-10.2 — предупреждение изменения дозы >50%: первый клик «Сохранить»
+   * не сохраняет (подтверждение), второй — сохраняет.
+   */
+  test('Н-10.2: предупреждение изменения дозы >50% (двойное подтверждение)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    const addAppointmentBtn = page.getByRole('button', { name: 'Добавить назначение' });
+    await expect(addAppointmentBtn).toBeVisible();
+    await addAppointmentBtn.click();
+
+    const modal = page.locator('.modal-content', { hasText: 'Новое назначение' });
+    await expect(modal).toBeVisible();
+
+    // Даём асинхронной загрузке предыдущей дозы (loadLastAppointmentDose) завершиться.
+    await page.waitForTimeout(500);
+
+    // Доза 10 против последней (~4) → изменение >50%.
+    await modal.locator('input[type="number"][step="0.25"]').first().fill('10');
+
+    // Предупреждение + требование повторного подтверждения.
+    await expect(modal.locator('.warning-message')).toContainText('более чем на 50%');
+    await expect(modal.locator('.warning-message')).toContainText('ещё раз');
+
+    // Первый клик — только подтверждение, POST не уходит.
+    await modal.locator('.btn-save').click();
+    await expect(modal).toBeVisible();
+
+    // Второй клик — сохраняет назначение.
+    const [resp] = await Promise.all([
+      page.waitForResponse((r) => r.url().includes('/api/appointments') && r.request().method() === 'POST'),
+      modal.locator('.btn-save').click(),
+    ]);
+    expect(resp.ok()).toBeTruthy();
+    await expect(modal).toBeHidden();
+
+    console.log('[Н-10.2] предупреждение >50% + двойное подтверждение');
+  });
+
+  /**
+   * Т-3/Т-4 — особые случаи СППВР: МНО >5.0 → «пропустить приём»,
+   * МНО <1.5 → «срочная консультация»; варианты в обоих случаях не выдаются.
+   * (creationDt анализа = дата анализа, поэтому перед проверкой <1.5 удаляем 5.5,
+   *  иначе два анализа с одной датой дают неоднозначный порядок «последнего».)
+   */
+  test('Т-3/Т-4: особые случаи СППВР (МНО >5.0 и <1.5)', async ({ page }) => {
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    const addTestBtn = page.getByRole('button', { name: 'Добавить анализ' });
+
+    // --- Т-3: МНО 5.5 → «пропустить приём» ---
+    await expect(addTestBtn).toBeVisible();
+    await addTestBtn.click();
+    let testModal = page.locator('.modal-content');
+    await testModal.locator('input[type="date"]').fill(dateDaysAgo(0));
+    await testModal.locator('input[type="number"][step="0.1"]').fill('5.5');
+    await testModal.locator('input[type="number"][step="0.25"]').fill('5');
+    const [resp5] = await Promise.all([
+      page.waitForResponse((r) => r.url().includes('/api/test_histories') && r.request().method() === 'POST'),
+      testModal.getByRole('button', { name: 'Сохранить' }).click(),
+    ]);
+    const hist5 = await resp5.json();
+    await expect(testModal).toBeHidden();
+
+    await page.getByRole('button', { name: 'Добавить назначение' }).click();
+    let apptModal = page.locator('.modal-content', { hasText: 'Новое назначение' });
+    await apptModal.getByRole('button', { name: /Рассчитать дозу/ }).click();
+    await expect(apptModal.locator('.error-message')).toContainText(/пропустить приём/);
+    await expect(apptModal.locator('.variants-block')).toHaveCount(0);
+    await apptModal.locator('.btn-cancel').click();
+    await expect(apptModal).toBeHidden();
+
+    // --- Т-4: удаляем 5.5, добавляем МНО 1.2 → «срочная консультация» ---
+    await apiDelete(demo.adminToken!, `/api/test_histories/${hist5.id}`);
+
+    await addTestBtn.click();
+    testModal = page.locator('.modal-content');
+    await testModal.locator('input[type="date"]').fill(dateDaysAgo(0));
+    await testModal.locator('input[type="number"][step="0.1"]').fill('1.2');
+    await testModal.locator('input[type="number"][step="0.25"]').fill('5');
+    await testModal.getByRole('button', { name: 'Сохранить' }).click();
+    await expect(testModal).toBeHidden();
+
+    await page.getByRole('button', { name: 'Добавить назначение' }).click();
+    apptModal = page.locator('.modal-content', { hasText: 'Новое назначение' });
+    await apptModal.getByRole('button', { name: /Рассчитать дозу/ }).click();
+    await expect(apptModal.locator('.error-message')).toContainText(/срочная консультация/);
+    await expect(apptModal.locator('.variants-block')).toHaveCount(0);
+    await apptModal.locator('.btn-cancel').click();
+    await expect(apptModal).toBeHidden();
+
+    console.log('[Т-3/Т-4] особые случаи СППВР (МНО >5.0 / <1.5)');
+  });
+
+  /**
+   * Т-5 — переход состояния: завершение лечения (PATCH realEndDt) отключает
+   * назначение (кнопка сайдбара «Сформировать рекомендации» становится неактивной).
+   */
+  test('Т-5: завершение лечения → назначение заблокировано', async ({ page }) => {
+    // Завершаем лечение через API.
+    await apiPatch(demo.adminToken!, demo.treatmentIri!, {
+      realEndDt: new Date().toISOString(),
+    });
+
+    await loginAsDoctor(page);
+    await page.goto(`/patient/${demo.patientId}`);
+
+    // Кнопка сайдбара отключается.
+    const recommendBtn = page.getByTitle('Сформировать рекомендации пациенту');
+    await expect(recommendBtn).toHaveClass(/disabled-button/);
+
+    console.log('[Т-5] завершение лечения → блокировка назначения');
+  });
+
+  /**
    * Шаг 14 — Teardown: удаление демо-данных в обратном порядке (если не DEMO=1).
    */
   test.afterAll(async () => {
