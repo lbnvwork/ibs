@@ -92,6 +92,18 @@ async function apiPatch<T>(token: string, path: string, data: object): Promise<T
 }
 
 /**
+ * Дата N дней назад (локальная, формат YYYY-MM-DD для <input type="date">).
+ */
+function dateDaysAgo(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
  * Логин врача через UI. Каждый UI-шаг получает свежий `page`,
  * поэтому авторизация повторяется в начале шага.
  */
@@ -253,5 +265,43 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     await page.waitForURL(new RegExp(`/patient/${demo.patientId}(?:$|[/?#])`));
 
     console.log('[шаг3]', { treatmentId: demo.treatmentId, treatmentIri: demo.treatmentIri });
+  });
+
+  /**
+   * Шаг 4 — СЦ-8 Анализы (МНО, ≥3 точки).
+   * Карточка пациента → «Добавить анализ» → дата + МНО + доза → «Сохранить».
+   */
+  test('Шаг 4 — СЦ-8 Анализы (МНО, ≥3 точки)', async ({ page }) => {
+    await loginAsDoctor(page);
+
+    await page.goto(`/patient/${demo.patientId}`);
+    const addTestBtn = page.getByRole('button', { name: 'Добавить анализ' });
+    await expect(addTestBtn).toBeVisible();
+
+    // Три точки МНО: ниже целевого (1.8) / в диапазоне (2.6) / выше (3.5) — для светофора.
+    const points = [
+      { daysAgo: 3, mno: '1.8', doze: '5' },
+      { daysAgo: 2, mno: '2.6', doze: '5' },
+      { daysAgo: 1, mno: '3.5', doze: '5' },
+    ];
+
+    for (const p of points) {
+      await addTestBtn.click();
+      const modal = page.locator('.modal-content');
+      await modal.locator('input[type="date"]').fill(dateDaysAgo(p.daysAgo));
+      await modal.locator('input[type="number"][step="0.1"]').fill(p.mno);
+      await modal.locator('input[type="number"][step="0.25"]').fill(p.doze);
+      await modal.getByRole('button', { name: 'Сохранить' }).click();
+      await expect(modal).toBeHidden();
+    }
+
+    // Проверка: 3 анализа сохранены.
+    const histories = await apiGet<Array<{ id: number }>>(
+      demo.adminToken,
+      `/api/test_histories?treatment=${demo.treatmentIri}`,
+    );
+    expect(histories.length, 'ожидается 3 анализа МНО').toBe(3);
+
+    console.log('[шаг4]', { анализов: histories.length });
   });
 });
