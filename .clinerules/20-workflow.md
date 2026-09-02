@@ -1,1 +1,0 @@
-/home/max/work/ibs/projects/ibs-agents/clinerules/20-workflow.md
