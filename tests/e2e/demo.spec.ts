@@ -578,4 +578,34 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     console.log('[шаг11] рабочий список + поиск');
   });
+
+  /**
+   * Шаг 12 — СЦ-13 Справочники (препараты / МКБ-10 / больницы / маркеры).
+   * Проверяем, что справочники загружены и отдают данные (через API).
+   */
+  test('Шаг 12 — СЦ-13 Справочники', async () => {
+    const token = demo.adminToken!;
+
+    // Препараты.
+    const drugs = await apiGet<Array<{ nominative: string }>>(token, '/api/drugs');
+    expect(drugs.length).toBeGreaterThanOrEqual(11);
+    expect(drugs.some((d) => d.nominative === 'варфарин')).toBeTruthy();
+
+    // МКБ-10 — поиск по коду.
+    const mkb = await apiGet<Array<{ mkb_code: string }>>(token, '/api/mkb10/search?q=I48');
+    expect(mkb.some((m) => m.mkb_code === 'I48')).toBeTruthy();
+
+    // Больницы — есть демо-больница.
+    const hospitals = await apiGet<Array<{ name: string }>>(token, '/api/hospitals');
+    expect(hospitals.some((h) => h.name === 'Демо-больница')).toBeTruthy();
+
+    // Маркеры — 4 маркера для варфарина.
+    const pharm = await apiGet<{ markers: Array<{ geneSymbol: string }> }>(
+      token,
+      `/api/patients/${demo.patientId}/pharmacogenetics`,
+    );
+    expect(pharm.markers.length).toBe(4);
+
+    console.log('[шаг12] справочники: препараты/МКБ-10/больницы/маркеры');
+  });
 });
