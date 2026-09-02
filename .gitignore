@@ -44,10 +44,9 @@ docs/.obsidian/
 # Секреты и доступы — не в git
 docs/09-Служебное/Доступы/
 
-# Локальная конфигурация агентов (Cline)
-.cline/*
-!.cline/skills/
-.clinerules/00-role.md
+# Локальная конфигурация агентов (Cline) — вынесена в репо ibs-agents (симлинки, не трекаем)
+.cline/
+.clinerules/
 
 # Playwright E2E (зависимости и артефакты — не в git)
 tests/e2e/node_modules/
