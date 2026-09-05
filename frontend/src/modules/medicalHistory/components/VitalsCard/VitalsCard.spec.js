@@ -75,6 +75,20 @@ describe('VitalsCard.vue', () => {
       expect(wrapper.vm.editing).toBe(false)
       expect(wrapper.vm.form.hb).toBe(140)
     })
+
+    it('resets editing state when patientId changes', async () => {
+      const wrapper = mountVitalsCard({}, [{ hb: 140 }])
+      await flushPromises()
+      wrapper.vm.startEditing()
+      wrapper.vm.form.hb = 999
+
+      vitalsApi.getLatest.mockResolvedValue({ data: { member: [{ hb: 150 }] } })
+      await wrapper.setProps({ patientId: '9' })
+      await flushPromises()
+
+      expect(wrapper.vm.editing).toBe(false)
+      expect(wrapper.vm.form.hb).toBeNull()
+    })
   })
 
   describe('validateForm / save', () => {

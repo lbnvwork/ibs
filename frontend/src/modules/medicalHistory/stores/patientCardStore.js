@@ -27,6 +27,11 @@ export const usePatientCardStore = defineStore('patientCard', {
         async fetchPatient(patientId) {
             this.loading = true;
             this.error = null;
+            // Сброс состояния редактирования при смене пациента (BUG-3.35-01)
+            this.editingPatient = false;
+            this.editingPatientData = {};
+            this.originalPatientJson = '';
+            this.patientFormError = '';
             try {
                 const data = await patientApi.getOne(patientId);
                 if (data.hospital) {
