@@ -31,6 +31,8 @@ export const usePharmacogeneticsStore = defineStore('pharmacogenetics', {
             this.drugIri = drugIri;
             this.loading = true;
             this.saveError = null;
+            // Сброс режима редактирования при смене пациента (BUG-3.35-01)
+            this.editing = false;
 
             try {
                 const params = {};
