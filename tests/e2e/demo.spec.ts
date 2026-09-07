@@ -605,9 +605,9 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     expect(drugs.length).toBeGreaterThanOrEqual(11);
     expect(drugs.some((d) => d.nominative === 'варфарин')).toBeTruthy();
 
-    // МКБ-10 — поиск по коду.
-    const mkb = await apiGet<Array<{ mkb_code: string }>>(token, '/api/mkb10/search?q=I48');
-    expect(mkb.some((m) => m.mkb_code === 'I48')).toBeTruthy();
+    // МКБ-10 — поиск по коду (3.62: /api/mkb10/search возвращает объекты list<Mkb10>, поле mkbCode).
+    const mkb = await apiGet<Array<{ mkbCode: string }>>(token, '/api/mkb10/search?q=I48');
+    expect(mkb.some((m) => m.mkbCode === 'I48')).toBeTruthy();
 
     // Больницы — есть демо-больница.
     const hospitals = await apiGet<Array<{ name: string }>>(token, '/api/hospitals');
