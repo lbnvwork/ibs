@@ -102,8 +102,8 @@ body {
 
 /* Хедер */
 header {
-  background: var(--color-sidebar-bg);
-  color: white;
+  background: var(--color-header-bg);
+  color: var(--color-header-text);
   display: flex;
   padding: 5px 10px;
   align-items: center;

@@ -1,6 +1,6 @@
 <template>
   <header>
-    Warfarin manager
+    <span class="page-title">{{ pageTitle }}</span>
     <div class="user" aria-label="Пользователь">
       {{ userDisplayName }}
       <div class="user-icon" aria-hidden="true">👤</div>
@@ -12,6 +12,13 @@
 <script>
 import { useAuthStore } from '@/modules/shared/stores/authStore';
 import { storeToRefs } from 'pinia';
+
+const ROUTE_TITLES = {
+  Home: 'Пациенты',
+  MedicalHistory: 'История пациента',
+  PatientAdd: 'Новый пациент',
+  TreatmentAdd: 'Назначение терапии'
+};
 
 export default {
   name: 'MainHeader',
@@ -26,6 +33,11 @@ export default {
       userDisplayName,
       logout
     };
+  },
+  computed: {
+    pageTitle() {
+      return ROUTE_TITLES[this.$route.name] || 'Warfarin manager';
+    }
   }
 }
 </script>
@@ -33,16 +45,17 @@ export default {
 .logout-button {
   background: none;
   border: none;
-  color: white;
+  color: var(--color-header-text);
   font-size: 20px;
   cursor: pointer;
   margin-left: 10px;
   padding: 0 5px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: background 0.2s;
 }
 
 .logout-button:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--color-header-hover);
 }
 </style>
+

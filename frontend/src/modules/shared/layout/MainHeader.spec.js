@@ -4,11 +4,17 @@ import { createPinia, setActivePinia } from 'pinia'
 import MainHeader from './MainHeader.vue'
 import { useAuthStore } from '@/modules/shared/stores/authStore'
 
-function mountMainHeader(user) {
+function mountMainHeader(user, { routeName = 'Home' } = {}) {
   setActivePinia(createPinia())
   const store = useAuthStore()
   store.user = user
-  const wrapper = mount(MainHeader)
+  const wrapper = mount(MainHeader, {
+    global: {
+      mocks: {
+        $route: { name: routeName, meta: {} }
+      }
+    }
+  })
   return { wrapper, store }
 }
 
@@ -35,4 +41,22 @@ describe('MainHeader.vue', () => {
 
     expect(store.logout).toHaveBeenCalled()
   })
+
+  describe('page title (3.58)', () => {
+    it('показывает заголовок текущей страницы: MedicalHistory', () => {
+      const { wrapper } = mountMainHeader({ userName: 'Хрусталёв А.И.' }, { routeName: 'MedicalHistory' })
+      expect(wrapper.find('.page-title').text()).toBe('История пациента')
+    })
+
+    it('показывает заголовок текущей страницы: Home', () => {
+      const { wrapper } = mountMainHeader({}, { routeName: 'Home' })
+      expect(wrapper.find('.page-title').text()).toBe('Пациенты')
+    })
+
+    it('fallback для неизвестного route — имя приложения', () => {
+      const { wrapper } = mountMainHeader({}, { routeName: 'Unknown' })
+      expect(wrapper.find('.page-title').text()).toBe('Warfarin manager')
+    })
+  })
 })
+
