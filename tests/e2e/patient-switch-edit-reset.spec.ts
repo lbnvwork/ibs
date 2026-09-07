@@ -1,9 +1,8 @@
 import { test, expect, request, type Page } from '@playwright/test';
 
-// Регрессионный тест на баг BUG-3.35-01:
-// форма редактирования карточки (витальные/персональные/лечение) не сбрасывается
-// при переключении пациента в боковой панели. Сейчас тест ПАДАЕТ (баг есть),
-// поэтому помечен test.fixme — после фикса снять пометку.
+// Регрессионный тест на баг BUG-3.35-01 (фикс — задача 3.60):
+// форма редактирования карточки (витальные/персональные/лечение) должна сбрасываться
+// при переключении пациента в боковой панели. После фикса 3.60 тест зелёный.
 
 const BASE_URL = process.env.E2E_BASE_URL || 'http://nginx';
 const ADMIN_LOGIN = process.env.ADMIN_LOGIN || 'demo';
@@ -90,7 +89,7 @@ async function seedTwoPatients(): Promise<{ aId: number; bId: number; lastNameB:
   return { aId: a.id, bId: b.id, lastNameB: `Джонс${suffix}` };
 }
 
-test.fail('BUG-3.35-01: форма редактирования сбрасывается при переключении пациента', async ({ page }) => {
+test('BUG-3.35-01: форма редактирования сбрасывается при переключении пациента', async ({ page }) => {
   const { aId, bId, lastNameB } = await seedTwoPatients();
 
   await loginAsDoctor(page);
