@@ -103,6 +103,8 @@ describe('MnoChart.vue', () => {
     expect(hasDoseValue(null)).toBe(false)
     expect(hasDoseValue(undefined)).toBe(false)
     expect(hasDoseValue('')).toBe(false)
+    expect(hasDoseValue(NaN)).toBe(false)
+    expect(hasDoseValue(0)).toBe(false)
   })
 
   it('draws МНО and dose on two lines for a point below range (СЦ-3.64.1)', () => {
@@ -118,7 +120,7 @@ describe('MnoChart.vue', () => {
     wrapper.vm.customLabelsPlugin.afterDatasetsDraw(chart)
 
     expect(fillText).toHaveBeenCalledWith('1.5', 10, 35)
-    expect(fillText).toHaveBeenCalledWith('5 мг', 10, 47)
+    expect(fillText).toHaveBeenCalledWith('5', 10, 47)
   })
 
   it('draws МНО and dose on two lines for a point above range (СЦ-3.64.2)', () => {
@@ -134,7 +136,7 @@ describe('MnoChart.vue', () => {
     wrapper.vm.customLabelsPlugin.afterDatasetsDraw(chart)
 
     expect(fillText).toHaveBeenCalledWith('3.8', 10, -7)
-    expect(fillText).toHaveBeenCalledWith('2.5 мг', 10, 5)
+    expect(fillText).toHaveBeenCalledWith('2.5', 10, 5)
   })
 
   it('draws only МНО when dose is missing (СЦ-3.64.4/5)', () => {
@@ -168,7 +170,7 @@ describe('MnoChart.vue', () => {
       parsed: { y: 1.5 },
       dataset: { label: 'МНО' },
       chart: { options: { doses: [5] } },
-    })).toBe('МНО: 1.5 · доза: 5 мг')
+    })).toBe('МНО: 1.5 · доза: 5')
 
     expect(label({
       datasetIndex: 0,
@@ -184,5 +186,18 @@ describe('MnoChart.vue', () => {
 
     expect(wrapper.vm.chartOptions.layout.padding.top).toBe(40)
     expect(wrapper.vm.chartOptions.layout.padding.bottom).toBe(30)
+  })
+
+  it('computes chart data once and reuses it for options (кэш, ревью №3)', () => {
+    const wrapper = mountMnoChart({ data: [{ date: '2024-01-01', inr: '1.5', dose: 5 }] })
+    const spy = vi.spyOn(wrapper.vm, 'prepareChartData')
+
+    // Форсируем пересчёт (после монтирования computed уже закэширован).
+    wrapper.vm.changeRange('1m')
+
+    wrapper.vm.chartData
+    wrapper.vm.chartOptions
+
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 })
