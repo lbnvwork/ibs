@@ -56,12 +56,29 @@ export default {
       immediate: true,
       handler(newId) {
         if (newId) {
+          this.resetEditing();
           this.store.fetchLatest(newId);
         }
       },
     },
   },
   methods: {
+    resetEditing() {
+      this.editing = false;
+      this.form = {
+        hb: null,
+        heartRate: null,
+        systolicPressure: null,
+        diastolicPressure: null,
+        saturation: null,
+        weight: null,
+        recordDt: '',
+        comment: '',
+      };
+      this.originalForm = null;
+      this.saveError = null;
+    },
+
     startEditing() {
       this.form = {
         hb: this.latest?.hb ?? null,

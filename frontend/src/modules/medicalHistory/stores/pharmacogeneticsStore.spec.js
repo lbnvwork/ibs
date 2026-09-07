@@ -60,6 +60,17 @@ describe('pharmacogeneticsStore', () => {
     expect(store.markers[0].editingValueId).toBe(10)
   })
 
+  it('resets editing state when fetching another patient', async () => {
+    pharmacogeneticsApi.getForPatient.mockResolvedValue({ data: { markers: [markerFixture] } })
+    const store = usePharmacogeneticsStore()
+    await store.fetchPharmacogenetics(1)
+    store.startEditing()
+
+    await store.fetchPharmacogenetics(2)
+
+    expect(store.editing).toBe(false)
+  })
+
   describe('save', () => {
     it('creates a result for a marker that had none and now has a value', async () => {
       pharmacogeneticsApi.getForPatient.mockResolvedValue({

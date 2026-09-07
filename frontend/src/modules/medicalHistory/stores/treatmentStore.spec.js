@@ -62,6 +62,18 @@ describe('treatmentStore', () => {
 
       expect(store.error).toBe('Не удалось загрузить данные лечения.')
     })
+
+    it('resets editing state when fetching another patient', async () => {
+      treatmentApi.getAll.mockResolvedValue({ member: [rawTreatment] })
+      const store = useTreatmentStore()
+      await store.fetchTreatment(1)
+      store.startEditingTreatment()
+
+      await store.fetchTreatment(2)
+
+      expect(store.editingTreatment).toBe(false)
+      expect(store.editingTreatmentData).toEqual({})
+    })
   })
 
   describe('isActive getter', () => {

@@ -17,7 +17,7 @@
                 :preview="patientPreview"
                 :forceExpand="editMode.patient"
             >
-                <PatientCard @edit-start="startPatientEdit" @edit-end="endPatientEdit" />
+                <PatientCard :key="id" @edit-start="startPatientEdit" @edit-end="endPatientEdit" />
             </CollapsibleSection>
 
             <CollapsibleSection
@@ -26,6 +26,7 @@
             >
                 <VitalsCard
                     v-if="id"
+                    :key="id"
                     :patient-id="id"
                     :treatment-id="activeTreatmentId"
                 />
@@ -37,6 +38,7 @@
             >
                 <Pharmacogenetics
                     v-if="id"
+                    :key="id"
                     :patient-id="id"
                     :drug-iri="treatmentStore.treatment?.drug"
                 />
@@ -50,7 +52,7 @@
                 :preview="treatmentPreview"
                 :forceExpand="editMode.treatment"
             >
-                <TreatmentCard @edit-start="startTreatmentEdit" @edit-end="endTreatmentEdit" />
+                <TreatmentCard :key="id" @edit-start="startTreatmentEdit" @edit-end="endTreatmentEdit" />
             </CollapsibleSection>
             <RiskScale v-if="false" />
         </div>

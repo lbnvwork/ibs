@@ -89,6 +89,18 @@ describe('patientCardStore', () => {
       expect(store.editingPatient).toBe(false)
       expect(store.editingPatientData.address).toBe('ул. Ленина, 1')
     })
+
+    it('resets editing state when fetching another patient', async () => {
+      patientApi.getOne.mockResolvedValue(rawPatient)
+      const store = usePatientCardStore()
+      await store.fetchPatient(1)
+      store.startEditingPatient()
+
+      await store.fetchPatient(2)
+
+      expect(store.editingPatient).toBe(false)
+      expect(store.editingPatientData).toEqual({})
+    })
   })
 
   describe('validatePatientForm', () => {

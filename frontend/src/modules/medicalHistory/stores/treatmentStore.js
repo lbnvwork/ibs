@@ -29,6 +29,11 @@ export const useTreatmentStore = defineStore('treatment', {
         async fetchTreatment(patientId) {
             this.loading = true;
             this.error = null;
+            // Сброс состояния редактирования при смене пациента (BUG-3.35-01)
+            this.editingTreatment = false;
+            this.editingTreatmentData = {};
+            this.originalTreatmentJson = '';
+            this.treatmentFormError = '';
             try {
                 const resp = await treatmentApi.getAll({
                     patient: `/api/patients/${patientId}`,
