@@ -6,8 +6,8 @@
 }
 
 .patient-history .patient-header h1 {
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
+    color: var(--color-dark);
+    border-bottom: 2px solid var(--color-accent);
     padding-bottom: 10px;
     margin-bottom: 20px;
     text-align: center;
@@ -39,7 +39,7 @@
 /* ОБЩИЕ СТИЛИ ДЛЯ СЕКЦИЙ (используются в виджетах) */
 .patient-history .section {
     background: white;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     padding: 15px;
     height: fit-content;
@@ -47,8 +47,8 @@
 
 .patient-history .section h3 {
     margin-top: 0;
-    color: #10345c;
-    border-bottom: 1px solid #eee;
+    color: var(--color-dark);
+    border-bottom: 1px solid var(--color-border);
     padding-bottom: 8px;
     font-size: 16px;
 }
@@ -82,14 +82,14 @@
 .patient-history .risk-scale-section .risk-scale-widget {
     margin-bottom: 0;
     box-shadow: none;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--color-border);
 }
 
 .patient-history .loading-message {
     text-align: center;
     padding: 50px;
     font-size: 18px;
-    color: #666;
+    color: var(--color-muted);
 }
 
 /* АДАПТИВНОСТЬ */

@@ -1,5 +1,5 @@
 .collapsible-section {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   margin-bottom: 16px;
   background: white;
@@ -15,37 +15,37 @@
   transition: background 0.2s;
 }
 .section-header:hover {
-  background: #f8f9fa;
+  background: var(--color-surface-alt);
 }
 .section-arrow {
   font-size: 12px;
   margin-right: 8px;
   transition: transform 0.2s;
-  color: #6c757d;
+  color: var(--color-muted);
 }
 .section-title {
   font-size: 16px;
   font-weight: 600;
-  color: #10345c;
+  color: var(--color-dark);
   margin: 0;
 }
 
 .section-preview-area {
   padding: 8px 15px;
-  border-top: 1px solid #dee2e6;
-  background: #fcfcfc;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
 }
 .section-preview {
   font-size: 14px;
-  color: #2c3e50;
+  color: var(--color-dark);
   line-height: 1.5;
   font-weight: 400;
 }
 .section-preview-area {
   padding: 8px 15px;
-  border-top: 1px solid #dee2e6;
-  background: #fcfcfc;
-  border-left: 3px solid #3498db;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  border-left: 3px solid var(--color-accent);
 }
 .section-content {
   padding: 15px;

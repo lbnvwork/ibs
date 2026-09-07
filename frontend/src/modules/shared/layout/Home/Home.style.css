@@ -7,8 +7,8 @@
 
 .filter-tabs {
   display: flex;
-  background: #fed9c6;
-  border-bottom: 1px solid #df7c55;
+  background: var(--color-warning-bg);
+  border-bottom: 1px solid var(--color-warning);
   font-size: 14px;
   font-weight: 600;
   flex-shrink: 0;
@@ -25,7 +25,7 @@
 }
 
 .filter-tabs button.active {
-  background: #fff;
-  border-bottom-color: #f5a623;
-  color: #b44;
+  background: var(--color-surface);
+  border-bottom-color: var(--color-warning);
+  color: var(--color-danger);
 }

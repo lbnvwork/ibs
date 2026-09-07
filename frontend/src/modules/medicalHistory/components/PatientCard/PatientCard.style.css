@@ -1,8 +1,8 @@
 .patient-info-compact {
-    background: #f8f9fa;
+    background: var(--color-surface-alt);
     padding: 15px;
     border-radius: 6px;
-    border-left: 4px solid #5291e9;
+    border-left: 4px solid var(--color-sidebar-bg);
 }
 
 .info-row {
@@ -20,7 +20,7 @@
 
 .info-group label {
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--color-dark);
     flex: 1 1 40%;
     min-width: 0;
     word-break: break-word;
@@ -60,45 +60,45 @@
 .btn-save-treatment {
     margin: 0;
     flex: none;
-    background: #27ae60;
+    background: var(--color-success);
     color: white;
 }
 .btn-save-treatment:hover {
-    background: #219a52;
+    background: var(--color-success);
 }
 
 .btn-cancel-treatment {
-    background: #e0e0e0;
-    color: #333;
+    background: var(--color-border);
+    color: var(--color-text);
 }
 .btn-cancel-treatment:hover {
-    background: #bdbdbd;
+    background: var(--color-border);
 }
 
 .edit-input {
     flex: 1 1 60%;
     padding: 6px 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     font-size: 14px;
     min-width: 0;
 }
 
 .treatment-form-error {
-    color: #e74c3c;
+    color: var(--color-danger);
     font-size: 13px;
     margin-bottom: 8px;
     padding: 6px 10px;
-    background: #fdf0f0;
-    border-left: 3px solid #e74c3c;
+    background: var(--color-danger-bg);
+    border-left: 3px solid var(--color-danger);
     border-radius: 4px;
     white-space: pre-line;
 }
 
 .treatment-section-header .btn-edit-treatment {
     background: transparent;
-    border: 1px solid #3498db;
-    color: #3498db;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
     font-size: 18px;
     width: 32px;
     height: 32px;
@@ -110,6 +110,6 @@
     padding: 0;
 }
 .treatment-section-header .btn-edit-treatment:hover {
-    background: #3498db;
+    background: var(--color-accent);
     color: white;
 }

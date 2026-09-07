@@ -25,7 +25,7 @@
 /* ЗАГОЛОВОК */
 .modal-content h2 {
     margin-top: 0;
-    color: #10345c;
+    color: var(--color-dark);
     font-size: 18px;
 }
 
@@ -38,20 +38,20 @@
     display: block;
     font-weight: 600;
     margin-bottom: 4px;
-    color: #2c3e50;
+    color: var(--color-dark);
 }
 
 .form-control {
     width: 100%;
     padding: 6px 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     font-size: 14px;
 }
 
 /* КНОПКА "РАССЧИТАТЬ ДОЗУ" (AI-СТИЛИЗАЦИЯ) */
 .btn-calculate {
-    background: linear-gradient(135deg, #3498db 0%, #8e44ad 100%);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-info) 100%);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -95,20 +95,20 @@
 /* ОБЩИЙ СТИЛЬ ДЛЯ СООБЩЕНИЙ ОБ ОШИБКАХ */
 .error-message,
 .save-error {
-    color: #e74c3c;
+    color: var(--color-danger);
     margin-bottom: 16px;
     padding: 8px 12px;
-    background: #fdf0f0;
-    border-left: 3px solid #e74c3c;
+    background: var(--color-danger-bg);
+    border-left: 3px solid var(--color-danger);
     border-radius: 4px;
     font-size: 13px;
 }
 
 /* ОШИБКА НЕЙРОСЕТИ – ФИОЛЕТОВЫЙ АКЦЕНТ */
 .error-message {
-    color: #8e44ad;
-    background: #faf5fc;
-    border-left-color: #8e44ad;
+    color: var(--color-info);
+    background: var(--color-surface-alt);
+    border-left-color: var(--color-info);
 }
 
 /* БЛОК ВАРИАНТОВ ДОЗИРОВКИ */
@@ -125,24 +125,24 @@
 
 .variants-table th,
 .variants-table td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     padding: 6px 8px;
     text-align: left;
     font-size: 14px;
 }
 
 .variants-table th {
-    background: #f2f2f2;
+    background: var(--color-surface-alt);
 }
 
 .variants-table tr.selected {
-    background: #e8f0fe;
+    background: var(--color-accent-bg);
 }
 
 /* ПОДПИСЬ ПОД ТАБЛИЦЕЙ */
 .explanation {
     font-size: 13px;
-    color: #555;
+    color: var(--color-text);
     margin-bottom: 12px;
     font-style: italic;
 }
@@ -156,7 +156,7 @@
 }
 
 .btn-save {
-    background: #27ae60;
+    background: var(--color-success);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -171,8 +171,8 @@
 }
 
 .btn-cancel {
-    background: #e0e0e0;
-    color: #333;
+    background: var(--color-border);
+    color: var(--color-text);
     border: none;
     padding: 8px 16px;
     border-radius: 4px;
@@ -185,7 +185,7 @@
     transition: background 0.2s;
 }
 .variant-row:hover {
-    background: #e8f0fe;
+    background: var(--color-accent-bg);
 }
 
 .checkbox-label {
@@ -193,7 +193,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 400;
-  color: #2c3e50;
+  color: var(--color-dark);
   cursor: pointer;
 }
 .checkbox-label input[type="checkbox"] {
@@ -204,9 +204,9 @@
 
 /* ЖЁЛТОЕ ПРЕДУПРЕЖДЕНИЕ (ворнинг) */
 .warning-message {
-    color: #e67e22;
-    background: #fff8e1;
-    border-left: 3px solid #e67e22;
+    color: var(--color-warning);
+    background: var(--color-warning-bg);
+    border-left: 3px solid var(--color-warning);
     padding: 8px 12px;
     margin-bottom: 12px;
     border-radius: 4px;
@@ -215,16 +215,16 @@
 
 /* КРАСНАЯ ОШИБКА (уже есть, м.б. не трогаем) */
 .save-error {
-    color: #e74c3c;
-    background: #fdf0f0;
-    border-left: 3px solid #e74c3c;
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
+    border-left: 3px solid var(--color-danger);
     /* ... прежние стили ... */
 }
 
 /* Подсказка под полем дозы (маленький текст) */
 .dose-warning-inline {
     display: block;
-    color: #e67e22;
+    color: var(--color-warning);
     font-size: 12px;
     margin-top: 4px;
 }
@@ -235,7 +235,7 @@
     align-items: center;
     gap: 8px;
     font-weight: 400;
-    color: #2c3e50;
+    color: var(--color-dark);
     cursor: pointer;
 }
 .checkbox-label input[type="checkbox"] {
