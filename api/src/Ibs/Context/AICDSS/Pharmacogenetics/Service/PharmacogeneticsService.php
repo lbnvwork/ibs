@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ibs\Context\AICDSS\Pharmacogenetics\Service;
 
+use Ibs\Context\AICDSS\Entity\GeneticMarkerValue;
 use Ibs\Context\AICDSS\Entity\MarkerDrugRelation;
 use Ibs\Context\AICDSS\Entity\PatientGeneticResult;
 use Ibs\Context\TreatmentTherapy\Entity\Treatment;
@@ -20,6 +21,7 @@ class PharmacogeneticsService
      * @param int|null $drugId    Если передан, фильтрует маркеры по препарату через marker_drug_relations.
      *                            Если null – используется препарат из последнего лечения пациента (старое поведение).
      */
+    /** @return list<array<string, mixed>> */
     public function getPatientPharmacogenetics(int $patientId, ?int $drugId = null): array
     {
         // Если drugId не передан явно, определяем по последнему лечению пациента
@@ -63,7 +65,7 @@ class PharmacogeneticsService
                 'geneSymbol'     => $marker->getGeneSymbol(),
                 'fullName'       => $marker->getFullName(),
                 'rsId'           => $marker->getRsId(),
-                'possibleValues' => $marker->getPossibleValues()->map(function ($gmv) {
+                'possibleValues' => $marker->getPossibleValues()->map(function (GeneticMarkerValue $gmv) {
                     return [
                         'id'          => $gmv->getId(),
                         'value'       => $gmv->getValue(),
@@ -92,6 +94,7 @@ class PharmacogeneticsService
             ->setMaxResults(1)
             ->setParameter('patientId', $patientId);
 
+        /** @var Treatment|null $treatment */
         $treatment = $qb->getQuery()->getOneOrNullResult();
 
         if ($treatment) {
@@ -105,6 +108,9 @@ class PharmacogeneticsService
             ->setMaxResults(1)
             ->setParameter('patientId', $patientId);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        /** @var Treatment|null $treatment */
+        $treatment = $qb->getQuery()->getOneOrNullResult();
+
+        return $treatment;
     }
 }

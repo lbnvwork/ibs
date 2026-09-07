@@ -10,6 +10,7 @@ use Ibs\Context\AICDSS\AiDosage\Dto\DosageRecommendation;
 use Ibs\Context\AICDSS\AiDosage\Service\DosageRecommendationEngine;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/** @implements ProviderInterface<DosageRecommendation> */
 class DosageRecommendationProvider implements ProviderInterface
 {
     public function __construct(
@@ -20,7 +21,11 @@ class DosageRecommendationProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): DosageRecommendation
     {
         $request = $this->requestStack->getCurrentRequest();
-        $treatmentId = (int) $request->query->get('treatment_id');
+        if (!$request) {
+            throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException('Нет активного запроса.');
+        }
+        $treatmentRaw = $request->query->get('treatment_id');
+        $treatmentId = (int) (is_scalar($treatmentRaw) ? $treatmentRaw : 0);
 
         $result = $this->engine->recommend($treatmentId);
 

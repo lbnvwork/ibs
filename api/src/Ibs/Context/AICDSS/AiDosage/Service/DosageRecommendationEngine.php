@@ -15,6 +15,7 @@ class DosageRecommendationEngine
         private EntityManagerInterface $entityManager
     ) {}
 
+    /** @return array{variants: list<array{dose: float, label: string}>, explanation: string} */
     public function recommend(int $treatmentId): array
     {
         $treatment = $this->entityManager->getRepository(Treatment::class)->find($treatmentId);
