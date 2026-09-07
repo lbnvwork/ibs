@@ -113,6 +113,7 @@ services:
       - "${FRONTEND_PORT:-5174}:5173"
     environment:
       VITE_API_URL: "http://localhost:${APP_PORT}/api"
+      VITE_THEME: "${VITE_THEME:-almazovo}"
     command: sh -c "npm ci && npm run build"
     networks:
       - default
