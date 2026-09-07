@@ -17,6 +17,7 @@ final class PatientGroupFilter extends AbstractFilter
 {
     public const DRUG_GROUP_FILTER_NAME = 'drugGroup';
 
+    /** @param array<string, mixed>|null $properties */
     public function __construct(
         ManagerRegistry         $managerRegistry,
         ?LoggerInterface        $logger = null,
@@ -29,7 +30,7 @@ final class PatientGroupFilter extends AbstractFilter
 
     protected function filterProperty(
         string $property,
-        $value,
+        mixed $value,
         QueryBuilder $queryBuilder,
         QueryNameGeneratorInterface $queryNameGenerator,
         string $resourceClass,
@@ -42,6 +43,10 @@ final class PatientGroupFilter extends AbstractFilter
 
         $parameterName = $queryNameGenerator->generateParameterName(self::DRUG_GROUP_FILTER_NAME);
 
+        if ($this->managerRegistry === null) {
+            return;
+        }
+        /** @var \Doctrine\ORM\EntityManagerInterface $entityManager */
         $entityManager = $this->managerRegistry->getManager();
 
         $subQuery = $entityManager->createQueryBuilder()

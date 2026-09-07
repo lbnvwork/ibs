@@ -52,6 +52,7 @@ class AdaptivePlanningPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(Holiday::class, $id);
+        $this->assertNotNull($reloaded);
         $this->assertSame(1, $reloaded->getHMonth());
         $this->assertSame(1, $reloaded->getHDay());
         $this->assertSame(2015, $reloaded->getHYear(), 'hYear must default to 2015.');
@@ -72,6 +73,8 @@ class AdaptivePlanningPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(TestPlan::class, $id);
+        $this->assertNotNull($reloaded);
+        $this->assertNotNull($reloaded->getTreatment());
         $this->assertSame($treatment->getId(), $reloaded->getTreatment()->getId());
     }
 
@@ -100,8 +103,13 @@ class AdaptivePlanningPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(Supervisor::class, $id);
+        $this->assertNotNull($reloaded);
+        $this->assertNotNull($reloaded->getUser());
+        $htp = $reloaded->getHospitalTestPlan();
+        $this->assertNotNull($htp);
+        $this->assertNotNull($htp->getHospital());
         $this->assertSame('supervisor.test', $reloaded->getUser()->getLogin());
-        $this->assertSame($hospital->getId(), $reloaded->getHospitalTestPlan()->getHospital()->getId());
+        $this->assertSame($hospital->getId(), $htp->getHospital()->getId());
     }
 
     private function createTreatment(): Treatment

@@ -60,6 +60,9 @@ class TreatmentPersistenceTest extends KernelTestCase
 
         $reloadedNote = $this->entityManager->find(TreatmentNote::class, $noteId);
         $reloadedRequest = $this->entityManager->find(PatientRequest::class, $requestId);
+        $this->assertNotNull($reloadedNote);
+        $this->assertNotNull($reloadedRequest);
+        $this->assertNotNull($reloadedNote->getTreatment());
 
         $this->assertSame('Пациент жалуется на слабость', $reloadedNote->getNote());
         $this->assertSame($treatment->getId(), $reloadedNote->getTreatment()->getId());
@@ -77,6 +80,7 @@ class TreatmentPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(TreatmentCodeGenerator::class, $id);
+        $this->assertNotNull($reloaded);
         $this->assertSame(1000, $reloaded->getCode());
     }
 

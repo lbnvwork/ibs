@@ -51,7 +51,7 @@ class DosageRecommendationEngineTest extends KernelTestCase
         $treatment = $this->createTreatment(2.0, 3.0);
         $this->entityManager->flush();
 
-        $result = $this->engine->recommend($treatment->getId());
+        $result = $this->engine->recommend((int) $treatment->getId());
 
         $this->assertSame([], $result['variants']);
         $this->assertSame('Нет данных МНО для расчёта', $result['explanation']);
@@ -63,7 +63,7 @@ class DosageRecommendationEngineTest extends KernelTestCase
         $this->createTestHistory($treatment, 5.5, 2.0);
         $this->entityManager->flush();
 
-        $result = $this->engine->recommend($treatment->getId());
+        $result = $this->engine->recommend((int) $treatment->getId());
 
         $this->assertSame([], $result['variants']);
         $this->assertStringContainsString('5.0', $result['explanation']);
@@ -75,7 +75,7 @@ class DosageRecommendationEngineTest extends KernelTestCase
         $this->createTestHistory($treatment, 1.2, 2.0);
         $this->entityManager->flush();
 
-        $result = $this->engine->recommend($treatment->getId());
+        $result = $this->engine->recommend((int) $treatment->getId());
 
         $this->assertSame([], $result['variants']);
         $this->assertStringContainsString('1.5', $result['explanation']);
@@ -87,7 +87,7 @@ class DosageRecommendationEngineTest extends KernelTestCase
         $this->createTestHistory($treatment, 1.8, 2.0);
         $this->entityManager->flush();
 
-        $result = $this->engine->recommend($treatment->getId());
+        $result = $this->engine->recommend((int) $treatment->getId());
 
         $this->assertSame(2.25, $result['variants'][0]['dose']);
         $this->assertStringContainsString('увеличена', $result['explanation']);
@@ -99,7 +99,7 @@ class DosageRecommendationEngineTest extends KernelTestCase
         $this->createTestHistory($treatment, 3.5, 2.0);
         $this->entityManager->flush();
 
-        $result = $this->engine->recommend($treatment->getId());
+        $result = $this->engine->recommend((int) $treatment->getId());
 
         $this->assertSame(1.75, $result['variants'][0]['dose']);
         $this->assertStringContainsString('уменьшена', $result['explanation']);
@@ -111,7 +111,7 @@ class DosageRecommendationEngineTest extends KernelTestCase
         $this->createTestHistory($treatment, 2.5, 2.0);
         $this->entityManager->flush();
 
-        $result = $this->engine->recommend($treatment->getId());
+        $result = $this->engine->recommend((int) $treatment->getId());
 
         $this->assertSame(2.0, $result['variants'][0]['dose']);
         $this->assertStringContainsString('без изменений', $result['explanation']);

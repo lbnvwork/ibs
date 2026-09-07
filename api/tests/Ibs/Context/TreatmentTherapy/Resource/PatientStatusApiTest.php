@@ -60,17 +60,18 @@ class PatientStatusApiTest extends WebTestCase
             'POST',
             '/api/patients/status',
             server: array_merge($this->authHeader($token), ['CONTENT_TYPE' => 'application/json']),
-            content: json_encode(['ids' => [$activePatient->getId(), $inactivePatient->getId()]])
+            content: json_encode(['ids' => [$activePatient->getId(), $inactivePatient->getId()]], JSON_THROW_ON_ERROR)
         );
 
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
+        /** @var list<array{id: int, status: string}> $data */
         $data = json_decode((string) $response->getContent(), true);
         $statusesById = array_column($data, 'status', 'id');
 
-        $this->assertSame('активный', $statusesById[$activePatient->getId()]);
-        $this->assertSame('неактивный', $statusesById[$inactivePatient->getId()]);
+        $this->assertSame('активный', $statusesById[(int) $activePatient->getId()]);
+        $this->assertSame('неактивный', $statusesById[(int) $inactivePatient->getId()]);
     }
 
     private function createPatient(string $lastname): Patient

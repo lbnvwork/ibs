@@ -73,10 +73,10 @@ class Mkb10RepositoryTest extends KernelTestCase
         $byName = $this->repository->searchByCodeOrName('астма');
 
         $this->assertNotEmpty($byCode);
-        $this->assertSame('J45.0', $byCode[0]['mkb_code']);
+        $this->assertSame('J45.0', $byCode[0]->getMkbCode());
 
         $this->assertNotEmpty($byName);
-        $this->assertSame('J45.0', $byName[0]['mkb_code']);
+        $this->assertSame('J45.0', $byName[0]->getMkbCode());
     }
 
     private function createMkb10(int $id, string $code, string $name): Mkb10

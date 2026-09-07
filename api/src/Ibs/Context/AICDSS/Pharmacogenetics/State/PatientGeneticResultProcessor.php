@@ -20,8 +20,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/** @implements ProcessorInterface<PatientGeneticResult, PatientGeneticResult> */
 class PatientGeneticResultProcessor implements ProcessorInterface
 {
+    /** @param ProcessorInterface<PatientGeneticResult, PatientGeneticResult> $persistProcessor */
     public function __construct(
         #[Autowire('@api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor,

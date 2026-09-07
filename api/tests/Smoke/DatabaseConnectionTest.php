@@ -24,7 +24,7 @@ class DatabaseConnectionTest extends KernelTestCase
         $connection = static::getContainer()->get(EntityManagerInterface::class)->getConnection();
         $result = $connection->executeQuery('SELECT 1')->fetchOne();
 
-        $this->assertEquals('1', (string) $result);
+        $this->assertEquals('1', (string) (is_scalar($result) ? $result : ''));
     }
 
     public function testRunningAgainstDedicatedTestDatabase(): void
@@ -35,6 +35,6 @@ class DatabaseConnectionTest extends KernelTestCase
         $dbName = $connection->executeQuery('SELECT current_database()')->fetchOne();
 
         // Guard against ever accidentally running the suite against the dev database.
-        $this->assertStringEndsWith('_test', (string) $dbName);
+        $this->assertStringEndsWith('_test', (string) (is_scalar($dbName) ? $dbName : ''));
     }
 }

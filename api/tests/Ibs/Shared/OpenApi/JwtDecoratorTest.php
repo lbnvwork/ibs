@@ -36,10 +36,13 @@ class JwtDecoratorTest extends TestCase
 
         $decorated = (new JwtDecorator($innerFactory))();
 
+        /** @var \ArrayObject<string, \ApiPlatform\OpenApi\Model\SecurityScheme>|null $securitySchemes */
         $securitySchemes = $decorated->getComponents()->getSecuritySchemes();
         $this->assertNotNull($securitySchemes);
         $this->assertArrayHasKey('JWT', (array) $securitySchemes);
-        $this->assertSame('bearer', $securitySchemes['JWT']->getScheme());
+        $jwtScheme = $securitySchemes['JWT'];
+        $this->assertNotNull($jwtScheme);
+        $this->assertSame('bearer', $jwtScheme->getScheme());
         $this->assertSame([['JWT' => []]], $decorated->getSecurity());
     }
 }

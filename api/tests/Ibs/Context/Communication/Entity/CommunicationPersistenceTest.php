@@ -57,9 +57,13 @@ class CommunicationPersistenceTest extends KernelTestCase
 
         $reloadedSms = $this->entityManager->find(SmsOut::class, $smsOutId);
         $reloadedStatus = $this->entityManager->find(SmsOutStatus::class, $statusId);
+        $this->assertNotNull($reloadedSms);
+        $this->assertNotNull($reloadedStatus);
+        $statusSmsOut = $reloadedStatus->getSmsOut();
+        $this->assertNotNull($statusSmsOut);
 
         $this->assertSame('79001234567', $reloadedSms->getSmsTarget());
-        $this->assertSame($smsOutId, $reloadedStatus->getSmsOut()->getId());
+        $this->assertSame($smsOutId, $statusSmsOut->getId());
     }
 
     public function testSmsInAndSmsTemplateArePersisted(): void
@@ -79,8 +83,13 @@ class CommunicationPersistenceTest extends KernelTestCase
         $templateId = $template->getId();
         $this->entityManager->clear();
 
-        $this->assertSame('СТОП', $this->entityManager->find(SmsIn::class, $smsInId)->getText());
-        $this->assertSame('Здравствуйте, {name}!', $this->entityManager->find(SmsTemplate::class, $templateId)->getSmsTemplate());
+        $reloadedSmsIn = $this->entityManager->find(SmsIn::class, $smsInId);
+        $reloadedTemplate = $this->entityManager->find(SmsTemplate::class, $templateId);
+        $this->assertNotNull($reloadedSmsIn);
+        $this->assertNotNull($reloadedTemplate);
+
+        $this->assertSame('СТОП', $reloadedSmsIn->getText());
+        $this->assertSame('Здравствуйте, {name}!', $reloadedTemplate->getSmsTemplate());
     }
 
     public function testNotificationLogIsPersisted(): void
@@ -101,6 +110,7 @@ class CommunicationPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(NotificationLog::class, $logId);
+        $this->assertNotNull($reloaded);
         $this->assertSame('sms', $reloaded->getChannelType());
         $this->assertSame('sent', $reloaded->getStatus());
         $this->assertSame(10, $reloaded->getPatientId());
@@ -119,6 +129,7 @@ class CommunicationPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(NotificationTemplate::class, $templateId);
+        $this->assertNotNull($reloaded);
         $this->assertSame('reminder_24h', $reloaded->getCode());
         $this->assertSame('sms', $reloaded->getChannel());
         $this->assertSame('Пора измерить МНО, %patient_name%.', $reloaded->getBodyTemplate());

@@ -91,7 +91,11 @@ class PatientPersistenceTest extends KernelTestCase
 
         $this->assertNotNull($reloaded);
         $this->assertSame('8(900)111-22-33', $reloaded->getNumber());
-        $this->assertSame('Мобильный', $reloaded->getPhoneType()->getName());
-        $this->assertSame($patient->getId(), $reloaded->getPerson()->getId());
+        $phoneType = $reloaded->getPhoneType();
+        $this->assertNotNull($phoneType);
+        $this->assertSame('Мобильный', $phoneType->getName());
+        $person = $reloaded->getPerson();
+        $this->assertNotNull($person);
+        $this->assertSame($patient->getId(), $person->getId());
     }
 }

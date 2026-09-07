@@ -33,6 +33,7 @@ class GeneticMarker
     #[ORM\Column(type: 'string', length: 50, nullable: true, options: ['comment' => 'rs-идентификатор (SNP)'])]
     private ?string $rsId = null;
 
+    /** @var Collection<int, GeneticMarkerValue> */
     #[ORM\OneToMany(targetEntity: GeneticMarkerValue::class, mappedBy: 'marker', cascade: ['persist'])]
     private Collection $possibleValues;
 
@@ -82,6 +83,7 @@ class GeneticMarker
         return $this;
     }
 
+    /** @return Collection<int, GeneticMarkerValue> */
     public function getPossibleValues(): Collection
     {
         return $this->possibleValues;

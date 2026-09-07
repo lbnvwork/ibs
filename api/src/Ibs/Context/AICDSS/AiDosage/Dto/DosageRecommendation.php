@@ -19,6 +19,7 @@ use Ibs\Context\AICDSS\AiDosage\State\DosageRecommendationProvider;
 )]
 class DosageRecommendation
 {
+    /** @var list<array{dose: float, label: string}> */
     public array $variants = [];
     public string $explanation = '';
 }

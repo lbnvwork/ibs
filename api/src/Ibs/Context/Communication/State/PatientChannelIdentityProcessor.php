@@ -18,8 +18,10 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
  * Ловим только UniqueConstraintViolationException: прочие нарушения БД
  * (not-null, FK) остаются 500 — для данного бага достаточно.
  */
+/** @implements ProcessorInterface<PatientChannelIdentity, PatientChannelIdentity> */
 final class PatientChannelIdentityProcessor implements ProcessorInterface
 {
+    /** @param ProcessorInterface<PatientChannelIdentity, PatientChannelIdentity> $persistProcessor */
     public function __construct(
         #[Autowire('@api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor,

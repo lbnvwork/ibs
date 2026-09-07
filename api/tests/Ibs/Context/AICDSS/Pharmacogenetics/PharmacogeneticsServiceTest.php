@@ -88,7 +88,7 @@ class PharmacogeneticsServiceTest extends KernelTestCase
 
         $this->entityManager->flush();
 
-        $markers = $this->service->getPatientPharmacogenetics($patient->getId());
+        $markers = $this->service->getPatientPharmacogenetics((int) $patient->getId());
 
         $this->assertCount(1, $markers);
         $this->assertSame('CYP2C9_2', $markers[0]['geneSymbol']);
@@ -105,7 +105,7 @@ class PharmacogeneticsServiceTest extends KernelTestCase
         $this->entityManager->persist($patient);
         $this->entityManager->flush();
 
-        $markers = $this->service->getPatientPharmacogenetics($patient->getId());
+        $markers = $this->service->getPatientPharmacogenetics((int) $patient->getId());
 
         $this->assertSame([], $markers);
     }
