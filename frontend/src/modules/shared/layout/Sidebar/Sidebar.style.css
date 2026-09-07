@@ -1,5 +1,5 @@
 .sidebar {
-    width: var(--sidebar-width);
+    width: 60px;
     background: var(--color-sidebar-bg);
     display: flex;
     flex-direction: column;
@@ -10,7 +10,6 @@
     overflow-x: hidden;
     position: relative;
     flex-shrink: 0;
-    transition: width 0.2s ease;
 }
 
 .sidebar button {
@@ -20,17 +19,16 @@
     height: 40px;
     margin: 5px 0;
     cursor: pointer;
-    border-radius: var(--radius-md);
-    color: var(--color-on-accent);
+    border-radius: 6px;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    flex-shrink: 0;
 }
 
 .sidebar button:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255,255,255,0.3);
 }
 
 .icon {
@@ -43,17 +41,16 @@
     transform: scale(1.1);
 }
 
-/* Тултип (иконочный режим) */
 .sidebar button::after {
     content: attr(title);
     position: absolute;
     left: 100%;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: var(--color-on-accent);
+    background: rgba(0,0,0,0.8);
+    color: white;
     padding: 8px 12px;
-    border-radius: var(--radius-sm);
+    border-radius: 4px;
     font-size: 12px;
     white-space: nowrap;
     z-index: 1000;
@@ -89,98 +86,17 @@
     visibility: hidden !important;
 }
 
-/* --- Текстовый режим (Бакулево) --- */
-.sidebar--text {
-    align-items: stretch;
-    padding: 12px 8px;
-}
-
-.sidebar--text .sidebar__logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px 16px;
-    color: var(--color-on-accent);
-    font-weight: bold;
-}
-
-.sidebar--text .logo-icon {
-    width: 28px;
-    height: 28px;
-}
-
-.sidebar--text .logo-text {
-    font-size: var(--font-size-base);
-    white-space: nowrap;
-}
-
-.sidebar--text button {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 12px;
-    padding: 0 12px;
-    margin: 2px 0;
-    height: 40px;
-    border-radius: var(--radius-md);
-    text-align: left;
-}
-
-.sidebar--text button:hover {
-    background: var(--color-accent);
-}
-
-.sidebar--text .icon {
-    flex-shrink: 0;
-}
-
-.sidebar--text .label {
-    font-size: var(--font-size-sm);
-    color: var(--color-on-accent);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.sidebar--text .divider {
-    width: calc(100% - 24px);
-    margin: 8px 12px;
-}
-
-.sidebar--text .sidebar__support {
-    margin-top: auto;
-    padding: 16px 12px 8px;
-    color: var(--color-on-accent);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.sidebar--text .support-title {
-    font-size: var(--font-size-sm);
-    opacity: 0.85;
-}
-
-.sidebar--text .support-phone {
-    font-size: var(--font-size-sm);
-    font-weight: bold;
-}
-
-/* В текстовом режиме тултип не нужен */
-.sidebar--text button::after {
-    display: none;
-}
-
 @media (max-width: 768px) {
-    .sidebar:not(.sidebar--text) {
+    .sidebar {
         width: 50px;
     }
 
-    .sidebar:not(.sidebar--text) button {
+    .sidebar button {
         width: 35px;
         height: 35px;
     }
 
-    .sidebar:not(.sidebar--text) .icon {
+    .icon {
         width: 20px;
         height: 20px;
     }

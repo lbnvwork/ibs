@@ -1,6 +1,20 @@
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths';
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore';
 
+const SIDEBAR_LABELS = {
+    patientAdd: 'Добавить пациента',
+    recommendations: 'Рекомендации',
+    sendMessage: 'Сообщение',
+    editData: 'Редактирование',
+    calendar: 'Календарь',
+    aiHelp: 'ИИ-помощь',
+    statistics: 'Статистика',
+    disabledPatients: 'Маломобильные',
+    chat: 'Чат',
+    print: 'Печать',
+    saveFormats: 'Сохранить'
+};
+
 export default {
     name: 'Sidebar',
     data() {
@@ -92,7 +106,7 @@ export default {
                         disabled = true;
                     }
                 }
-                return { ...item, disabled };
+                return { ...item, disabled, label: SIDEBAR_LABELS[item.name] || '' };
             });
         },
         isBackButtonActive() {
