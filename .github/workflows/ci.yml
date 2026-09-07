@@ -64,7 +64,7 @@ jobs:
         working-directory: api
         run: |
           php bin/console cache:warmup --env=dev
-          vendor/bin/phpstan analyse --no-progress
+          vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
       - name: Composer validate + audit
         working-directory: api
