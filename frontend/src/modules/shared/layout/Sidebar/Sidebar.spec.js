@@ -1,6 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
+
+const themeMock = vi.hoisted(() => ({ isBakulevo: false }))
+
+vi.mock('@/themes', () => ({
+  get isBakulevo() {
+    return themeMock.isBakulevo
+  }
+}))
+
 import Sidebar from './Sidebar.vue'
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore'
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths'
@@ -106,5 +115,30 @@ describe('Sidebar.vue', () => {
     // back button + all non-divider items
     const buttonItems = wrapper.vm.sidebarItems.filter(i => i.type === 'button')
     expect(buttons.length).toBe(buttonItems.length + 1)
+  })
+
+  describe('Sidebar: темизация (3.58)', () => {
+    beforeEach(() => {
+      themeMock.isBakulevo = false
+    })
+
+    it('Алмазово: узкий иконочный сайдбар, без подписей (СЦ-3.58.14)', () => {
+      const { wrapper } = mountSidebar()
+      expect(wrapper.find('.sidebar').classes()).not.toContain('sidebar--text')
+      expect(wrapper.findAll('.label').length).toBe(0)
+      expect(wrapper.find('.sidebar__logo').exists()).toBe(false)
+      expect(wrapper.find('.sidebar__support').exists()).toBe(false)
+    })
+
+    it('Бакулево: пункты с подписями, логотип, «Служба поддержки» (СЦ-3.58.13)', () => {
+      themeMock.isBakulevo = true
+      const { wrapper } = mountSidebar()
+      expect(wrapper.find('.sidebar').classes()).toContain('sidebar--text')
+      expect(wrapper.findAll('.label').length).toBeGreaterThan(0)
+      expect(wrapper.find('.sidebar__logo').exists()).toBe(true)
+      expect(wrapper.find('.sidebar__logo').text()).toContain('Warfarin manager')
+      expect(wrapper.find('.sidebar__support').exists()).toBe(true)
+      expect(wrapper.find('.sidebar__support').text()).toContain('Служба поддержки')
+    })
   })
 })

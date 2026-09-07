@@ -1,5 +1,20 @@
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths';
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore';
+import { isBakulevo as isBakulevoTheme } from '@/themes';
+
+const SIDEBAR_LABELS = {
+    patientAdd: 'Добавить пациента',
+    recommendations: 'Рекомендации',
+    sendMessage: 'Сообщение',
+    editData: 'Редактирование',
+    calendar: 'Календарь',
+    aiHelp: 'ИИ-помощь',
+    statistics: 'Статистика',
+    disabledPatients: 'Маломобильные',
+    chat: 'Чат',
+    print: 'Печать',
+    saveFormats: 'Сохранить'
+};
 
 export default {
     name: 'Sidebar',
@@ -82,6 +97,9 @@ export default {
         }
     },
     computed: {
+        isBakulevo() {
+            return isBakulevoTheme;
+        },
         sidebarItems() {
             return this.sidebarItemDefinitions.map(item => {
                 let disabled = false;
@@ -92,7 +110,7 @@ export default {
                         disabled = true;
                     }
                 }
-                return { ...item, disabled };
+                return { ...item, disabled, label: SIDEBAR_LABELS[item.name] || '' };
             });
         },
         isBackButtonActive() {
