@@ -1,5 +1,21 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+
+const themeMock = vi.hoisted(() => ({ isBakulevo: false }))
+
+vi.mock('@/themes', () => ({
+  get isBakulevo() {
+    return themeMock.isBakulevo
+  },
+  get FEATURES() {
+    return {
+      pharmacogenetics: !themeMock.isBakulevo,
+      patientListPanel: !themeMock.isBakulevo,
+      riskScale: themeMock.isBakulevo,
+    }
+  },
+}))
+
 import App from './App.vue'
 
 function mountApp(isLoginPage) {
@@ -26,5 +42,19 @@ describe('App.vue', () => {
     expect(wrapper.findComponent({ name: 'PatientListPanel' }).exists()).toBe(false)
     expect(wrapper.findComponent({ name: 'MainHeader' }).exists()).toBe(false)
     expect(wrapper.find('.main').classes()).toContain('full-width')
+  })
+
+  describe('3.58: фича-флаг бокового списка (СЦ-3.58.11/12)', () => {
+    it('Алмазово: PatientListPanel виден (СЦ-3.58.12)', () => {
+      themeMock.isBakulevo = false
+      const wrapper = mountApp(false)
+      expect(wrapper.findComponent({ name: 'PatientListPanel' }).exists()).toBe(true)
+    })
+
+    it('Бакулево: PatientListPanel скрыт (СЦ-3.58.11)', () => {
+      themeMock.isBakulevo = true
+      const wrapper = mountApp(false)
+      expect(wrapper.findComponent({ name: 'PatientListPanel' }).exists()).toBe(false)
+    })
   })
 })

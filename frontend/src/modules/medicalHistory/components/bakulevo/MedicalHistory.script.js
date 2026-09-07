@@ -8,12 +8,10 @@ import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCard
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore';
 import { useMedicalTableStore } from '@/modules/medicalHistory/stores/medicalTableStore';
 import MedicalTable from '@/modules/medicalHistory/components/MedicalTable/MedicalTable.vue';
-import Pharmacogenetics from '@/modules/medicalHistory/components/Pharmacogenetics/Pharmacogenetics.vue';
 import VitalsCard from '@/modules/medicalHistory/components/VitalsCard/bakulevo/VitalsCard.vue';
 import RiskScale from '@/modules/medicalHistory/components/RiskScale/RiskScale.vue';
 import CollapsibleSection from '@/modules/medicalHistory/components/CollapsibleSection/CollapsibleSection.vue';
 import { usePatientVitalsLatestStore } from '@/modules/medicalHistory/stores/patientVitalsLatestStore';
-import { usePharmacogeneticsStore } from '@/modules/medicalHistory/stores/pharmacogeneticsStore';
 import { buildIndicators } from '@/modules/shared/utils/vitalsHelpers';
 
 export default {
@@ -25,7 +23,6 @@ export default {
         PatientCard, 
         TreatmentCard, 
         MedicalTable, 
-        Pharmacogenetics,
         VitalsCard,
         CollapsibleSection
     },
@@ -71,14 +68,6 @@ export default {
             }
             if (t.realEndDt) preview += ' (Завершено)';
             return preview;
-        },
-        pharmacogeneticsPreview() {
-            const store = usePharmacogeneticsStore();
-            const markers = store.markers || [];
-            const parts = markers
-                .filter(m => m.currentValueId !== null)
-                .map(m => `${m.geneSymbol}: ${m.currentValue}`);
-            return parts.length ? parts.join(', ') : 'Не исследовано';
         },
         vitalsPreview() {
             const latest = usePatientVitalsLatestStore().latest;

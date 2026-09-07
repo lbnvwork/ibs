@@ -2,7 +2,7 @@
   <div class="app">
     <template v-if="!isLoginPage">
       <Sidebar />
-      <PatientListPanel />
+      <PatientListPanel v-if="showPatientListPanel" />
     </template>
     <div class="main" :class="{ 'full-width': isLoginPage }" role="main">
       <MainHeader v-if="!isLoginPage" />
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { isBakulevo } from '@/themes';
+import { isBakulevo, FEATURES } from '@/themes';
 import Sidebar from '@/modules/shared/layout/Sidebar/Sidebar.vue';
 import SidebarBakulevo from '@/modules/shared/layout/Sidebar/bakulevo/Sidebar.vue';
 import PatientListPanel from '@/modules/patientManagement/components/PatientListPanel/PatientListPanel.vue';
@@ -28,6 +28,9 @@ export default {
   computed: {
     isLoginPage() {
       return this.$route.meta.isLoginPage === true;
+    },
+    showPatientListPanel() {
+      return FEATURES.patientListPanel;
     }
   }
 }

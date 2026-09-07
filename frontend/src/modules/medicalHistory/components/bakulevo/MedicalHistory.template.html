@@ -31,18 +31,6 @@
                     :treatment-id="activeTreatmentId"
                 />
             </CollapsibleSection>
-
-            <CollapsibleSection
-                title="Фармакогенетика"
-                :preview="pharmacogeneticsPreview"
-            >
-                <Pharmacogenetics
-                    v-if="id"
-                    :key="id"
-                    :patient-id="id"
-                    :drug-iri="treatmentStore.treatment?.drug"
-                />
-            </CollapsibleSection>
         </div>
 
         <div class="right-column">

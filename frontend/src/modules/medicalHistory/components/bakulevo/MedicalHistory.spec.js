@@ -6,7 +6,6 @@ import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCard
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore'
 import { useMedicalTableStore } from '@/modules/medicalHistory/stores/medicalTableStore'
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore'
-import { usePharmacogeneticsStore } from '@/modules/medicalHistory/stores/pharmacogeneticsStore'
 import { usePatientVitalsLatestStore } from '@/modules/medicalHistory/stores/patientVitalsLatestStore'
 
 const childStubs = {
@@ -138,16 +137,6 @@ describe('MedicalHistory.vue', () => {
       expect(wrapper.vm.treatmentPreview).toBe('Тромбоз, Варфарин, МНО 2–3 (Завершено)')
     })
 
-    it('pharmacogeneticsPreview lists investigated markers or falls back', async () => {
-      const { wrapper } = mountMedicalHistory('7')
-      await flushPromises()
-      expect(wrapper.vm.pharmacogeneticsPreview).toBe('Не исследовано')
-
-      usePharmacogeneticsStore().markers = [{ currentValueId: 1, geneSymbol: 'CYP2C9', currentValue: '*1/*1' }]
-      await wrapper.vm.$nextTick()
-      expect(wrapper.vm.pharmacogeneticsPreview).toBe('CYP2C9: *1/*1')
-    })
-
     it('vitalsPreview lists present vitals or falls back to "Нет измерений"', async () => {
       const { wrapper } = mountMedicalHistory('7')
       await flushPromises()
@@ -248,6 +237,17 @@ describe('MedicalHistory.vue', () => {
       await wrapper.vm.$nextTick()
 
       expect(wrapper.findComponent({ name: 'RiskScale' }).exists()).toBe(true)
+    })
+  })
+
+  describe('3.58: фича-флаг фармакогенетики (СЦ-3.58.3)', () => {
+    it('не рендерит Pharmacogenetics в Бакулево', async () => {
+      const { wrapper, treatmentStore } = mountMedicalHistory('7')
+      treatmentStore.treatment = { '@id': '/api/treatments/1', realEndDt: null, drug: '/api/drugs/1' }
+      await wrapper.vm.$nextTick()
+
+      expect(wrapper.findComponent({ name: 'Pharmacogenetics' }).exists()).toBe(false)
+      expect(wrapper.text()).not.toContain('Фармакогенетика')
     })
   })
 })
