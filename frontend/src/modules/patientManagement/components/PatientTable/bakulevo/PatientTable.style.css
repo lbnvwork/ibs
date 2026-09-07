@@ -1,0 +1,422 @@
+.patient-table {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.patient-table .table-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.patient-table .table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px 15px;
+}
+
+.patient-table .table-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-dark);
+  font-weight: 600;
+}
+
+.patient-table .table-title {
+  display: flex;
+  align-items: center;
+}
+
+.patient-table .patient-count {
+  display: inline-block;
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: var(--radius-lg);
+  margin-left: 8px;
+}
+
+.patient-table .triage-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-lg);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-on-accent);
+  white-space: nowrap;
+}
+
+.patient-table .triage-badge--danger { background: var(--color-triage-danger); }
+.patient-table .triage-badge--warning { background: var(--color-triage-warning); }
+.patient-table .triage-badge--success { background: var(--color-triage-success); }
+.patient-table .triage-badge--info { background: var(--color-triage-info); }
+
+.patient-table .triage-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.patient-table .filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-surface-alt);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+}
+
+.patient-table .filter-controls label {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--color-danger);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.patient-table .filter-controls select {
+  padding: 6px 10px;
+  font-size: 14px;
+  width: 220px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: white;
+}
+
+.patient-table .tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.patient-table .tabs button {
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.patient-table .tabs button.active {
+  background: var(--color-surface);
+  border-bottom-color: var(--color-warning);
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.patient-table .table-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.patient-table .table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.patient-table .table-container th,
+.patient-table .table-container td {
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+}
+
+.patient-table .table-container th {
+  background: var(--color-border);
+  font-weight: 600;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.patient-table .table-container th::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+  z-index: -1;
+}
+
+.patient-table .table-container tr.highlight-red {
+  background: var(--color-danger-bg);
+}
+
+.patient-table .table-container tr.highlight-blue {
+  background: var(--color-accent-bg);
+}
+
+.patient-table .table-container .icon-cell {
+  width: 25px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.patient-table .table-container .value-up {
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.patient-table .table-container .value-down {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.patient-table .table-container .comment {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.patient-table .pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-surface-alt);
+  border-top: 1px solid var(--color-surface-alt);
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.patient-table .pagination button {
+  padding: 6px 14px;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-dark);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.patient-table .pagination button:hover:not(:disabled) {
+  background: var(--color-sidebar-bg);
+  border-color: var(--color-sidebar-bg);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.patient-table .pagination button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.patient-table .pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--color-surface-alt);
+  border-color: var(--color-surface-alt);
+  color: var(--color-muted);
+}
+
+.patient-table .pagination span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-surface-alt);
+  color: var(--color-dark);
+}
+
+.patient-table .pagination input {
+  width: 65px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  text-align: center;
+  font-size: 13px;
+  transition: border 0.2s, box-shadow 0.2s;
+  background: white;
+}
+
+.patient-table .pagination input:focus {
+  outline: none;
+  border-color: var(--color-sidebar-bg);
+  box-shadow: 0 0 0 3px rgba(82,145,233,0.2);
+}
+
+.patient-table .pagination input::-webkit-inner-spin-button,
+.patient-table .pagination input::-webkit-outer-spin-button {
+  opacity: 0.5;
+}
+
+.patient-table .loading-row td,
+.patient-table .empty-row td,
+.patient-table .error-row td {
+  text-align: center;
+  padding: 20px;
+  background: var(--color-surface-alt);
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.patient-table .loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-sidebar-bg);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.patient-table .table-container a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.patient-table .table-container a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.patient-table .table-container a:visited {
+  color: var(--color-accent);
+}
+
+
+
+/* ---------- Гибкая ширина столбцов для витальных показателей ---------- */
+
+.patient-table .table-container table {
+  table-layout: auto;              /* браузер сам распределит ширину */
+}
+
+/* # (порядковый номер) */
+.patient-table .table-container th:nth-child(1),
+.patient-table .table-container td:nth-child(1) {
+  width: 30px;
+  text-align: center;
+}
+
+/* Статус SMS */
+.patient-table .table-container th:nth-child(2),
+.patient-table .table-container td:nth-child(2) {
+  max-width: 40px;
+  text-align: center;
+  padding: 4px 2px;
+}
+
+/* Возраст */
+.patient-table .table-container th:nth-child(4),
+.patient-table .table-container td:nth-child(4) {
+  width: 50px;
+  text-align: center;
+}
+
+/* ФИО — ограничиваем, но оставляем читаемым */
+.patient-table .table-container th:nth-child(3),
+.patient-table .table-container td:nth-child(3) {
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Диагноз */
+.patient-table .table-container th:nth-child(5),
+.patient-table .table-container td:nth-child(5) {
+  min-width: 350px;
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Показатели */
+.patient-table .table-container th:nth-child(6),
+.patient-table .table-container td:nth-child(6) { 
+  padding: 4px 6px;
+}
+
+/* Общие отступы для компактности */
+.patient-table .table-container td {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+
+
+/* Чипсы показателей */
+.indicator-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--color-surface-alt);
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.indicator-item:first-child {
+    margin-left: 0;
+}
+
+/* МНО выделяется */
+.indicator-mno {
+    background: var(--color-accent-bg);
+    border: 1px solid var(--color-accent-bg);
+}
+
+/* Название показателя */
+.indicator-label {
+    color: var(--color-muted);
+    font-weight: 400;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Значение показателя */
+.indicator-value {
+    font-weight: 700;
+    color: var(--color-dark);
+    font-size: 13px;
+}
+.indicator-mno .indicator-value {
+    color: var(--color-accent);
+}
+
+.indicator-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

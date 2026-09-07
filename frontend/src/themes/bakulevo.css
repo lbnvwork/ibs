@@ -21,6 +21,10 @@
   --color-warning-bg: #fffbeb;
   --color-accent-bg: #eff6ff;
   --color-info: #7c3aed;
+  --color-triage-danger: #dc2626;
+  --color-triage-warning: #f59e0b;
+  --color-triage-success: #16a34a;
+  --color-triage-info: #2563eb;
   --color-text: #111827;
   --color-dark: #111827;
   --color-muted: #6b7280;

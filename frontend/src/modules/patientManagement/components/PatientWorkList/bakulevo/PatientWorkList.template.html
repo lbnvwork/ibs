@@ -1,0 +1,56 @@
+<PatientTable
+  :tabs="tabs"
+  v-model:activeTab="activeTab"
+  v-model:selectedDiagnosis="selectedDiagnosisCodes"
+  :patients="patients"
+  :loading="loading"
+  :error="error"
+  :totalPages="totalPages"
+  :currentPage="currentPage"
+  :pageInput="pageInput"
+  :totalCount="totalItems"
+  @update:pageInput="pageInput = $event"
+  @goToPage="goToPage"
+  @nextPage="nextPage"
+  @prevPage="prevPage"
+  @firstPage="firstPage"
+  @lastPage="lastPage"
+>
+  <template #title>
+    <h3>Работа со списком пациентов</h3>
+  </template>
+  <template #thead>
+    <tr>
+      <th>#</th>
+      <th>SMS</th>
+      <th>ФИО</th>
+      <th>Возраст</th>
+      <th>Диагноз</th>
+      <th>Показатели</th>
+      <th>Комментарий</th>
+      <th>Триаж</th>
+    </tr>
+  </template>
+
+  <template #tbody="{ patients, triageBadge }">
+    <tr
+      v-for="(patient, index) in patients"
+      :key="patient.id"
+      :class="{
+        'highlight-red': patient.highlightRed,
+        'highlight-blue': patient.highlightBlue
+      }"
+    >
+      <td>{{ index + 1 }}</td>
+      <td class="icon-cell">{{ patient.smsStatus }}</td>
+      <td><router-link :to="`/patient/${patient.id}`">{{ patient.name }}</router-link></td>
+      <td>{{ patient.age }}</td>
+      <td>{{ patient.diagnosis }}</td>
+      <td v-html="patient.indicators"></td>
+      <td class="comment">{{ patient.comment }}</td>
+      <td class="triage-cell">
+        <span class="triage-badge" :class="`triage-badge--${triageBadge(patient).type}`">{{ triageBadge(patient).label }}</span>
+      </td>
+    </tr>
+  </template>
+</PatientTable>
