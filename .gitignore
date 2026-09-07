@@ -8,6 +8,7 @@ api/var/
 api/vendor/
 api/.env
 api/composer.lock
+api/config/reference.php
 
 # Vue.js
 frontend/node_modules/
