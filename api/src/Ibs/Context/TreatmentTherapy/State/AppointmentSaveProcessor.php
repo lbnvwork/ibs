@@ -12,10 +12,12 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
+/** @implements ProcessorInterface<Appointment, Appointment> */
 class AppointmentSaveProcessor implements ProcessorInterface
 {
     private EntityManagerInterface $entityManager;
 
+    /** @param ProcessorInterface<Appointment, Appointment> $persistProcessor */
     public function __construct(
         #[Autowire('@api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor,

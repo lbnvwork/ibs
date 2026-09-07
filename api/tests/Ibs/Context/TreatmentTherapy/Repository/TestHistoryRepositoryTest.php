@@ -66,7 +66,7 @@ class TestHistoryRepositoryTest extends KernelTestCase
 
         $this->entityManager->flush();
 
-        $results = $this->repository->findLatestByTreatmentIds([$treatment->getId()]);
+        $results = $this->repository->findLatestByTreatmentIds([(int) $treatment->getId()]);
 
         $this->assertCount(1, $results);
         $this->assertSame($newer->getId(), $results[0]->getId());

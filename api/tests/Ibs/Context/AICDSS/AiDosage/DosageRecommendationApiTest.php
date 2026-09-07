@@ -88,6 +88,7 @@ class DosageRecommendationApiTest extends WebTestCase
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
+        /** @var array{variants: array<mixed>, explanation: string} $data */
         $data = json_decode((string) $response->getContent(), true);
         $this->assertNotEmpty($data['variants']);
         $this->assertStringContainsString('увеличена', $data['explanation']);

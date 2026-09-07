@@ -63,7 +63,9 @@ final class CreateUserCommand extends Command
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
 
         $roles = $input->getOption('role');
-        $roles = \is_array($roles) && [] !== $roles ? \array_values($roles) : ['ROLE_USER'];
+        $roles = \is_array($roles) && [] !== $roles
+            ? array_map(static fn (mixed $role): string => (string) (is_scalar($role) ? $role : ''), array_values($roles))
+            : ['ROLE_USER'];
         $user->setRoles($roles);
 
         $name = $input->getOption('name');

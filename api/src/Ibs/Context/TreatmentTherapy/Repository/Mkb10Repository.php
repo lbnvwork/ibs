@@ -8,6 +8,7 @@ use Ibs\Context\TreatmentTherapy\Entity\Mkb10;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/** @extends ServiceEntityRepository<Mkb10> */
 class Mkb10Repository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -15,6 +16,7 @@ class Mkb10Repository extends ServiceEntityRepository
         parent::__construct($registry, Mkb10::class);
     }
 
+    /** @return list<Mkb10> */
     public function findPopularActiveDiagnoses(int $limit = 10): array
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -44,11 +46,12 @@ class Mkb10Repository extends ServiceEntityRepository
         return $result;
     }
 
+    /** @return list<Mkb10> */
     public function searchByCodeOrName(string $query, int $limit = 20): array
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = '
-            SELECT *
+            SELECT id
             FROM mkb10
             WHERE mkb_code ILIKE :query
             OR mkb_name ILIKE :query
@@ -67,6 +70,16 @@ class Mkb10Repository extends ServiceEntityRepository
             'query_start' => "$query%",
             'limit' => $limit,
         ]);
-        return $stmt->fetchAllAssociative();
+        $rows = $stmt->fetchAllAssociative();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $mkb10 = $this->find($row['id']);
+            if ($mkb10) {
+                $result[] = $mkb10;
+            }
+        }
+
+        return $result;
     }
 }

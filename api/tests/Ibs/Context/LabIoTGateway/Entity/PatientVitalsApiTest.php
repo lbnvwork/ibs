@@ -53,7 +53,7 @@ class PatientVitalsApiTest extends WebTestCase
             content: json_encode([
                 'patient' => '/api/patients/'.$patient->getId(),
                 'recordDt' => '2026-08-01T08:00:00+00:00',
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $this->assertSame(422, $this->client->getResponse()->getStatusCode());
@@ -73,12 +73,13 @@ class PatientVitalsApiTest extends WebTestCase
                 'patient' => '/api/patients/'.$patient->getId(),
                 'recordDt' => '2026-08-01T08:00:00+00:00',
                 'heartRate' => 72,
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $response = $this->client->getResponse();
         $this->assertSame(201, $response->getStatusCode());
 
+        /** @var array{id: int} $data */
         $data = json_decode((string) $response->getContent(), true);
         $this->entityManager->clear();
 

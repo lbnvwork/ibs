@@ -59,7 +59,7 @@ class MaxDeepLinkGeneratorTest extends TestCase
             ->willReturnOnConsecutiveCalls(null, $existing);
 
         $driverException = new class('duplicate key value') extends \Exception implements DriverExceptionInterface {
-            public function getSQLState(): ?string
+            public function getSQLState(): string
             {
                 return '23505';
             }

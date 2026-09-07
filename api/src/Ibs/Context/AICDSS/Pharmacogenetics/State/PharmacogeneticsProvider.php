@@ -11,6 +11,7 @@ use Ibs\Context\AICDSS\Pharmacogenetics\Service\PharmacogeneticsService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/** @implements ProviderInterface<PharmacogeneticsResponse> */
 class PharmacogeneticsProvider implements ProviderInterface
 {
     public function __construct(
@@ -19,7 +20,8 @@ class PharmacogeneticsProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PharmacogeneticsResponse
     {
-        $patientId = (int) $uriVariables['patientId'];
+        $rawId = $uriVariables['patientId'] ?? null;
+        $patientId = (int) (is_scalar($rawId) ? $rawId : 0);
 
         // Извлекаем drug IRI из query-параметров
         $request = $context['request'] ?? null;

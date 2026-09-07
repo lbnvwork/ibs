@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class AtLeastOneVitalSignValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof AtLeastOneVitalSign) {
             throw new UnexpectedTypeException($constraint, AtLeastOneVitalSign::class);

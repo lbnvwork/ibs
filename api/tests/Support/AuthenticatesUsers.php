@@ -16,6 +16,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 trait AuthenticatesUsers
 {
+    /** @param list<string> $roles */
     private function createUser(
         EntityManagerInterface $entityManager,
         string $login,
@@ -43,14 +44,16 @@ trait AuthenticatesUsers
             'POST',
             '/api/login',
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode(['login' => $login, 'password' => $plainPassword])
+            content: json_encode(['login' => $login, 'password' => $plainPassword], JSON_THROW_ON_ERROR)
         );
 
+        /** @var array{token: string} $data */
         $data = json_decode((string) $client->getResponse()->getContent(), true);
 
         return $data['token'];
     }
 
+    /** @param list<string> $roles */
     private function createAuthenticatedClient(
         KernelBrowser $client,
         EntityManagerInterface $entityManager,
@@ -63,6 +66,7 @@ trait AuthenticatesUsers
         return $this->obtainToken($client, $login, $plainPassword);
     }
 
+    /** @return array<string, string> */
     private function authHeader(string $token): array
     {
         return ['HTTP_AUTHORIZATION' => 'Bearer '.$token];

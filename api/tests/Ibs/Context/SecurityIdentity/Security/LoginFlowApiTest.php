@@ -45,16 +45,18 @@ class LoginFlowApiTest extends WebTestCase
             'POST',
             '/api/login',
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode(['login' => 'login.flow.user', 'password' => 'correct-password'])
+            content: json_encode(['login' => 'login.flow.user', 'password' => 'correct-password'], JSON_THROW_ON_ERROR)
         );
 
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
+        /** @var array{token: string} $data */
         $data = json_decode((string) $response->getContent(), true);
         $this->assertArrayHasKey('token', $data);
 
         [, $payload] = explode('.', $data['token']);
+        /** @var array{id: int} $decoded */
         $decoded = json_decode(base64_decode(strtr($payload, '-_', '+/')), true);
 
         $this->assertSame($user->getId(), $decoded['id'], 'JwtCreatedListener must embed the user id claim.');
@@ -68,7 +70,7 @@ class LoginFlowApiTest extends WebTestCase
             'POST',
             '/api/login',
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode(['login' => 'login.flow.wrong', 'password' => 'wrong-password'])
+            content: json_encode(['login' => 'login.flow.wrong', 'password' => 'wrong-password'], JSON_THROW_ON_ERROR)
         );
 
         $this->assertSame(401, $this->client->getResponse()->getStatusCode());

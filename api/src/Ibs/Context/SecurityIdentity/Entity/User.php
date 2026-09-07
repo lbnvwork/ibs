@@ -60,6 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:write'])]
     private ?string $userName = null;
 
+    /** @var list<string> */
     #[ORM\Column(type: 'json', nullable: false, options: ['default' => '[]', 'comment' => 'Роли'])]
     #[Groups(['user:read'])]
     private array $roles = [];
@@ -110,15 +111,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /** @return list<string> */
     public function getRoles(): array
     {
         $roles = $this->roles;
         if (!in_array('ROLE_USER', $roles, true)) {
             $roles[] = 'ROLE_USER';
         }
-        return array_unique($roles);
+        /** @var list<string> $unique */
+        $unique = array_values(array_unique($roles));
+
+        return $unique;
     }
 
+    /** @param list<string> $roles */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -152,7 +158,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->login;
+        if ($this->login === null || $this->login === '') {
+            throw new \LogicException('Login is not set for user.');
+        }
+
+        return $this->login;
     }
 
     /**
@@ -176,6 +186,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         ];
     }
 
+    /** @param array{id?: ?int, login?: ?string, userName?: ?string, roles?: list<string>, medicalPersonnel?: ?MedicalPersonnel, comment?: ?string} $data */
     public function __unserialize(array $data): void
     {
         $this->id = $data['id'] ?? null;

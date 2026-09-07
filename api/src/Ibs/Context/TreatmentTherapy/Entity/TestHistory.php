@@ -91,7 +91,7 @@ class TestHistory
             $this->modDt = new \DateTime();
         }
         // Гарантируем, что doze2 всегда -1, если не задан явно
-        if ($this->doze2 === 0 || $this->doze2 === null) {
+        if ($this->doze2 === 0) {
             $this->doze2 = -1;
         }
     }

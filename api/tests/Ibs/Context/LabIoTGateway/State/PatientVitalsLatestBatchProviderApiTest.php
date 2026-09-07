@@ -56,11 +56,14 @@ class PatientVitalsLatestBatchProviderApiTest extends WebTestCase
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
+        /** @var list<array{id: int}> $data */
         $data = json_decode((string) $response->getContent(), true);
         $ids = array_column($data, 'id');
 
         $wantedLatest = $this->entityManager->getRepository(PatientVitalsLatest::class)->findOneBy(['patient' => $wanted->getId()]);
         $notWantedLatest = $this->entityManager->getRepository(PatientVitalsLatest::class)->findOneBy(['patient' => $notWanted->getId()]);
+        $this->assertNotNull($wantedLatest);
+        $this->assertNotNull($notWantedLatest);
 
         $this->assertContains($wantedLatest->getId(), $ids);
         $this->assertNotContains($notWantedLatest->getId(), $ids);

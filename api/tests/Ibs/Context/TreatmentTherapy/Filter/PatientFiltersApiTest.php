@@ -101,7 +101,9 @@ class PatientFiltersApiTest extends WebTestCase
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
-        $ids = array_column(json_decode((string) $response->getContent(), true), 'id');
+        /** @var list<array{id: int}> $data */
+        $data = json_decode((string) $response->getContent(), true);
+        $ids = array_column($data, 'id');
         $this->assertContains($matching->getId(), $ids);
         $this->assertNotContains($nonMatching->getId(), $ids);
     }
@@ -128,7 +130,9 @@ class PatientFiltersApiTest extends WebTestCase
             server: array_merge($this->authHeader($token), ['HTTP_ACCEPT' => 'application/json'])
         );
 
-        $ids = array_column(json_decode((string) $this->client->getResponse()->getContent(), true), 'id');
+        /** @var list<array{id: int}> $data */
+        $data = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $ids = array_column($data, 'id');
         $this->assertContains($matching->getId(), $ids);
         $this->assertNotContains($nonMatching->getId(), $ids);
     }
@@ -165,13 +169,16 @@ class PatientFiltersApiTest extends WebTestCase
             server: array_merge($this->authHeader($token), ['HTTP_ACCEPT' => 'application/json'])
         );
 
-        $ids = array_column(json_decode((string) $this->client->getResponse()->getContent(), true), 'id');
+        /** @var list<array{id: int}> $data */
+        $data = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $ids = array_column($data, 'id');
         $this->assertContains($matching->getId(), $ids);
         $this->assertNotContains($nonMatching->getId(), $ids);
     }
 
     private function createPatientWithTreatment(Drug $drug, string $diagnosisCode): Patient
     {
+        /** @var int $counter */
         static $counter = 0;
         ++$counter;
 

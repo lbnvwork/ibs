@@ -39,7 +39,7 @@ class TrimAndNullifyStringsListener
             $request->cookies->all(),
             $request->files->all(),
             $request->server->all(),
-            json_encode($data)
+            json_encode($data) ?: null
         );
     }
 }

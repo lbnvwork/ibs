@@ -59,7 +59,17 @@ class Mkb10ProvidersApiTest extends WebTestCase
         $this->assertSame(200, $response->getStatusCode());
 
         $data = json_decode((string) $response->getContent(), true);
+        $this->assertIsArray($data);
         $this->assertNotEmpty($data);
+
+        // Контракт для UI MultiDiagnosisSelect: массив объектов {id, mkbCode, mkbName}
+        $first = $data[0];
+        $this->assertIsArray($first);
+        $this->assertArrayHasKey('id', $first);
+        $this->assertArrayHasKey('mkbCode', $first);
+        $this->assertArrayHasKey('mkbName', $first);
+        $this->assertSame('K29', $first['mkbCode']);
+        $this->assertSame('Гастрит и дуоденит', $first['mkbName']);
     }
 
     public function testSearchEndpointReturnsEmptyArrayForTooShortQuery(): void

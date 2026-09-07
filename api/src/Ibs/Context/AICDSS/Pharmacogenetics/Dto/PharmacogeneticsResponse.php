@@ -18,5 +18,6 @@ use Ibs\Context\AICDSS\Pharmacogenetics\State\PharmacogeneticsProvider;
 )]
 class PharmacogeneticsResponse
 {
+    /** @var list<array<string, mixed>> */
     public array $markers = [];
 }
