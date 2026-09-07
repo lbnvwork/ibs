@@ -7,7 +7,19 @@ import {
 
 ChartJS.register(...registerables);
 
-// Кастомный плагин для подписей вне диапазона
+// Проверка: есть ли доза у точки (не null/undefined/'—'/''/NaN/0).
+// Дозы варфарина — доли таблетки (от четвертины и выше), 0/NaN назначением не являются.
+export function hasDoseValue(dose) {
+    if (dose === null || dose === undefined || dose === '—' || dose === '') return false;
+    const num = Number(dose);
+    return !Number.isNaN(num) && num > 0;
+}
+
+// Кастомный плагин для подписей вне диапазона.
+// МНО и доза выводятся отдельными строками друг под другом (чтобы не наползали).
+const LINE_HEIGHT = 12;
+const LABEL_OFFSET = 15;
+
 const customLabelsPlugin = {
     id: 'customLabels',
     afterDatasetsDraw(chart) {
@@ -15,8 +27,12 @@ const customLabelsPlugin = {
         const meta = chart.getDatasetMeta(0);
         const mnoFrom = chart.options.mnoFrom;
         const mnoTo = chart.options.mnoTo;
+        const doses = chart.options.doses || [];
 
         if (!meta || !meta.data) return;
+
+        ctx.font = 'bold 10px Arial';
+        ctx.textAlign = 'center';
 
         meta.data.forEach((point, index) => {
             const value = chart.data.datasets[0].data[index];
@@ -26,12 +42,26 @@ const customLabelsPlugin = {
             const above = mnoTo !== null && value > mnoTo;
             if (!below && !above) return;
 
+            const dose = doses[index];
+            const hasDose = hasDoseValue(dose);
             const x = point.x;
-            const y = below ? point.y + 15 : point.y - 10;
-            ctx.font = 'bold 10px Arial';
             ctx.fillStyle = below ? '#2a5c98' : '#e74c3c';
-            ctx.textAlign = 'center';
-            ctx.fillText(value, x, y);
+
+            if (below) {
+                // ниже диапазона — подпись под точкой: МНО, затем доза
+                ctx.fillText(String(value), x, point.y + LABEL_OFFSET);
+                if (hasDose) {
+                    ctx.fillText(String(dose), x, point.y + LABEL_OFFSET + LINE_HEIGHT);
+                }
+            } else {
+                // выше диапазона — подпись над точкой: МНО, затем доза
+                if (hasDose) {
+                    ctx.fillText(String(value), x, point.y - LABEL_OFFSET - LINE_HEIGHT);
+                    ctx.fillText(String(dose), x, point.y - LABEL_OFFSET);
+                } else {
+                    ctx.fillText(String(value), x, point.y - LABEL_OFFSET);
+                }
+            }
         });
     }
 };
@@ -58,17 +88,42 @@ export default {
         };
     },
     computed: {
+        // Единая точка расчёта: preparedData кэширует prepareChartData(),
+        // чтобы chartData и chartOptions не пересчитывали данные дважды.
+        preparedData() {
+            return this.prepareChartData();
+        },
         chartData() {
-            const d = this.prepareChartData();
+            const d = this.preparedData;
             if (!d) return null;
             return { labels: d.labels, datasets: d.datasets };
         },
         chartOptions() {
+            const d = this.preparedData;
             return {
                 responsive: true,
                 maintainAspectRatio: false,
+                // Отступы сверху/снизу — чтобы подписи «над точкой» не уходили за край.
+                layout: {
+                    padding: { top: 40, bottom: 30 },
+                },
                 plugins: {
                     legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                if (context.datasetIndex !== 0) {
+                                    return `${context.dataset.label}: ${context.parsed.y}`;
+                                }
+                                const doses = context.chart.options.doses || [];
+                                const dose = doses[context.dataIndex];
+                                if (hasDoseValue(dose)) {
+                                    return `МНО: ${context.parsed.y} · доза: ${dose}`;
+                                }
+                                return `МНО: ${context.parsed.y}`;
+                            },
+                        },
+                    },
                 },
                 scales: {
                     y: {
@@ -81,6 +136,7 @@ export default {
                 },
                 mnoFrom: this.mnoFrom,
                 mnoTo: this.mnoTo,
+                doses: d ? d.doses : [],
             };
         },
     },
@@ -113,6 +169,7 @@ export default {
 
             const labels = items.map(item => formatDate(item.date));
             const inrValues = items.map(item => parseFloat(item.inr));
+            const doses = items.map(item => item.dose);
 
             const datasets = [
                 {
@@ -147,7 +204,7 @@ export default {
                 });
             }
 
-            return { labels, datasets };
+            return { labels, doses, datasets };
         },
     },
 };

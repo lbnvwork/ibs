@@ -37,12 +37,19 @@ describe('MedicalTable.vue', () => {
     expect(row.findAll('td')[1].text()).toBe('—')
   })
 
-  it('builds chartData from events that have a non-null mno', () => {
+  it('builds chartData from events that have a non-null mno, including dose (СЦ-3.64.1/2)', () => {
     const { wrapper } = mountMedicalTable([
-      { displayDate: '01.01.2024', date: '2024-01-01', mno: 2.5, type: 'test' },
+      { displayDate: '01.01.2024', date: '2024-01-01', mno: 2.5, prescribedDose: 5, type: 'test' },
       { displayDate: '02.01.2024', date: '2024-01-02', mno: null, type: 'appointment' },
     ])
-    expect(wrapper.vm.chartData).toEqual([{ date: '2024-01-01', inr: 2.5 }])
+    expect(wrapper.vm.chartData).toEqual([{ date: '2024-01-01', inr: 2.5, dose: 5 }])
+  })
+
+  it('chartData dose is "—" when there is no appointment on the date (СЦ-3.64.4/5)', () => {
+    const { wrapper } = mountMedicalTable([
+      { displayDate: '01.01.2024', date: '2024-01-01', mno: 2.5, prescribedDose: '—', type: 'test' },
+    ])
+    expect(wrapper.vm.chartData).toEqual([{ date: '2024-01-01', inr: 2.5, dose: '—' }])
   })
 
   it('only renders the MnoChart when there is at least one chartable point', () => {
