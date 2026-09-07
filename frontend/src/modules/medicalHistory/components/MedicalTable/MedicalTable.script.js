@@ -17,7 +17,7 @@ export default {
         const chartData = computed(() => {
             return store.events
                 .filter(e => e.mno !== null)
-                .map(e => ({ date: e.date, inr: e.mno }));
+                .map(e => ({ date: e.date, inr: e.mno, dose: e.prescribedDose }));
         });
 
         return { store, chartData, buildIndicatorsFromRow };
