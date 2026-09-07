@@ -38,7 +38,7 @@ final class MaxDeepLinkGenerator
         } catch (UniqueConstraintViolationException) {
             // Гонка: параллельный запрос уже создал диплинк для этого пациента
             // (unique patient_id). Возвращаем существующий вместо падения с 500.
-            $this->entityManager->clear(MaxDeepLink::class);
+            $this->entityManager->clear();
             $deeplink = $this->deeplinks->findByPatientId($patientId);
             if (null === $deeplink) {
                 throw new \RuntimeException(\sprintf('Не удалось создать диплинк для пациента %d.', $patientId));

@@ -52,8 +52,14 @@ final class TemplateResolver
         $result = preg_replace_callback(
             '/%([a-zA-Z0-9_]+)%/',
             static function (array $matches) use ($data): string {
+                $key = $matches[1] ?? '';
+                $placeholder = is_string($matches[0] ?? null) ? $matches[0] : '';
+                if (!is_string($key) || $key === '') {
+                    return $placeholder;
+                }
+
                 // Оставляем плейсхолдер как есть, если данные для него не переданы.
-                return \array_key_exists($matches[1], $data) ? (string) $data[$matches[1]] : $matches[0];
+                return \array_key_exists($key, $data) ? (string) $data[$key] : $placeholder;
             },
             $text,
         );
