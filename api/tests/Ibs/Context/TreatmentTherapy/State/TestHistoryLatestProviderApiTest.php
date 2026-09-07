@@ -89,6 +89,7 @@ class TestHistoryLatestProviderApiTest extends WebTestCase
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
+        /** @var list<array{id: int}> $data */
         $data = json_decode((string) $response->getContent(), true);
         $this->assertCount(1, $data);
         $this->assertSame($newer->getId(), $data[0]['id']);

@@ -47,6 +47,7 @@ class SecurityIdentityPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(User::class, $id);
+        $this->assertNotNull($reloaded);
         $this->assertContains('ROLE_USER', $reloaded->getRoles());
     }
 
@@ -76,8 +77,11 @@ class SecurityIdentityPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(MedicalPersonnelPhone::class, $id);
+        $this->assertNotNull($reloaded);
         $this->assertSame('8(800)555-35-35', $reloaded->getNumber());
-        $this->assertSame('Др. Кузнецова', $reloaded->getPerson()->getName());
+        $person = $reloaded->getPerson();
+        $this->assertNotNull($person);
+        $this->assertSame('Др. Кузнецова', $person->getName());
     }
 
     public function testUserForHospitalLinksUserAndHospitalWithPermissions(): void
@@ -101,7 +105,10 @@ class SecurityIdentityPersistenceTest extends KernelTestCase
         $this->entityManager->clear();
 
         $reloaded = $this->entityManager->find(UserForHospital::class, $id);
+        $this->assertNotNull($reloaded);
         $this->assertSame(7, $reloaded->getPermissions());
-        $this->assertSame('hospital.user', $reloaded->getUser()->getLogin());
+        $user = $reloaded->getUser();
+        $this->assertNotNull($user);
+        $this->assertSame('hospital.user', $user->getLogin());
     }
 }

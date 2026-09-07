@@ -54,6 +54,7 @@ class HashPasswordsCommandTest extends WebTestCase
 
         $this->entityManager->clear();
         $reloaded = $this->entityManager->find(User::class, $user->getId());
+        $this->assertNotNull($reloaded);
 
         $this->assertNotSame('plain-text-secret', $reloaded->getPassword());
 
@@ -78,6 +79,7 @@ class HashPasswordsCommandTest extends WebTestCase
 
         $this->entityManager->clear();
         $reloaded = $this->entityManager->find(User::class, $user->getId());
+        $this->assertNotNull($reloaded);
 
         $this->assertSame($hashedBefore, $reloaded->getPassword());
         $this->assertStringContainsString('No plain-text passwords found.', $this->commandTester->getDisplay());

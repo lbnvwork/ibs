@@ -56,12 +56,13 @@ class AppointmentSaveProcessorApiTest extends WebTestCase
                 'treatment' => '/api/treatments/'.$treatment->getId(),
                 'appointmentDt' => '2026-08-01T10:00:00+00:00',
                 'doze' => 1.5,
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $response = $this->client->getResponse();
         $this->assertSame(201, $response->getStatusCode());
 
+        /** @var array{id: int} $data */
         $data = json_decode((string) $response->getContent(), true);
 
         $this->entityManager->clear();
@@ -88,7 +89,7 @@ class AppointmentSaveProcessorApiTest extends WebTestCase
                 'treatment' => '/api/treatments/'.$treatment->getId(),
                 'appointmentDt' => '2026-08-01T10:00:00+00:00',
                 'doze' => 1.5,
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $this->assertSame(422, $this->client->getResponse()->getStatusCode());

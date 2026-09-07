@@ -49,7 +49,7 @@ class TreatmentRepositoryTest extends KernelTestCase
 
         $this->entityManager->flush();
 
-        $result = $this->repository->getActivePatientIds([$activePatient->getId(), $finishedPatient->getId()]);
+        $result = $this->repository->getActivePatientIds([(int) $activePatient->getId(), (int) $finishedPatient->getId()]);
 
         $this->assertContains($activePatient->getId(), $result);
         $this->assertNotContains($finishedPatient->getId(), $result);

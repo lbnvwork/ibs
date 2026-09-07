@@ -61,6 +61,7 @@ class MetadataApiTest extends WebTestCase
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
+        /** @var array{version: int} $data */
         $data = json_decode((string) $response->getContent(), true);
         $this->assertSame(7, $data['version']);
     }

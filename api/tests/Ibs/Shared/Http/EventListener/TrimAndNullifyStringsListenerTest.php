@@ -49,15 +49,17 @@ class TrimAndNullifyStringsListenerTest extends WebTestCase
             content: json_encode([
                 'name' => '   Городская больница   ',
                 'region' => '   ',
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $response = $this->client->getResponse();
         $this->assertSame(201, $response->getStatusCode());
 
+        /** @var array{id: int} $data */
         $data = json_decode((string) $response->getContent(), true);
         $this->entityManager->clear();
         $hospital = $this->entityManager->find(Hospital::class, $data['id']);
+        $this->assertNotNull($hospital);
 
         $this->assertSame('Городская больница', $hospital->getName());
         $this->assertNull($hospital->getRegion(), 'Blank strings must be normalized to null.');

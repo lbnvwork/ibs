@@ -56,12 +56,13 @@ class PatientGeneticResultApiTest extends WebTestCase
                 'patient' => '/api/patients/'.$patient->getId(),
                 'marker' => '/api/genetic_markers/'.$marker->getId(),
                 'markerValue' => '/api/genetic_marker_values/'.$value->getId(),
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $response = $this->client->getResponse();
         $this->assertSame(201, $response->getStatusCode());
 
+        /** @var array{id: int} $data */
         $data = json_decode((string) $response->getContent(), true);
         $this->entityManager->clear();
         $result = $this->entityManager->find(PatientGeneticResult::class, $data['id']);
@@ -97,7 +98,7 @@ class PatientGeneticResultApiTest extends WebTestCase
                 'patient' => '/api/patients/'.$patient->getId(),
                 'marker' => '/api/genetic_markers/'.$marker->getId(),
                 'markerValue' => '/api/genetic_marker_values/'.$otherValue->getId(),
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $this->assertSame(400, $this->client->getResponse()->getStatusCode());
@@ -124,7 +125,7 @@ class PatientGeneticResultApiTest extends WebTestCase
                 'patient' => '/api/patients/'.$patient->getId(),
                 'marker' => '/api/genetic_markers/'.$marker->getId(),
                 'markerValue' => '/api/genetic_marker_values/'.$value->getId(),
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
 
         $this->assertSame(409, $this->client->getResponse()->getStatusCode());
