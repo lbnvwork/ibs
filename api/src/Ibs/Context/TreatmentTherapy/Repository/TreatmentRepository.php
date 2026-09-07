@@ -24,6 +24,10 @@ class TreatmentRepository extends ServiceEntityRepository
      * @param int[] $patientIds
      * @return int[]
      */
+    /**
+     * @param array<int> $patientIds
+     * @return list<int>
+     */
     public function getActivePatientIds(array $patientIds): array
     {
         if (empty($patientIds)) {
@@ -38,6 +42,9 @@ class TreatmentRepository extends ServiceEntityRepository
 
         $result = $qb->getQuery()->getScalarResult();
 
-        return array_column($result, 'patient_id');
+        /** @var list<int> $ids */
+        $ids = array_column($result, 'patient_id');
+
+        return $ids;
     }
 }

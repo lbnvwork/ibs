@@ -8,6 +8,7 @@ use Ibs\Context\TreatmentTherapy\Entity\TestHistory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/** @extends ServiceEntityRepository<TestHistory> */
 class TestHistoryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -15,6 +16,10 @@ class TestHistoryRepository extends ServiceEntityRepository
         parent::__construct($registry, TestHistory::class);
     }
 
+    /**
+     * @param array<int> $treatmentIds
+     * @return list<TestHistory>
+     */
     public function findLatestByTreatmentIds(array $treatmentIds): array
     {
         if (empty($treatmentIds)) {
@@ -35,10 +40,13 @@ class TestHistoryRepository extends ServiceEntityRepository
             return [];
         }
 
-        return $this->createQueryBuilder('th')
+        /** @var list<TestHistory> $result */
+        $result = $this->createQueryBuilder('th')
             ->where('th.id IN (:ids)')
             ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult();
+
+        return $result;
     }
 }

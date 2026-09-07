@@ -10,6 +10,7 @@ use Ibs\Context\TreatmentTherapy\Dto\PatientStatus\PatientStatusRequest;
 use Ibs\Context\TreatmentTherapy\Dto\PatientStatus\PatientStatusResponse;
 use Ibs\Context\TreatmentTherapy\Repository\TreatmentRepository;
 
+/** @implements ProcessorInterface<PatientStatusRequest, list<PatientStatusResponse>> */
 final class PatientStatusProcessor implements ProcessorInterface
 {
     private const ACTIVE_PATIENT_STATUS = 'активный';

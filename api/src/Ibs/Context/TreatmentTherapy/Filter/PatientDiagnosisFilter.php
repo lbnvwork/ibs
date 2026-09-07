@@ -17,6 +17,7 @@ final class PatientDiagnosisFilter extends AbstractFilter
 {
     public const DIAGNOSIS_FILTER_NAME = 'diagnosisCode';
 
+    /** @param array<string, mixed>|null $properties */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ?LoggerInterface $logger = null,
@@ -28,7 +29,7 @@ final class PatientDiagnosisFilter extends AbstractFilter
 
     protected function filterProperty(
         string $property,
-        $value,
+        mixed $value,
         QueryBuilder $queryBuilder,
         QueryNameGeneratorInterface $queryNameGenerator,
         string $resourceClass,
@@ -45,6 +46,10 @@ final class PatientDiagnosisFilter extends AbstractFilter
         }
 
         $parameterName = $queryNameGenerator->generateParameterName('diagnosisCodes');
+        if ($this->managerRegistry === null) {
+            return;
+        }
+        /** @var \Doctrine\ORM\EntityManagerInterface $entityManager */
         $entityManager = $this->managerRegistry->getManager();
 
         $subQuery = $entityManager->createQueryBuilder()

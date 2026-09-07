@@ -357,7 +357,7 @@ class Treatment
                 ->addViolation();
         }
 
-        if ($this->planEndDt !== null && $this->begDt !== null) {
+        if ($this->planEndDt !== null) {
             if ($this->planEndDt < $this->begDt) {
                 $context->buildViolation('treatment.plan_end_dt.invalid')
                     ->atPath('planEndDt')
