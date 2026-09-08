@@ -44,7 +44,7 @@
             <div class="info-group">
                 <label>Целевой диапазон МНО:</label>
                 <template v-if="!store.editingTreatment">
-                    <span>{{ store.treatment.mnoFrom }} – {{ store.treatment.mnoTo }}</span>
+                    <span>{{ formatMno(store.treatment.mnoFrom) }} – {{ formatMno(store.treatment.mnoTo) }}</span>
                 </template>
                 <template v-else>
                     <span class="range-edit">

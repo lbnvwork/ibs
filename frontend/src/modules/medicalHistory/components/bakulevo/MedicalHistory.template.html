@@ -5,59 +5,108 @@
     <div v-else-if="error" class="loading-message">
         <p style="color: red;">{{ error }}</p>
     </div>
-    <div class="patient-header">
-        <h1>Электронная история болезни пациента</h1>
-    </div>
 
-    <div v-if="treatmentStore.treatment" class="patient-main-content">
-        <div class="left-column">
-            <CollapsibleSection
-                ref="patientSection"
-                title="Персональные данные"
-                :preview="patientPreview"
-                :forceExpand="editMode.patient"
-            >
-                <PatientCard :key="id" @edit-start="startPatientEdit" @edit-end="endPatientEdit" />
-            </CollapsibleSection>
+    <template v-else-if="treatmentStore.treatment && patientCardStore.patient">
+        <DashboardHeader
+            :patient="patientCardStore.patient"
+            :treatment="treatmentStore.treatment"
+            :doctor-name="doctorName"
+            :sex="patientSex"
+            @edit-patient="openPatientEdit"
+            @edit-treatment="openTreatmentEdit"
+        />
 
-            <CollapsibleSection
-                title="Витальные показатели"
-                :preview="vitalsPreview"
-            >
-                <VitalsCard
-                    v-if="id"
-                    :key="id"
-                    :patient-id="id"
-                    :treatment-id="activeTreatmentId"
-                />
-            </CollapsibleSection>
+        <div class="dash-tabs" role="tablist">
+            <button
+                class="dash-tab"
+                :class="{ 'dash-tab--active': activeTab === 'overview' }"
+                role="tab"
+                :aria-selected="activeTab === 'overview'"
+                @click="activeTab = 'overview'"
+            >Обзор</button>
+            <button
+                class="dash-tab"
+                :class="{ 'dash-tab--active': activeTab === 'history' }"
+                role="tab"
+                :aria-selected="activeTab === 'history'"
+                @click="activeTab = 'history'"
+            >История наблюдений</button>
         </div>
 
-        <div class="right-column">
-            <CollapsibleSection
-                ref="treatmentSection"
-                title="Лечение"
-                :preview="treatmentPreview"
-                :forceExpand="editMode.treatment"
-            >
-                <TreatmentCard :key="id" @edit-start="startTreatmentEdit" @edit-end="endTreatmentEdit" />
-            </CollapsibleSection>
-            <RiskScale :risk-scores="riskScores" />
+        <div v-if="activeTab === 'overview'" class="overview">
+            <div class="overview-actions">
+                <button class="btn-action" @click="openAppointmentInlineModal">Добавить назначение</button>
+                <button class="btn-action" @click="openTestModal">Добавить анализ</button>
+            </div>
+
+            <div class="overview-columns">
+                <div class="overview-left">
+                    <section class="dash-card">
+                        <div class="dash-card__head">
+                            <h3 class="dash-card__title">Текущие показатели</h3>
+                            <button class="btn-ghost" @click="openVitalsEdit">Изменить</button>
+                        </div>
+                        <div class="metrics-grid">
+                            <MetricCard
+                                v-for="(m, i) in metrics"
+                                :key="i"
+                                :label="m.label"
+                                :value="m.value"
+                                :hint="m.hint"
+                                :tone="m.tone"
+                            />
+                        </div>
+                    </section>
+
+                    <section class="dash-card">
+                        <h3 class="dash-card__title">Динамика МНО</h3>
+                        <MnoChart
+                            v-if="chartData.length > 0"
+                            :data="chartData"
+                            :mno-from="treatmentStore.treatment.mnoFrom"
+                            :mno-to="treatmentStore.treatment.mnoTo"
+                        />
+                        <p v-else class="dash-empty">Нет данных МНО для графика</p>
+                    </section>
+                </div>
+
+                <div class="overview-right">
+                    <ComplicationRisk
+                        :mno="latestMetrics.mno"
+                        :mno-from="treatmentStore.treatment.mnoFrom"
+                        :mno-to="treatmentStore.treatment.mnoTo"
+                    />
+                    <CurrentTherapy
+                        :drug-name="drugName"
+                        :diagnosis="treatmentStore.treatment.diagnosis"
+                        :mno-from="treatmentStore.treatment.mnoFrom"
+                        :mno-to="treatmentStore.treatment.mnoTo"
+                        :dose="latestDose"
+                        :dose-date="latestDoseDate"
+                    />
+                    <RecentEvents :items="recentEvents" />
+                </div>
+            </div>
         </div>
-    </div>
+
+        <div v-else class="history-tab">
+            <MedicalTable
+                :key="treatmentStore.treatment['@id']"
+                :mno-from="treatmentStore.treatment.mnoFrom"
+                :mno-to="treatmentStore.treatment.mnoTo"
+                hide-chart
+                hide-recommendations
+                hide-comment
+                @open-test-modal="openTestModal"
+                @open-appointment-modal="openAppointmentInlineModal"
+            />
+        </div>
+    </template>
 
     <div v-else class="loading-message">
         <p>Пациент не найден</p>
     </div>
 
-    <MedicalTable
-        v-if="treatmentStore.treatment"
-        :key="treatmentStore.treatment['@id']"
-        :mno-from="treatmentStore.treatment.mnoFrom"
-        :mno-to="treatmentStore.treatment.mnoTo"
-        @open-test-modal="openTestModal"
-        @open-appointment-modal="openAppointmentInlineModal"
-    />
     <TestAddModal
         v-if="showTestModal"
         :treatment="treatmentStore.treatment['@id']"
@@ -81,4 +130,31 @@
         @close="closeAppointmentModal"
         @saved="onAppointmentSaved"
     />
+
+    <div v-if="showPatientModal" class="modal-backdrop" @click.self="closePatientEdit">
+        <div class="modal-panel">
+            <div class="modal-panel__head">
+                <button class="modal-close" @click="closePatientEdit">×</button>
+            </div>
+            <PatientCard :key="id" />
+        </div>
+    </div>
+
+    <div v-if="showTreatmentModal" class="modal-backdrop" @click.self="closeTreatmentEdit">
+        <div class="modal-panel">
+            <div class="modal-panel__head">
+                <button class="modal-close" @click="closeTreatmentEdit">×</button>
+            </div>
+            <TreatmentCard :key="id" />
+        </div>
+    </div>
+
+    <div v-if="showVitalsModal" class="modal-backdrop" @click.self="closeVitalsEdit">
+        <div class="modal-panel">
+            <div class="modal-panel__head">
+                <button class="modal-close" @click="closeVitalsEdit">×</button>
+            </div>
+            <VitalsCard v-if="id" :key="id" :patient-id="id" :treatment-id="activeTreatmentId" />
+        </div>
+    </div>
 </div>

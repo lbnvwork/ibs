@@ -165,9 +165,44 @@ describe('Sidebar.vue (bakulevo — доработка №1)', () => {
       expect(wrapper.findAll('.label').length).toBeGreaterThan(0)
       expect(wrapper.find('.sidebar__logo').exists()).toBe(true)
       expect(wrapper.find('.sidebar__logo img').exists()).toBe(true)
-      expect(wrapper.find('.sidebar__logo').text()).toContain('Warfarin manager')
+      expect(wrapper.find('.sidebar__logo').text()).toContain('Coag Analyzer')
       expect(wrapper.find('.sidebar__support').exists()).toBe(true)
       expect(wrapper.find('.sidebar__support').text()).toContain('Служба поддержки')
+    })
+  })
+
+  // --- Сворачивание сайдбара ---
+  describe('collapse', () => {
+    it('toggles collapsed state via toggleSidebar', () => {
+      const { wrapper } = mountSidebar()
+      expect(wrapper.vm.collapsed).toBe(false)
+      wrapper.vm.toggleSidebar()
+      expect(wrapper.vm.collapsed).toBe(true)
+      wrapper.vm.toggleSidebar()
+      expect(wrapper.vm.collapsed).toBe(false)
+    })
+
+    it('applies sidebar--collapsed class when collapsed', async () => {
+      const { wrapper } = mountSidebar()
+      wrapper.vm.toggleSidebar()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.find('.sidebar').classes()).toContain('sidebar--collapsed')
+    })
+
+    it('hides group sub-items when collapsed', async () => {
+      const { wrapper } = mountSidebar()
+      wrapper.vm.toggleSidebar()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.findAll('.sidebar-group__item').length).toBe(0)
+    })
+
+    it('expands the sidebar when a collapsed group header is clicked', () => {
+      const { wrapper } = mountSidebar()
+      wrapper.vm.toggleSidebar()
+      const group = wrapper.vm.sidebarGroups[0]
+      wrapper.vm.toggleGroup(group)
+      expect(wrapper.vm.collapsed).toBe(false)
+      expect(group.expanded).toBe(true)
     })
   })
 })

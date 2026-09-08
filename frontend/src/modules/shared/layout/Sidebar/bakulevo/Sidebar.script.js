@@ -20,6 +20,7 @@ export default {
     data() {
         return {
             bakulevoLogo,
+            collapsed: false,
             // Раскрывашки, раскрытые по умолчанию. Только рабочий функционал (доработка №1):
             // заглушки (sendMessage/editData/calendar/aiHelp/statistics/disabledPatients/chat/print/saveFormats) удалены.
             sidebarGroups: [
@@ -63,8 +64,17 @@ export default {
                 this.$router.push(HOME_PATH);
             }
         },
+        toggleSidebar() {
+            this.collapsed = !this.collapsed;
+        },
         toggleGroup(group) {
-            group.expanded = !group.expanded;
+            if (this.collapsed) {
+                // В свёрнутом режиме клик по группе разворачивает сайдбар и группу.
+                this.collapsed = false;
+                group.expanded = true;
+            } else {
+                group.expanded = !group.expanded;
+            }
         },
         isItemDisabled(item) {
             // «Назначение»/«Анализ» доступны только на карточке пациента при активном лечении.

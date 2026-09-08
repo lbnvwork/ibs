@@ -1,5 +1,5 @@
 import { Line } from 'vue-chartjs';
-import { formatDate } from '@/modules/shared/utils/formatters';
+import { formatDate, formatMno } from '@/modules/shared/utils/formatters';
 import {
     Chart as ChartJS,
     registerables
@@ -185,7 +185,7 @@ export default {
 
             if (this.mnoFrom !== null && this.mnoFrom !== undefined) {
                 datasets.push({
-                    label: `Нижняя граница (${this.mnoFrom})`,
+                    label: `Нижняя граница (${formatMno(this.mnoFrom)})`,
                     data: new Array(labels.length).fill(this.mnoFrom),
                     borderColor: '#27ae60',
                     borderDash: [5, 5],
@@ -195,7 +195,7 @@ export default {
             }
             if (this.mnoTo !== null && this.mnoTo !== undefined) {
                 datasets.push({
-                    label: `Верхняя граница (${this.mnoTo})`,
+                    label: `Верхняя граница (${formatMno(this.mnoTo)})`,
                     data: new Array(labels.length).fill(this.mnoTo),
                     borderColor: '#e74c3c',
                     borderDash: [5, 5],

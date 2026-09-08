@@ -15,6 +15,7 @@ import CollapsibleSection from '@/modules/medicalHistory/components/CollapsibleS
 import { usePatientVitalsLatestStore } from '@/modules/medicalHistory/stores/patientVitalsLatestStore';
 import { usePharmacogeneticsStore } from '@/modules/medicalHistory/stores/pharmacogeneticsStore';
 import { buildIndicators } from '@/modules/shared/utils/vitalsHelpers';
+import { formatMno } from '@/modules/shared/utils/formatters';
 
 export default {
     name: 'MedicalHistory',
@@ -67,7 +68,7 @@ export default {
             if (!t) return 'Нет активного лечения';
             let preview = `${t.diagnosis || '—'}, ${t.drugName || '—'}`;
             if (t.mnoFrom !== undefined && t.mnoTo !== undefined) {
-                preview += `, МНО ${t.mnoFrom}–${t.mnoTo}`;
+                preview += `, МНО ${formatMno(t.mnoFrom)}–${formatMno(t.mnoTo)}`;
             }
             if (t.realEndDt) preview += ' (Завершено)';
             return preview;

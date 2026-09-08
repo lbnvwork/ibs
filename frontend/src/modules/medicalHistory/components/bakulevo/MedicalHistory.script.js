@@ -9,23 +9,31 @@ import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCard
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore';
 import { useMedicalTableStore } from '@/modules/medicalHistory/stores/medicalTableStore';
 import MedicalTable from '@/modules/medicalHistory/components/MedicalTable/MedicalTable.vue';
+import MnoChart from '@/modules/medicalHistory/components/MnoChart/MnoChart.vue';
 import VitalsCard from '@/modules/medicalHistory/components/VitalsCard/bakulevo/VitalsCard.vue';
-import RiskScale from '@/modules/medicalHistory/components/RiskScale/RiskScale.vue';
-import CollapsibleSection from '@/modules/medicalHistory/components/CollapsibleSection/CollapsibleSection.vue';
-import { usePatientVitalsLatestStore } from '@/modules/medicalHistory/stores/patientVitalsLatestStore';
-import { buildIndicators } from '@/modules/shared/utils/vitalsHelpers';
+import DashboardHeader from './DashboardHeader/DashboardHeader.vue';
+import MetricCard from './MetricCard/MetricCard.vue';
+import ComplicationRisk from './ComplicationRisk/ComplicationRisk.vue';
+import CurrentTherapy from './CurrentTherapy/CurrentTherapy.vue';
+import RecentEvents from './RecentEvents/RecentEvents.vue';
+import { patientApi } from '@/modules/shared/api/patients';
+import { formatMno } from '@/modules/shared/utils/formatters';
 
 export default {
     name: 'MedicalHistory',
-    components: { 
-        RiskScale, 
-        AppointmentAdd, 
-        TestAddModal, 
-        PatientCard, 
-        TreatmentCard, 
-        MedicalTable, 
+    components: {
+        AppointmentAdd,
+        TestAddModal,
+        PatientCard,
+        TreatmentCard,
+        MedicalTable,
+        MnoChart,
         VitalsCard,
-        CollapsibleSection
+        DashboardHeader,
+        MetricCard,
+        ComplicationRisk,
+        CurrentTherapy,
+        RecentEvents
     },
     props: {
         id: { type: String, default: null }
@@ -34,11 +42,12 @@ export default {
         return {
             loading: true,
             error: null,
+            activeTab: 'overview',
             showAppointmentInlineModal: false,
-            editMode: {
-                patient: false,
-                treatment: false
-            }
+            showPatientModal: false,
+            showTreatmentModal: false,
+            showVitalsModal: false,
+            patientSex: null
         };
     },
     computed: {
@@ -51,43 +60,109 @@ export default {
         treatmentStore() {
             return useTreatmentStore();
         },
+        patientCardStore() {
+            return usePatientCardStore();
+        },
         activeTreatmentId() {
             const treatment = this.treatmentStore.treatment;
             return treatment ? this.extractIdFromIri(treatment['@id']) : null;
         },
-        patientPreview() {
-            const p = usePatientCardStore().patient;
-            if (!p) return 'Нет данных';
-            const phone = p.phone || '—';
-            const sex = p.sex === 1 ? 'м' : 'ж';
-            return `${p.name}, ${p.age || '—'} (${sex}), ${phone}`;
+        events() {
+            return useMedicalTableStore().events;
         },
-        treatmentPreview() {
-            const t = useTreatmentStore().treatment;
-            if (!t) return 'Нет активного лечения';
-            let preview = `${t.diagnosis || '—'}, ${t.drugName || '—'}`;
-            if (t.mnoFrom !== undefined && t.mnoTo !== undefined) {
-                preview += `, МНО ${t.mnoFrom}–${t.mnoTo}`;
+        latestMetrics() {
+            const out = {
+                mno: null, hb: null, heartRate: null,
+                systolicPressure: null, diastolicPressure: null,
+                saturation: null, weight: null
+            };
+            for (const e of this.events) {
+                if (out.mno == null && e.mno != null) out.mno = e.mno;
+                if (out.hb == null && e.hb != null) out.hb = e.hb;
+                if (out.heartRate == null && e.heartRate != null) out.heartRate = e.heartRate;
+                if (out.systolicPressure == null && e.systolicPressure != null) out.systolicPressure = e.systolicPressure;
+                if (out.diastolicPressure == null && e.diastolicPressure != null) out.diastolicPressure = e.diastolicPressure;
+                if (out.saturation == null && e.saturation != null) out.saturation = e.saturation;
+                if (out.weight == null && e.weight != null) out.weight = e.weight;
             }
-            if (t.realEndDt) preview += ' (Завершено)';
-            return preview;
+            return out;
         },
-        vitalsPreview() {
-            const latest = usePatientVitalsLatestStore().latest;
-            if (!latest) return 'Нет измерений';
-            const parts = [];
-            if (latest.hb != null) parts.push(`Hb ${latest.hb}`);
-            if (latest.heartRate != null) parts.push(`ЧСС ${latest.heartRate}`);
-            if (latest.systolicPressure != null && latest.diastolicPressure != null) {
-                parts.push(`АД ${latest.systolicPressure}/${latest.diastolicPressure}`);
+        metrics() {
+            const m = this.latestMetrics;
+            const t = this.treatmentStore.treatment;
+            const from = t ? t.mnoFrom : null;
+            const to = t ? t.mnoTo : null;
+            const hasRange = from != null && to != null;
+            const mnoTone = m.mno == null
+                ? 'neutral'
+                : hasRange
+                    ? (m.mno < from ? 'info' : (m.mno > to ? 'danger' : 'success'))
+                    : 'neutral';
+            return [
+                { label: 'МНО (INR)', value: m.mno != null ? String(m.mno) : '—', hint: hasRange ? `Целевой диапазон ${formatMno(from)}–${formatMno(to)}` : '', tone: mnoTone },
+                { label: 'Гемоглобин', value: m.hb != null ? `${m.hb} г/л` : '—', hint: '', tone: 'neutral' },
+                { label: 'ЧСС', value: m.heartRate != null ? `${m.heartRate} уд/мин` : '—', hint: '', tone: 'neutral' },
+                { label: 'АД', value: (m.systolicPressure != null && m.diastolicPressure != null) ? `${m.systolicPressure}/${m.diastolicPressure} мм рт.ст.` : '—', hint: '', tone: 'neutral' },
+                { label: 'SpO₂', value: m.saturation != null ? `${m.saturation}%` : '—', hint: '', tone: 'neutral' },
+                { label: 'Вес', value: m.weight != null ? `${m.weight} кг` : '—', hint: '', tone: 'neutral' }
+            ];
+        },
+        chartData() {
+            return this.events
+                .filter(e => e.mno !== null && e.mno !== undefined)
+                .map(e => ({ date: e.date, inr: e.mno, dose: e.prescribedDose }));
+        },
+        doctorName() {
+            for (const e of this.events) {
+                if (e.doctorName) return e.doctorName;
             }
-            if (latest.saturation != null) parts.push(`SpO₂ ${latest.saturation}%`);
-            if (latest.weight != null) parts.push(`Вес ${latest.weight} кг`);
-            return parts.length > 0 ? parts.join(', ') : 'Нет измерений';
+            return '';
         },
-        riskScores() {
-            // Расчёт клинических шкал не реализован (FUNC-006) — дефолтные баллы для презентации риск-блока.
-            return { cha2ds2Vasc: 0, hasBled: 0, score: 0 };
+        latestDose() {
+            for (const e of this.events) {
+                if (typeof e.prescribedDose === 'number' && e.prescribedDose > 0) return e.prescribedDose;
+            }
+            return null;
+        },
+        latestDoseDate() {
+            for (const e of this.events) {
+                if (typeof e.prescribedDose === 'number' && e.prescribedDose > 0) return e.displayDate;
+            }
+            return '';
+        },
+        drugName() {
+            const t = this.treatmentStore.treatment;
+            if (!t) return '—';
+            if (t.drugName) return t.drugName;
+            const drugId = t.drug ? this.extractIdFromIri(t.drug) : null;
+            if (drugId) {
+                const drug = this.treatmentStore.allDrugs.find(d => d.id === drugId);
+                if (drug) return drug.nominative || '—';
+            }
+            return '—';
+        },
+        recentEvents() {
+            const t = this.treatmentStore.treatment;
+            const from = t ? t.mnoFrom : null;
+            const to = t ? t.mnoTo : null;
+            return this.events.slice(0, 5).map(e => {
+                let title;
+                let tone = 'neutral';
+                if (e.type === 'appointment') {
+                    title = `Назначена доза ${e.prescribedDose}`;
+                    tone = 'info';
+                } else if (e.mno != null) {
+                    title = `Анализ МНО ${e.mno}`;
+                    if (from != null && to != null) {
+                        if (e.mno < from) tone = 'info';
+                        else if (e.mno > to) tone = 'danger';
+                        else tone = 'success';
+                    }
+                } else {
+                    title = 'Показатели обновлены';
+                }
+                return { title, date: e.displayDate, tone };
+            });
         }
     },
     watch: {
@@ -99,7 +174,8 @@ export default {
                     const treatmentStore = useTreatmentStore();
                     await Promise.all([
                         patientCardStore.fetchPatient(newId),
-                        treatmentStore.fetchTreatment(newId)
+                        treatmentStore.fetchTreatment(newId),
+                        this.loadPatientSex(newId)
                     ]);
                     this.loadPatientData();
                 }
@@ -109,13 +185,21 @@ export default {
     methods: {
         extractIdFromIri,
 
+        async loadPatientSex(id) {
+            try {
+                const raw = await patientApi.getOne(id);
+                this.patientSex = raw ? raw.sex : null;
+            } catch (err) {
+                this.patientSex = null;
+            }
+        },
+
         async loadPatientData() {
             this.loading = true;
             useAppointmentAddStore().setTreatmentActive(false);
             this.error = null;
 
             try {
-                const patientCardStore = usePatientCardStore();
                 const treatmentStore = useTreatmentStore();
                 const treatment = treatmentStore.treatment;
 
@@ -128,7 +212,10 @@ export default {
                 useAppointmentAddStore().setTreatmentActive(isActive);
 
                 if (treatment['@id']) {
-                    await useMedicalTableStore().fetchMedicalData(treatment['@id']);
+                    await Promise.all([
+                        useMedicalTableStore().fetchMedicalData(treatment['@id']),
+                        treatmentStore.loadDrugsIfNeeded()
+                    ]);
                 }
             } catch (err) {
                 console.error('Ошибка загрузки истории:', err);
@@ -162,25 +249,24 @@ export default {
             this.loadPatientData();
             this.showAppointmentInlineModal = false;
         },
-        async reloadPatient() {
-            if (this.id) {
-                const patientCardStore = usePatientCardStore();
-                await patientCardStore.fetchPatient(this.id);
-            }
+        openPatientEdit() {
+            this.showPatientModal = true;
         },
-        startPatientEdit() {
-            this.editMode.patient = true;
-            this.$refs.patientSection?.expand();
+        closePatientEdit() {
+            this.showPatientModal = false;
         },
-        endPatientEdit() {
-            this.editMode.patient = false;
+        openTreatmentEdit() {
+            this.showTreatmentModal = true;
         },
-        startTreatmentEdit() {
-            this.editMode.treatment = true;
-            this.$refs.treatmentSection?.expand();
+        closeTreatmentEdit() {
+            this.showTreatmentModal = false;
         },
-        endTreatmentEdit() {
-            this.editMode.treatment = false;
+        openVitalsEdit() {
+            this.showVitalsModal = true;
+        },
+        closeVitalsEdit() {
+            this.showVitalsModal = false;
+            this.loadPatientData();
         }
     }
 };

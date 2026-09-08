@@ -7,7 +7,7 @@
         </div>
     </div>
     <MnoChart
-        v-if="chartData.length > 0"
+        v-if="!hideChart && chartData.length > 0"
         :data="chartData"
         :mno-from="mnoFrom"
         :mno-to="mnoTo"
@@ -20,8 +20,8 @@
                     <th>Показатели</th>
                     <th>Принимаемая доза</th>
                     <th>Назначенная доза</th>
-                    <th>Рекомендации</th>
-                    <th>Комментарий</th>
+                    <th v-if="!hideRecommendations">Рекомендации</th>
+                    <th v-if="!hideComment">Комментарий</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,8 +33,8 @@
                     </td>
                     <td>{{ data.currentDose }}</td>
                     <td>{{ data.prescribedDose }}</td>
-                    <td class="recommendations">{{ data.recommendations }}</td>
-                    <td class="comment">{{ data.comment }}</td>
+                    <td v-if="!hideRecommendations" class="recommendations">{{ data.recommendations }}</td>
+                    <td v-if="!hideComment" class="comment">{{ data.comment }}</td>
                 </tr>
             </tbody>
         </table>

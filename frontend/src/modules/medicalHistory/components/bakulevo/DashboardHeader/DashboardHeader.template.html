@@ -1,0 +1,32 @@
+<div class="dash-header">
+    <div class="dash-header__part">
+        <div class="avatar" :class="avatarClass">{{ initials }}</div>
+        <div class="patient-main">
+            <div class="patient-name-row">
+                <span class="patient-name">{{ patient.name }}</span>
+                <span class="status-badge" :class="statusClass">{{ statusLabel }}</span>
+            </div>
+            <div class="patient-meta">{{ patient.age }}, {{ birthDate }} · {{ genderLabel }}</div>
+            <div class="patient-meta">ID пациента {{ patient.id }} · {{ patient.phone }}</div>
+        </div>
+        <button class="icon-more" type="button" aria-label="Редактировать данные" @click="$emit('edit-patient')">⋯</button>
+    </div>
+
+    <div class="dash-header__part dash-header__part--treatment">
+        <div class="treat-grid">
+            <div class="treat-item">
+                <span class="treat-label">Лечащий врач</span>
+                <span class="treat-value">{{ doctorName || '—' }}</span>
+            </div>
+            <div class="treat-item">
+                <span class="treat-label">Начало лечения</span>
+                <span class="treat-value">{{ treatment.begDt ? formatDate(treatment.begDt) : '—' }}</span>
+            </div>
+            <div class="treat-item">
+                <span class="treat-label">Диагноз</span>
+                <span class="treat-value">{{ treatment.diagnosis || '—' }}</span>
+            </div>
+        </div>
+        <button class="icon-more" type="button" aria-label="Редактировать лечение" @click="$emit('edit-treatment')">⋯</button>
+    </div>
+</div>

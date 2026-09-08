@@ -1,0 +1,35 @@
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--color-muted);
+}
+
+.metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-dark);
+    line-height: 1.2;
+}
+
+.metric-hint {
+    font-size: 12px;
+    color: var(--color-muted);
+}
+
+.metric-card--success .metric-value { color: var(--color-triage-success); }
+.metric-card--info .metric-value { color: var(--color-triage-info); }
+.metric-card--danger .metric-value { color: var(--color-triage-danger); }
+.metric-card--warning .metric-value { color: var(--color-triage-warning); }
+.metric-card--neutral .metric-value { color: var(--color-dark); }

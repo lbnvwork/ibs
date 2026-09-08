@@ -135,7 +135,7 @@ describe('MedicalHistory.vue', () => {
       const { wrapper, treatmentStore } = mountMedicalHistory('7')
       treatmentStore.treatment = { diagnosis: 'Тромбоз', drugName: 'Варфарин', mnoFrom: 2, mnoTo: 3, realEndDt: '2024-01-01' }
       await wrapper.vm.$nextTick()
-      expect(wrapper.vm.treatmentPreview).toBe('Тромбоз, Варфарин, МНО 2–3 (Завершено)')
+      expect(wrapper.vm.treatmentPreview).toBe('Тромбоз, Варфарин, МНО 2.00–3.00 (Завершено)')
     })
 
     it('pharmacogeneticsPreview lists investigated markers or falls back', async () => {

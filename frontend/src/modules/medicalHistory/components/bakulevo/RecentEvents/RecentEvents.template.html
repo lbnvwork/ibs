@@ -1,0 +1,11 @@
+<div class="events-card">
+    <h3 class="events-card__title">Последние события</h3>
+    <ul v-if="items.length" class="events-list">
+        <li v-for="(ev, i) in items" :key="i" class="event-item">
+            <span class="event-dot" :class="`event-dot--${ev.tone}`"></span>
+            <span class="event-title">{{ ev.title }}</span>
+            <span class="event-date">{{ ev.date }}</span>
+        </li>
+    </ul>
+    <p v-else class="events-empty">Событий пока нет</p>
+</div>

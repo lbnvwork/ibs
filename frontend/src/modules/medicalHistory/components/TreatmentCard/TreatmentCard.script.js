@@ -1,4 +1,5 @@
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore';
+import { formatMno } from '@/modules/shared/utils/formatters';
 
 export default {
     name: 'TreatmentCard',
@@ -9,7 +10,7 @@ export default {
             if (!dateStr) return '—';
             return new Date(dateStr).toLocaleDateString('ru-RU');
         };
-        return { store, formatDate };
+        return { store, formatDate, formatMno };
     },
     methods: {
         startEditingTreatment() {

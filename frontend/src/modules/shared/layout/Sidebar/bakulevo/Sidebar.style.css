@@ -231,3 +231,54 @@
 .sidebar--text .sidebar__support {
     margin-top: 8px;
 }
+
+/* --- Сворачивание сайдбара (Бакулево) --- */
+.sidebar--text.sidebar--collapsed {
+    width: 64px;
+    align-items: center;
+}
+
+.sidebar--text.sidebar--collapsed .sidebar__logo {
+    justify-content: center;
+    gap: 0;
+    padding: 8px 0 12px;
+}
+
+.sidebar--text.sidebar--collapsed .logo-text {
+    display: none;
+}
+
+.sidebar--text.sidebar--collapsed button {
+    width: 40px;
+    justify-content: center;
+    padding: 0;
+    gap: 0;
+    margin: 4px 0;
+}
+
+.sidebar--text.sidebar--collapsed .label {
+    display: none;
+}
+
+.sidebar--text.sidebar--collapsed .chevron {
+    display: none;
+}
+
+.sidebar--text.sidebar--collapsed .sidebar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar--text.sidebar--collapsed .sidebar-group__header {
+    font-weight: normal;
+}
+
+.sidebar--text.sidebar--collapsed .sidebar__support {
+    display: none;
+}
+
+/* В свёрнутом режиме возвращаем тултипы (отключены для текстового режима) */
+.sidebar--text.sidebar--collapsed button::after {
+    display: block;
+}

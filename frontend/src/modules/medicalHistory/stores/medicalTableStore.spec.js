@@ -32,7 +32,7 @@ describe('medicalTableStore', () => {
 
   it('merges a test-history entry with its same-day appointment', async () => {
     mockResponses({
-      appointments: [{ appointmentDt: '2026-02-10T09:00:00', doze: 5, comment: 'Снизить дозу' }],
+      appointments: [{ appointmentDt: '2026-02-10T09:00:00', doze: 5, comment: 'Снизить дозу', doctorName: 'Петров А. В.' }],
       history: [{ creationDt: '2026-02-10T12:00:00', mno: 2.4, doze: 4.5, comment: 'Пациент в норме' }]
     })
 
@@ -45,7 +45,8 @@ describe('medicalTableStore', () => {
       mno: 2.4,
       currentDose: 4.5,
       prescribedDose: 5,
-      recommendations: 'Снизить дозу'
+      recommendations: 'Снизить дозу',
+      doctorName: 'Петров А. В.'
     })
   })
 

@@ -68,4 +68,30 @@ describe('MedicalTable.vue', () => {
     expect(wrapper.emitted('open-test-modal')).toBeTruthy()
     expect(wrapper.emitted('open-appointment-modal')).toBeTruthy()
   })
+
+  it('hides «Рекомендации» and «Комментарий» columns when the flags are set', () => {
+    const { wrapper } = mountMedicalTable(
+      [{ displayDate: '01.01.2024', currentDose: 2, prescribedDose: 2.25, recommendations: '', comment: '', type: 'test', mno: 2.5 }],
+      { hideRecommendations: true, hideComment: true }
+    )
+    const headers = wrapper.findAll('th').map(th => th.text())
+    expect(headers).not.toContain('Рекомендации')
+    expect(headers).not.toContain('Комментарий')
+    expect(headers).toEqual(['Дата', 'Показатели', 'Принимаемая доза', 'Назначенная доза'])
+  })
+
+  it('keeps «Рекомендации» and «Комментарий» columns by default', () => {
+    const { wrapper } = mountMedicalTable([{ displayDate: '01.01.2024', currentDose: 2, prescribedDose: 2.25, recommendations: '', comment: '', type: 'test', mno: 2.5 }])
+    const headers = wrapper.findAll('th').map(th => th.text())
+    expect(headers).toContain('Рекомендации')
+    expect(headers).toContain('Комментарий')
+  })
+
+  it('hides the chart when hideChart is set', () => {
+    const { wrapper } = mountMedicalTable(
+      [{ displayDate: '01.01.2024', date: '2024-01-01', mno: 2.5 }],
+      { hideChart: true }
+    )
+    expect(wrapper.findComponent({ name: 'MnoChart' }).exists()).toBe(false)
+  })
 })
