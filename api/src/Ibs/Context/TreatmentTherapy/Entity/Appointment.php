@@ -18,6 +18,7 @@ use Ibs\Context\TreatmentTherapy\State\AppointmentSaveProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -194,11 +195,41 @@ class Appointment
             $this->creationDt = new \DateTime();
         }
         $this->modDt = new \DateTime();
+        if ($this->doze2 <= 0) {
+            $this->doze2 = -1.0;
+        }
     }
 
     #[PreUpdate]
     public function setUpdatedAtValue(): void
     {
         $this->modDt = new \DateTime();
+    }
+
+    #[Assert\Callback]
+    public function validate(\Symfony\Component\Validator\Context\ExecutionContextInterface $context): void
+    {
+        if ($this->doze2 <= 0) {
+            return;
+        }
+        if ($this->doze2 > 10) {
+            $context->buildViolation('Вторая доза не может превышать 10 таблеток.')
+                ->atPath('doze2')
+                ->addViolation();
+        }
+        $scaled = $this->doze2 * 4;
+        if (abs($scaled - round($scaled)) > 1e-9) {
+            $context->buildViolation('Вторая доза должна быть кратна 0.25.')
+                ->atPath('doze2')
+                ->addViolation();
+        }
+        if (isset($this->doze)) {
+            $diff = abs($this->doze2 - $this->doze);
+            if (abs($diff - 0.25) > 1e-9 && abs($diff - 0.5) > 1e-9) {
+                $context->buildViolation('Отклонение второй дозы должно быть 0.25 или 0.5.')
+                    ->atPath('doze2')
+                    ->addViolation();
+            }
+        }
     }
 }
