@@ -74,6 +74,7 @@
         v-if="showTestModal"
         :treatment="treatmentStore.treatment['@id']"
         :drug-id="extractIdFromIri(treatmentStore.treatment.drug)"
+        :drug-genitive="testDrugGenitive"
         @close="showTestModal = false"
         @saved="onTestSaved"
     />

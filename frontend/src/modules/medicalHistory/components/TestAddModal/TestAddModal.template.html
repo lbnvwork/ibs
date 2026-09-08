@@ -21,8 +21,8 @@
         </div>
 
         <div class="form-group">
-            <label>Комментарий:</label>
-            <textarea v-model="comment" rows="3" class="form-control"></textarea>
+            <label>Сообщение пациенту:</label>
+            <textarea v-model="comment" rows="3" class="form-control" @input="markCommentDirty"></textarea>
         </div>
 
         <div v-if="saveError" class="save-error">{{ saveError }}</div>
