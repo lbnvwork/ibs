@@ -105,6 +105,39 @@ describe('medicalTableStore', () => {
     expect(store.events[0]).toMatchObject({ type: 'appointment', prescribedDose: 3, mno: null })
   })
 
+  it('reads nextTestDt from an appointment and formats it (СЦ-3.66.2)', async () => {
+    mockResponses({ appointments: [{ appointmentDt: '2026-02-12T09:00:00', doze: 3, comment: '', nextTestDt: '2026-02-26T00:00:00+00:00' }] })
+
+    const store = useMedicalTableStore()
+    await store.fetchMedicalData('/api/treatments/1')
+
+    expect(store.events).toHaveLength(1)
+    expect(store.events[0].nextTestDt).not.toBe('—')
+    expect(store.events[0].nextTestDt).toContain('2026')
+  })
+
+  it('uses a dash for nextTestDt when the appointment has none (СЦ-3.66.3)', async () => {
+    mockResponses({ appointments: [{ appointmentDt: '2026-02-12T09:00:00', doze: 3, comment: '' }] })
+
+    const store = useMedicalTableStore()
+    await store.fetchMedicalData('/api/treatments/1')
+
+    expect(store.events[0].nextTestDt).toBe('—')
+  })
+
+  it('carries nextTestDt onto a same-day test event (СЦ-3.66.2)', async () => {
+    mockResponses({
+      appointments: [{ appointmentDt: '2026-02-10T09:00:00', doze: 5, comment: 'Снизить дозу', nextTestDt: '2026-02-20T00:00:00+00:00' }],
+      history: [{ creationDt: '2026-02-10T12:00:00', mno: 2.4, doze: 4.5, comment: '' }]
+    })
+
+    const store = useMedicalTableStore()
+    await store.fetchMedicalData('/api/treatments/1')
+
+    expect(store.events[0]).toMatchObject({ type: 'test' })
+    expect(store.events[0].nextTestDt).not.toBe('—')
+  })
+
   it('sorts all events from most recent to oldest', async () => {
     mockResponses({
       history: [

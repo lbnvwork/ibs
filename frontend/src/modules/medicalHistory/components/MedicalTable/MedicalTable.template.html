@@ -20,6 +20,7 @@
                     <th>Показатели</th>
                     <th>Принимаемая доза</th>
                     <th>Назначенная доза</th>
+                    <th>Следующая сдача МНО</th>
                     <th>Рекомендации</th>
                     <th>Комментарий</th>
                 </tr>
@@ -33,6 +34,7 @@
                     </td>
                     <td>{{ formatDoseWithAlternation(data.currentDose, data.currentDose2) }}</td>
                     <td>{{ formatDoseWithAlternation(data.prescribedDose, data.prescribedDose2) }}</td>
+                    <td>{{ data.nextTestDt }}</td>
                     <td class="recommendations">{{ data.recommendations }}</td>
                     <td class="comment">{{ data.comment }}</td>
                 </tr>

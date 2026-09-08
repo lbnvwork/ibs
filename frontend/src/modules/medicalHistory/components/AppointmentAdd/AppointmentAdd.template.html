@@ -6,6 +6,10 @@
             <input type="date" v-model="appointmentDt" class="form-control" />
         </div>
         <div class="form-group">
+            <label>Дата следующей сдачи МНО:</label>
+            <input type="date" v-model="nextTestDt" class="form-control" :min="appointmentDt" />
+        </div>
+        <div class="form-group">
             <label>Доза для назначения (таб./сут):</label>
             <input 
                 type="number" 
