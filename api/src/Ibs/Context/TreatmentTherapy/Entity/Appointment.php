@@ -223,7 +223,7 @@ class Appointment
                 ->atPath('doze2')
                 ->addViolation();
         }
-        if (isset($this->doze)) {
+        if ($this->doze > 0) {
             $diff = abs($this->doze2 - $this->doze);
             if (abs($diff - 0.25) > 1e-9 && abs($diff - 0.5) > 1e-9) {
                 $context->buildViolation('Отклонение второй дозы должно быть 0.25 или 0.5.')
