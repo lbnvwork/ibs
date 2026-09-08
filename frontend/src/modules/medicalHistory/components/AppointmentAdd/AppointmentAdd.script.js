@@ -12,6 +12,7 @@ export default {
     data() {
         return {
             appointmentDt: new Date().toISOString().slice(0, 10),
+            nextTestDt: null,
             comment: '',
             dose: null,
             selectedVariant: null,
@@ -150,6 +151,9 @@ export default {
                         errors.alternationDelta = 'Максимальная доза 10 таблеток.';
                     }
                 }
+                if (this.nextTestDt && this.appointmentDt && this.nextTestDt < this.appointmentDt) {
+                    errors.nextTestDt = 'Дата следующей сдачи не может быть раньше даты назначения.';
+                }
             };
 
             const formData = {
@@ -189,6 +193,7 @@ export default {
             const payload = {
                 treatment: this.treatment,
                 appointmentDt: isoDate,
+                nextTestDt: this.nextTestDt ? new Date(this.nextTestDt).toISOString() : null,
                 doze: this.dose,
                 doze2: this.enableAlternation && this.dose2 !== null ? this.dose2 : -1,
                 drug: `/api/drugs/${this.drugId}`,

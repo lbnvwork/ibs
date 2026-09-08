@@ -70,6 +70,18 @@ describe('MedicalTable.vue', () => {
     expect(withoutData.findComponent({ name: 'MnoChart' }).exists()).toBe(false)
   })
 
+  it('renders the next MNO test date column (СЦ-3.66.2)', () => {
+    const { wrapper } = mountMedicalTable([
+      { displayDate: '02.01.2024', currentDose: 2.25, prescribedDose: 2.25, recommendations: '', comment: '', type: 'appointment', mno: null, nextTestDt: '20.01.2024' },
+    ])
+
+    const headers = wrapper.findAll('th').map(th => th.text())
+    expect(headers).toContain('Следующая сдача МНО')
+
+    const cells = wrapper.findAll('tbody td').map(td => td.text())
+    expect(cells).toContain('20.01.2024')
+  })
+
   it('emits open-test-modal and open-appointment-modal', async () => {
     const { wrapper } = mountMedicalTable([])
     await wrapper.find('.btn-add-test').trigger('click')
