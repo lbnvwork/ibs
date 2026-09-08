@@ -40,6 +40,33 @@ class AppointmentTest extends TestCase
         $this->assertCount(0, $this->violationPaths($appointment));
     }
 
+    public function testDoze2RejectsNonMultipleOf025(): void
+    {
+        $appointment = new Appointment();
+        $appointment->setDoze(2.5);
+        $appointment->setDoze2(2.4);
+
+        $this->assertContains('doze2', $this->violationPaths($appointment));
+    }
+
+    public function testDoze2RejectsDeviationOtherThan025Or05(): void
+    {
+        $appointment = new Appointment();
+        $appointment->setDoze(2.5);
+        $appointment->setDoze2(3.25);
+
+        $this->assertContains('doze2', $this->violationPaths($appointment));
+    }
+
+    public function testDoze2AcceptsValidAlternation(): void
+    {
+        $appointment = new Appointment();
+        $appointment->setDoze(2.5);
+        $appointment->setDoze2(2.75);
+
+        $this->assertCount(0, $this->violationPaths($appointment));
+    }
+
     private function createValidator(): ValidatorInterface
     {
         return Validation::createValidatorBuilder()

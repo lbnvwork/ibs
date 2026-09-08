@@ -14,9 +14,19 @@ export default {
             mno: null,
             doze: null,
             comment: '',
+            enableAlternation: false,
+            alternationDelta: null,
             fieldErrors: {},
             saveError: null,
         };
+    },
+    computed: {
+        dose2() {
+            if (!this.enableAlternation || this.alternationDelta === null || this.alternationDelta === '') {
+                return null;
+            }
+            return this.doze !== null ? this.doze + Number(this.alternationDelta) : null;
+        }
     },
     methods: {
         validateForm() {
@@ -39,12 +49,64 @@ export default {
                 },
             };
 
-            const errors = validateForm(
-                { creationDt: this.creationDt, mno: this.mno, doze: this.doze },
-                rules
-            );
+            if (this.enableAlternation) {
+                rules.alternationDelta = {
+                    required: true,
+                    message: 'Выберите отклонение чередования.',
+                };
+            }
+
+            const formData = { creationDt: this.creationDt, mno: this.mno, doze: this.doze };
+            if (this.enableAlternation) {
+                formData.alternationDelta = this.alternationDelta;
+            }
+
+            const extraChecks = (errors) => {
+                if (this.enableAlternation && this.dose2 !== null) {
+                    if (this.dose2 <= 0) {
+                        errors.alternationDelta = 'Вторая доза должна быть положительной.';
+                    }
+                    if (this.dose2 > 10) {
+                        errors.alternationDelta = 'Максимальная доза 10 таблеток.';
+                    }
+                }
+            };
+
+            const errors = validateForm(formData, rules, extraChecks);
             this.fieldErrors = errors;
             return Object.keys(errors).length > 0;
+        },
+
+        onAlternationToggle() {
+            if (!this.enableAlternation) {
+                this.alternationDelta = null;
+            }
+        },
+
+        async loadLastAppointment() {
+            try {
+                const response = await apiClient.get('/appointments', {
+                    params: {
+                        treatment: this.treatment,
+                        itemsPerPage: 1,
+                        order: { appointmentDt: 'desc' }
+                    }
+                });
+                const member = response.data?.member;
+                if (member && member.length > 0) {
+                    const last = member[0];
+                    this.doze = last.doze;
+                    const delta = last.doze2 !== null && last.doze2 !== undefined
+                        ? Number(last.doze2) - Number(last.doze)
+                        : null;
+                    if (delta !== null && [0.25, -0.25, 0.5, -0.5].some(d => Math.abs(delta - d) < 1e-9)) {
+                        this.enableAlternation = true;
+                        this.alternationDelta = String(delta);
+                    }
+                }
+            } catch (err) {
+                console.warn('Не удалось загрузить последнее назначение для автоподстановки:', err);
+            }
         },
 
         async save() {
@@ -59,9 +121,9 @@ export default {
                 creationDt: new Date(this.creationDt).toISOString(),
                 mno: this.mno,
                 doze: this.doze,
+                doze2: this.enableAlternation && this.dose2 !== null ? this.dose2 : -1,
                 drug: `/api/drugs/${this.drugId}`,
                 comment: this.comment || null,
-                // doze2 явно не отправляем — сервер должен подставить -1
             };
 
             try {
@@ -72,5 +134,8 @@ export default {
                 this.saveError = 'Не удалось сохранить анализ.';
             }
         },
+    },
+    created() {
+        this.loadLastAppointment();
     },
 };

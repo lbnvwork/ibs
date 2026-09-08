@@ -32,8 +32,8 @@
                         <span v-if="data.type !== 'appointment'" v-html="buildIndicatorsFromRow(data)"></span>
                         <span v-else>—</span>
                     </td>
-                    <td>{{ data.currentDose }}</td>
-                    <td>{{ data.prescribedDose }}</td>
+                    <td>{{ formatDoseWithAlternation(data.currentDose, data.currentDose2) }}</td>
+                    <td>{{ formatDoseWithAlternation(data.prescribedDose, data.prescribedDose2) }}</td>
                     <td>{{ data.nextTestDt }}</td>
                     <td class="recommendations">{{ data.recommendations }}</td>
                     <td class="comment">{{ data.comment }}</td>

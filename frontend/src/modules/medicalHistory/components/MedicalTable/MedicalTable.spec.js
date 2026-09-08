@@ -37,6 +37,16 @@ describe('MedicalTable.vue', () => {
     expect(row.findAll('td')[1].text()).toBe('—')
   })
 
+  it('renders alternation as "доза / вторая доза через день" (СЦ-3.65.1/6)', () => {
+    const { wrapper } = mountMedicalTable([
+      { displayDate: '01.01.2024', currentDose: 2.5, currentDose2: 2.75, prescribedDose: 3, prescribedDose2: -1, recommendations: '', comment: '', type: 'test', mno: 2.5 },
+    ])
+    const cells = wrapper.findAll('tbody tr td')
+    // columns: [Дата, Показатели, Принимаемая доза, Назначенная доза, Рекомендации, Комментарий]
+    expect(cells[2].text()).toBe('2.5 / 2.75 через день')
+    expect(cells[3].text()).toBe('3')
+  })
+
   it('builds chartData from events that have a non-null mno, including dose (СЦ-3.64.1/2)', () => {
     const { wrapper } = mountMedicalTable([
       { displayDate: '01.01.2024', date: '2024-01-01', mno: 2.5, prescribedDose: 5, type: 'test' },
