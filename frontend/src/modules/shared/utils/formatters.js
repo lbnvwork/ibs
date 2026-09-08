@@ -63,3 +63,21 @@ export function formatSnils(value) {
     return `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6,9)} ${digits.slice(9,11)}`;
 }
 
+/**
+ * Форматирует дозу с учётом чередования.
+ * При `doze2 > 0` — «2.5 / 2.75 через день», иначе — только основная доза.
+ * `doze2 = -1` / null / undefined / '' / '—' → без чередования.
+ */
+export function formatDoseWithAlternation(doze, doze2) {
+    if (doze === null || doze === undefined || doze === '') return '—';
+
+    const numericDose2 = Number(doze2);
+    const hasAlternation = doze2 !== null && doze2 !== undefined && doze2 !== '' && doze2 !== '—'
+        && !Number.isNaN(numericDose2) && numericDose2 > 0;
+
+    if (hasAlternation) {
+        return `${doze} / ${doze2} через день`;
+    }
+    return String(doze);
+}
+

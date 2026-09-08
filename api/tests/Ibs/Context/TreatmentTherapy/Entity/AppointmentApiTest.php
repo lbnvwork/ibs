@@ -67,6 +67,28 @@ class AppointmentApiTest extends WebTestCase
         $this->assertSame(1.75, $data['doze2']);
     }
 
+    public function testCreateWithInvalidDoze2IsRejected(): void
+    {
+        $token = $this->createAuthenticatedClient($this->client, $this->entityManager);
+
+        $treatment = $this->createTreatment(realEndDt: null);
+        $this->entityManager->flush();
+
+        $this->client->request(
+            'POST',
+            '/api/appointments',
+            server: array_merge($this->authHeader($token), ['CONTENT_TYPE' => 'application/json']),
+            content: json_encode([
+                'treatment' => '/api/treatments/'.$treatment->getId(),
+                'appointmentDt' => '2026-08-01T10:00:00+00:00',
+                'doze' => 2.5,
+                'doze2' => 2.4,
+            ], JSON_THROW_ON_ERROR)
+        );
+
+        $this->assertSame(422, $this->client->getResponse()->getStatusCode());
+    }
+
     private function createTreatment(?\DateTimeInterface $realEndDt): Treatment
     {
         $patient = new Patient();
