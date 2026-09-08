@@ -4,6 +4,8 @@ import { createPinia, setActivePinia } from 'pinia'
 
 import Sidebar from './Sidebar.vue'
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore'
+import { useTestAddStore } from '@/modules/medicalHistory/stores/testAddStore'
+import { useAuthStore } from '@/modules/shared/stores/authStore'
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths'
 
 function mountSidebar({ routeName = 'Home', routePath = '/', backTarget = undefined, push = vi.fn() } = {}) {
@@ -19,11 +21,21 @@ function mountSidebar({ routeName = 'Home', routePath = '/', backTarget = undefi
   return { wrapper, push }
 }
 
-describe('Sidebar.vue', () => {
+function findItem(wrapper, name) {
+  return wrapper.vm.sidebarGroups.flatMap(g => g.items).find(i => i.name === name)
+}
+
+const STUB_NAMES = [
+  'sendMessage', 'editData', 'calendar', 'aiHelp', 'statistics',
+  'disabledPatients', 'chat', 'print', 'saveFormats'
+]
+
+describe('Sidebar.vue (bakulevo — доработка №1)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
+  // --- Кнопка «Назад» (сохранено из исходного) ---
   it('disables the back button on the home page', () => {
     const { wrapper } = mountSidebar({ routePath: HOME_PATH })
     expect(wrapper.vm.isBackButtonActive).toBe(false)
@@ -34,7 +46,7 @@ describe('Sidebar.vue', () => {
     expect(wrapper.vm.isBackButtonActive).toBe(true)
   })
 
-  it('navigates to the route backTarget when set', async () => {
+  it('navigates to the route backTarget when set', () => {
     const { wrapper, push } = mountSidebar({ routePath: '/patient/5', backTarget: '/patient/5' })
     wrapper.vm.handleBackButton()
     expect(push).toHaveBeenCalledWith('/patient/5')
@@ -46,70 +58,107 @@ describe('Sidebar.vue', () => {
     expect(push).toHaveBeenCalledWith(HOME_PATH)
   })
 
-  describe('the "recommendations" item', () => {
-    it('is disabled outside the MedicalHistory route', () => {
+  // --- Структура (СЦ-3.58.17) ---
+  describe('structure', () => {
+    it('has exactly the two groups Пациенты and Рекомендации, expanded by default', () => {
+      const { wrapper } = mountSidebar()
+      expect(wrapper.vm.sidebarGroups.map(g => g.id)).toEqual(['patients', 'recommendations'])
+      expect(wrapper.vm.sidebarGroups.every(g => g.expanded)).toBe(true)
+    })
+
+    it('contains no stub items', () => {
+      const { wrapper } = mountSidebar()
+      const names = wrapper.vm.sidebarGroups.flatMap(g => g.items).map(i => i.name)
+      STUB_NAMES.forEach(s => expect(names).not.toContain(s))
+    })
+
+    it('renders two group headers and four sub-items in the DOM', () => {
+      const { wrapper } = mountSidebar()
+      expect(wrapper.findAll('.sidebar-group__header').length).toBe(2)
+      expect(wrapper.findAll('.sidebar-group__item').length).toBe(4)
+    })
+
+    it('collapses/expands a group via toggleGroup', () => {
+      const { wrapper } = mountSidebar()
+      const group = wrapper.vm.sidebarGroups[0]
+      wrapper.vm.toggleGroup(group)
+      expect(group.expanded).toBe(false)
+      wrapper.vm.toggleGroup(group)
+      expect(group.expanded).toBe(true)
+    })
+  })
+
+  // --- Навигация (СЦ-3.58.18) ---
+  describe('navigation', () => {
+    it('patientList navigates to HOME_PATH', () => {
+      const { wrapper, push } = mountSidebar()
+      wrapper.vm.handleItemClick(findItem(wrapper, 'patientList'))
+      expect(push).toHaveBeenCalledWith(HOME_PATH)
+    })
+
+    it('patientAdd navigates to PATIENT_ADD_PATH', () => {
+      const { wrapper, push } = mountSidebar()
+      wrapper.vm.handleItemClick(findItem(wrapper, 'patientAdd'))
+      expect(push).toHaveBeenCalledWith(PATIENT_ADD_PATH)
+    })
+  })
+
+  // --- Гейтинг «Назначение»/«Анализ» (СЦ-3.58.19) ---
+  describe('appointment/testAdd gating', () => {
+    it('appointment is disabled outside MedicalHistory', () => {
       const { wrapper } = mountSidebar({ routeName: 'Home' })
-      const item = wrapper.vm.sidebarItems.find(i => i.name === 'recommendations')
-      expect(item.disabled).toBe(true)
+      expect(wrapper.vm.isItemDisabled(findItem(wrapper, 'appointment'))).toBe(true)
     })
 
-    it('is disabled on MedicalHistory when there is no active treatment', () => {
-      const { wrapper } = mountSidebar({ routeName: 'MedicalHistory' })
-      useAppointmentAddStore().isTreatmentActive = false
-      const item = wrapper.vm.sidebarItems.find(i => i.name === 'recommendations')
-      expect(item.disabled).toBe(true)
-    })
-
-    it('is enabled on MedicalHistory with an active treatment', () => {
+    it('appointment is enabled on MedicalHistory with active treatment', () => {
       const { wrapper } = mountSidebar({ routeName: 'MedicalHistory' })
       useAppointmentAddStore().isTreatmentActive = true
-      const item = wrapper.vm.sidebarItems.find(i => i.name === 'recommendations')
-      expect(item.disabled).toBe(false)
+      expect(wrapper.vm.isItemDisabled(findItem(wrapper, 'appointment'))).toBe(false)
     })
 
-    it('opens the appointment modal only when active on MedicalHistory', () => {
+    it('testAdd opens the appointment-style modal via testAddStore', () => {
       const { wrapper } = mountSidebar({ routeName: 'MedicalHistory' })
-      const store = useAppointmentAddStore()
-      store.isTreatmentActive = true
-      store.openModal = vi.fn()
+      const appStore = useAppointmentAddStore()
+      appStore.isTreatmentActive = true
+      appStore.openModal = vi.fn()
+      const testStore = useTestAddStore()
+      testStore.openModal = vi.fn()
 
-      wrapper.vm.handleButtonClick({ name: 'recommendations' })
+      wrapper.vm.handleItemClick(findItem(wrapper, 'testAdd'))
 
-      expect(store.openModal).toHaveBeenCalled()
+      expect(testStore.openModal).toHaveBeenCalled()
     })
 
-    it('does not open the modal when not on MedicalHistory', () => {
+    it('testAdd does not open the modal outside MedicalHistory', () => {
       const { wrapper } = mountSidebar({ routeName: 'Home' })
-      const store = useAppointmentAddStore()
-      store.isTreatmentActive = true
-      store.openModal = vi.fn()
+      const testStore = useTestAddStore()
+      testStore.openModal = vi.fn()
 
-      wrapper.vm.handleButtonClick({ name: 'recommendations' })
+      wrapper.vm.handleItemClick(findItem(wrapper, 'testAdd'))
 
-      expect(store.openModal).not.toHaveBeenCalled()
+      expect(testStore.openModal).not.toHaveBeenCalled()
     })
   })
 
-  it('navigates to PATIENT_ADD_PATH for the patientAdd item', () => {
-    const { wrapper, push } = mountSidebar()
-    wrapper.vm.handleButtonClick({ name: 'patientAdd' })
-    expect(push).toHaveBeenCalledWith(PATIENT_ADD_PATH)
+  // --- Выход (СЦ-3.58.21) ---
+  describe('logout', () => {
+    it('renders a logout button with label Выход', () => {
+      const { wrapper } = mountSidebar()
+      expect(wrapper.find('.sidebar__logout').exists()).toBe(true)
+      expect(wrapper.find('.sidebar__logout').text()).toContain('Выход')
+    })
+
+    it('calls authStore.logout()', () => {
+      const { wrapper } = mountSidebar()
+      const auth = useAuthStore()
+      auth.logout = vi.fn()
+      wrapper.vm.handleLogout()
+      expect(auth.logout).toHaveBeenCalled()
+    })
   })
 
-  it('does nothing (but does not throw) for unimplemented items', () => {
-    const { wrapper } = mountSidebar()
-    expect(() => wrapper.vm.handleButtonClick({ name: 'chat' })).not.toThrow()
-  })
-
-  it('renders a button for every sidebar item plus the back button', () => {
-    const { wrapper } = mountSidebar()
-    const buttons = wrapper.findAll('button')
-    // back button + all non-divider items
-    const buttonItems = wrapper.vm.sidebarItems.filter(i => i.type === 'button')
-    expect(buttons.length).toBe(buttonItems.length + 1)
-  })
-
-  describe('Sidebar: темизация (3.58)', () => {
+  // --- Темизация (3.58, СЦ-3.58.13) ---
+  describe('темизация (3.58)', () => {
     it('Бакулево: пункты с подписями, логотип, «Служба поддержки» (СЦ-3.58.13)', () => {
       const { wrapper } = mountSidebar()
       expect(wrapper.find('.sidebar').classes()).toContain('sidebar--text')

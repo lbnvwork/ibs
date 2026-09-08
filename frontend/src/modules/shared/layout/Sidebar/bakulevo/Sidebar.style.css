@@ -185,3 +185,43 @@
         height: 20px;
     }
 }
+
+/* Доработка №1: раскрывашки-группы + кнопка «Выход» */
+.sidebar--text .sidebar-group {
+    width: 100%;
+}
+
+.sidebar--text .sidebar-group__header {
+    font-weight: bold;
+}
+
+.sidebar--text .sidebar-group__header .chevron {
+    margin-left: auto;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.sidebar--text .sidebar-group__header .chevron--open {
+    transform: rotate(180deg);
+}
+
+.sidebar--text .sidebar-group__items {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar--text .sidebar-group__item {
+    padding-left: 28px;
+}
+
+.sidebar--text .sidebar__logout {
+    margin-top: auto;
+    width: 100%;
+    font-weight: bold;
+}
+
+.sidebar--text .sidebar__support {
+    margin-top: 8px;
+}

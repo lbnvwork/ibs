@@ -1,5 +1,6 @@
 import { extractIdFromIri } from '@/modules/shared/utils/apiHelpers';
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore';
+import { useTestAddStore } from '@/modules/medicalHistory/stores/testAddStore';
 import AppointmentAdd from '@/modules/medicalHistory/components/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/modules/medicalHistory/components/TestAddModal/TestAddModal.vue';
 import PatientCard from '@/modules/medicalHistory/components/PatientCard/PatientCard.vue';
@@ -33,7 +34,6 @@ export default {
         return {
             loading: true,
             error: null,
-            showTestModal: false,
             showAppointmentInlineModal: false,
             editMode: {
                 patient: false,
@@ -44,6 +44,9 @@ export default {
     computed: {
         showAppointmentModal() {
             return useAppointmentAddStore().isModalOpen;
+        },
+        showTestModal() {
+            return useTestAddStore().isModalOpen;
         },
         treatmentStore() {
             return useTreatmentStore();
@@ -143,11 +146,14 @@ export default {
             useAppointmentAddStore().closeModal();
         },
         openTestModal() {
-            this.showTestModal = true;
+            useTestAddStore().openModal();
+        },
+        closeTestModal() {
+            useTestAddStore().closeModal();
         },
         onTestSaved() {
             this.loadPatientData();
-            this.showTestModal = false;
+            useTestAddStore().closeModal();
         },
         openAppointmentInlineModal() {
             this.showAppointmentInlineModal = true;
