@@ -24,6 +24,11 @@
              не протекал в контейнер и не ломал MaxWebhookApiTest. -->
         <env name="MAX_WEBHOOK_SECRET" value="test-webhook-secret" force="true" />
         <server name="MAX_WEBHOOK_SECRET" value="test-webhook-secret" force="true" />
+        <!-- Тестовая БД изолирована от корневого .env (3.76): при dev DATABASE_URL
+             на общей боевой БД phpunit ходит в локальный db/symfony_test
+             (суффикс `_test` добавляет doctrine.yaml when@test). -->
+        <env name="DATABASE_URL" value="postgresql://symfony:symfony@db:5432/symfony?serverVersion=15&amp;charset=utf8" force="true" />
+        <server name="DATABASE_URL" value="postgresql://symfony:symfony@db:5432/symfony?serverVersion=15&amp;charset=utf8" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>
 
