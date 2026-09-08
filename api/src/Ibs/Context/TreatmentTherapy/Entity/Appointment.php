@@ -57,8 +57,8 @@ class Appointment
     #[ORM\Column(type: 'text', nullable: true, options: ['comment' => 'Комментарий'])]
     private ?string $comment = null;
 
-    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => -1, 'comment' => 'Вторая доза (чередование)'])]
-    private int $doze2 = -1;
+    #[ORM\Column(type: 'float', nullable: false, options: ['default' => -1, 'comment' => 'Вторая доза (чередование)'])]
+    private float $doze2 = -1.0;
 
     #[ORM\ManyToOne(targetEntity: Treatment::class)]
     #[ORM\JoinColumn(name: 'treatment_id', referencedColumnName: 'id', nullable: true, options: ['comment' => 'Лечение'])]
@@ -143,12 +143,12 @@ class Appointment
         return $this;
     }
 
-    public function getDoze2(): int
+    public function getDoze2(): float
     {
         return $this->doze2;
     }
 
-    public function setDoze2(int $doze2): self
+    public function setDoze2(float $doze2): self
     {
         $this->doze2 = $doze2;
         return $this;
