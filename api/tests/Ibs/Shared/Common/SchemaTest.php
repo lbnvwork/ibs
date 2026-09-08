@@ -84,6 +84,14 @@ class SchemaTest extends KernelTestCase
         }
     }
 
+    public function testAppointmentsHaveNextTestDtColumn(): void
+    {
+        $columns = $this->listTableColumns('appointments');
+
+        $this->assertArrayHasKey('next_test_dt', $columns, 'appointments.next_test_dt must exist');
+        $this->assertFalse($columns['next_test_dt']->getNotnull(), 'appointments.next_test_dt must be nullable');
+    }
+
     /**
      * @return array<string, \Doctrine\DBAL\Schema\Column>
      */

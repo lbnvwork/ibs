@@ -46,6 +46,9 @@ class Appointment
     #[ORM\Column(type: 'datetime', nullable: false, options: ['comment' => 'Дата назначения'])]
     private \DateTimeInterface $appointmentDt;
 
+    #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата следующей сдачи МНО'])]
+    private ?\DateTimeInterface $nextTestDt = null;
+
     #[ORM\Column(type: 'datetime', nullable: true, options: ['comment' => 'Дата создания'])]
     private ?\DateTimeInterface $creationDt = null;
 
@@ -97,6 +100,17 @@ class Appointment
     public function setAppointmentDt(\DateTimeInterface $appointmentDt): self
     {
         $this->appointmentDt = $appointmentDt;
+        return $this;
+    }
+
+    public function getNextTestDt(): ?\DateTimeInterface
+    {
+        return $this->nextTestDt;
+    }
+
+    public function setNextTestDt(?\DateTimeInterface $nextTestDt): self
+    {
+        $this->nextTestDt = $nextTestDt;
         return $this;
     }
 
@@ -204,6 +218,19 @@ class Appointment
     public function setUpdatedAtValue(): void
     {
         $this->modDt = new \DateTime();
+    }
+
+    #[Assert\Callback]
+    public function validateNextTestDt(\Symfony\Component\Validator\Context\ExecutionContextInterface $context): void
+    {
+        if ($this->nextTestDt === null || !isset($this->appointmentDt)) {
+            return;
+        }
+        if ($this->nextTestDt->format('Y-m-d') < $this->appointmentDt->format('Y-m-d')) {
+            $context->buildViolation('Дата следующей сдачи не может быть раньше даты назначения.')
+                ->atPath('nextTestDt')
+                ->addViolation();
+        }
     }
 
     #[Assert\Callback]
