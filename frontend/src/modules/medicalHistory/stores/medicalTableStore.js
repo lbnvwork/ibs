@@ -73,6 +73,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                         currentDose: item.doze !== undefined ? item.doze : '—',
                         prescribedDose: matchingAppt ? matchingAppt.doze : '—',
                         recommendations: matchingAppt ? (matchingAppt.comment || '') : '',
+                        nextTestDt: matchingAppt && matchingAppt.nextTestDt ? formatDate(matchingAppt.nextTestDt) : '—',
                         comment: item.comment || '',
                         ...latestVitals
                     });
@@ -99,6 +100,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                                 currentDose: '—',
                                 prescribedDose: matchingAppt ? matchingAppt.doze : '—',
                                 recommendations: matchingAppt ? (matchingAppt.comment || '') : '',
+                                nextTestDt: '—',
                                 comment: '',
                                 ...latestVitals
                             });
@@ -116,6 +118,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                         currentDose: '—',
                         prescribedDose: a.doze,
                         recommendations: a.comment || '',
+                        nextTestDt: a.nextTestDt ? formatDate(a.nextTestDt) : '—',
                         comment: '',
                         hb: null, heartRate: null,
                         systolicPressure: null, diastolicPressure: null,
