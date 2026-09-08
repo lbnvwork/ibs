@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 const E2E_LOGIN = process.env.E2E_LOGIN ?? '';
 const E2E_PASSWORD = process.env.E2E_PASSWORD ?? '';
 
-async function loginAsDoctor(page) {
+async function loginAsDoctor(page: Page) {
   if (!E2E_LOGIN || !E2E_PASSWORD) {
     throw new Error('E2E_LOGIN / E2E_PASSWORD не заданы — передайте через docker compose run -e ...');
   }
@@ -14,7 +14,7 @@ async function loginAsDoctor(page) {
   await page.waitForURL('/');
 }
 
-async function fillPatientForm(page, lastname) {
+async function fillPatientForm(page: Page, lastname: string) {
   const hospital = page.getByLabel('Больница', { exact: false });
   await expect(hospital.locator('option')).not.toHaveCount(0);
   await hospital.selectOption({ index: 0 });

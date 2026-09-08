@@ -148,7 +148,7 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     demo.adminToken = await apiLogin(ADMIN_LOGIN, ADMIN_PASSWORD);
 
     // 1. Тестовая больница.
-    const hospital = await apiPost<{ id: number }>(demo.adminToken, '/api/hospitals', {
+    const hospital = await apiPost<{ id: number }>(demo.adminToken!, '/api/hospitals', {
       name: 'Демо-больница',
       region: 'Москва',
     });
@@ -158,7 +158,7 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     // 2. Находим заранее созданного врача (app:create-user) по логину.
     // GET /api/users (без Accept: ld+json) отдаёт плоский JSON-массив.
     const users = await apiGet<Array<{ id: number; login: string; medicalPersonnel?: unknown }>>(
-      demo.adminToken,
+      demo.adminToken!,
       '/api/users',
     );
     const doctor = users.find((u) => u.login === DOCTOR_LOGIN);
@@ -177,11 +177,11 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     // 3. Привязываем профиль врача к больнице.
     if (demo.doctorPersonnelIri) {
-      await apiPatch(demo.adminToken, demo.doctorPersonnelIri, { hospital: demo.hospitalIri });
+      await apiPatch(demo.adminToken!, demo.doctorPersonnelIri, { hospital: demo.hospitalIri });
     }
 
     // 4. Тестовый Supervisor, привязка к врачу.
-    const supervisor = await apiPost<{ id: number }>(demo.adminToken, '/api/supervisors', {
+    const supervisor = await apiPost<{ id: number }>(demo.adminToken!, '/api/supervisors', {
       user: demo.doctorUserIri,
     });
     demo.supervisorIri = `/api/supervisors/${supervisor.id}`;
@@ -312,7 +312,7 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     // Проверка: 3 анализа сохранены.
     const histories = await apiGet<Array<{ id: number }>>(
-      demo.adminToken,
+      demo.adminToken!,
       `/api/test_histories?treatment=${demo.treatmentIri}`,
     );
     expect(histories.length, 'ожидается 3 анализа МНО').toBe(3);
