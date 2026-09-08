@@ -1,10 +1,12 @@
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths';
+import almazovoLogo from '@/assets/logos/almazovo.png';
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore';
 
 export default {
     name: 'Sidebar',
     data() {
         return {
+            almazovoLogo,
             sidebarItemDefinitions: [
                 {
                     name: 'patientAdd',

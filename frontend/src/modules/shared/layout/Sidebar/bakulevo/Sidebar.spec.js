@@ -164,6 +164,7 @@ describe('Sidebar.vue (bakulevo — доработка №1)', () => {
       expect(wrapper.find('.sidebar').classes()).toContain('sidebar--text')
       expect(wrapper.findAll('.label').length).toBeGreaterThan(0)
       expect(wrapper.find('.sidebar__logo').exists()).toBe(true)
+      expect(wrapper.find('.sidebar__logo img').exists()).toBe(true)
       expect(wrapper.find('.sidebar__logo').text()).toContain('Warfarin manager')
       expect(wrapper.find('.sidebar__support').exists()).toBe(true)
       expect(wrapper.find('.sidebar__support').text()).toContain('Служба поддержки')

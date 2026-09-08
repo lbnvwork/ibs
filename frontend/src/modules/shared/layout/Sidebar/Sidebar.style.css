@@ -86,6 +86,23 @@
     visibility: hidden !important;
 }
 
+/* Логотип (иконочный режим Алмазово) */
+.sidebar__logo {
+    width: 40px;
+    height: 40px;
+    margin: 8px 0;
+    flex-shrink: 0;
+}
+
+.sidebar__logo .logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    object-fit: contain;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 50px;

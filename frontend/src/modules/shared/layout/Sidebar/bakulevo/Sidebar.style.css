@@ -104,9 +104,15 @@
     font-weight: bold;
 }
 
-.sidebar--text .logo-icon {
-    width: 28px;
-    height: 28px;
+.sidebar--text .logo-img {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    object-fit: contain;
+    padding: 2px;
+    box-sizing: border-box;
 }
 
 .sidebar--text .logo-text {

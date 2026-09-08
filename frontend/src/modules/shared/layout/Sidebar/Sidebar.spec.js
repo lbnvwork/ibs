@@ -108,11 +108,12 @@ describe('Sidebar.vue', () => {
     expect(buttons.length).toBe(buttonItems.length + 1)
   })
 
-  it('Алмазово: узкий иконочный сайдбар без подписей/логотипа (СЦ-3.58.14)', () => {
+  it('Алмазово: узкий иконочный сайдбар без подписей, с логотипом-иконкой (СЦ-3.58.14)', () => {
     const { wrapper } = mountSidebar()
     expect(wrapper.find('.sidebar').classes()).not.toContain('sidebar--text')
     expect(wrapper.findAll('.label').length).toBe(0)
-    expect(wrapper.find('.sidebar__logo').exists()).toBe(false)
+    expect(wrapper.find('.sidebar__logo').exists()).toBe(true)
+    expect(wrapper.find('.sidebar__logo img').exists()).toBe(true)
     expect(wrapper.find('.sidebar__support').exists()).toBe(false)
   })
 })

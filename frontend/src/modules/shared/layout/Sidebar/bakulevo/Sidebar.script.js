@@ -1,4 +1,5 @@
 import { HOME_PATH, PATIENT_ADD_PATH } from '@/router/paths';
+import bakulevoLogo from '@/assets/logos/bakulevo.png';
 import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointmentAddStore';
 import { useTestAddStore } from '@/modules/medicalHistory/stores/testAddStore';
 import { useAuthStore } from '@/modules/shared/stores/authStore';
@@ -18,6 +19,7 @@ export default {
     name: 'Sidebar',
     data() {
         return {
+            bakulevoLogo,
             // Раскрывашки, раскрытые по умолчанию. Только рабочий функционал (доработка №1):
             // заглушки (sendMessage/editData/calendar/aiHelp/statistics/disabledPatients/chat/print/saveFormats) удалены.
             sidebarGroups: [
