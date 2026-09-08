@@ -1,3 +1,12 @@
+// Экранирование значений перед вставкой в v-html: закрывает XSS-вектор,
+// если с бэкенда придёт строка с разметкой вместо числа (ревью 3.58 PR #124).
+const escapeHtml = (value) => String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
 export function buildIndicators(testHistory, vitals) {
     const parts = [];
 
@@ -6,7 +15,7 @@ export function buildIndicators(testHistory, vitals) {
         parts.push(
             `<span class="indicator-item indicator-mno">` +
             `<span class="indicator-label">МНО</span>` +
-            `<span class="indicator-value">${testHistory.mno}</span>` +
+            `<span class="indicator-value">${escapeHtml(testHistory.mno)}</span>` +
             `</span>`
         );
     }
@@ -16,7 +25,7 @@ export function buildIndicators(testHistory, vitals) {
             parts.push(
                 `<span class="indicator-item">` +
                 `<span class="indicator-label">Hb</span>` +
-                `<span class="indicator-value">${vitals.hb}</span>` +
+                `<span class="indicator-value">${escapeHtml(vitals.hb)}</span>` +
                 `</span>`
             );
         }
@@ -24,7 +33,7 @@ export function buildIndicators(testHistory, vitals) {
             parts.push(
                 `<span class="indicator-item">` +
                 `<span class="indicator-label">ЧСС</span>` +
-                `<span class="indicator-value">${vitals.heartRate}</span>` +
+                `<span class="indicator-value">${escapeHtml(vitals.heartRate)}</span>` +
                 `</span>`
             );
         }
@@ -32,7 +41,7 @@ export function buildIndicators(testHistory, vitals) {
             parts.push(
                 `<span class="indicator-item">` +
                 `<span class="indicator-label">АД</span>` +
-                `<span class="indicator-value">${vitals.systolicPressure}/${vitals.diastolicPressure}</span>` +
+                `<span class="indicator-value">${escapeHtml(vitals.systolicPressure)}/${escapeHtml(vitals.diastolicPressure)}</span>` +
                 `</span>`
             );
         }
@@ -40,7 +49,7 @@ export function buildIndicators(testHistory, vitals) {
             parts.push(
                 `<span class="indicator-item">` +
                 `<span class="indicator-label">SpO₂</span>` +
-                `<span class="indicator-value">${vitals.saturation}%</span>` +
+                `<span class="indicator-value">${escapeHtml(vitals.saturation)}%</span>` +
                 `</span>`
             );
         }

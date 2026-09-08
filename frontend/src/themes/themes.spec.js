@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { resolveTheme, themeName, isBakulevo, FEATURES } from './index.js'
+import { resolveTheme } from './index.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const almazovo = readFileSync(join(here, 'almazovo.css'), 'utf8')
@@ -12,6 +12,13 @@ const token = (css, name) => {
   const m = css.match(new RegExp(`${name}:\\s*([^;]+);`))
   return m ? m[1].trim() : null
 }
+
+// themeName/isBakulevo/FEATURES вычисляются на импорте из import.meta.env.VITE_THEME,
+// поэтому проверяем их детерминированно — динамическим импортом с моком env (ревью PR #124).
+afterEach(() => {
+  vi.unstubAllEnvs()
+  vi.resetModules()
+})
 
 describe('themes (3.58)', () => {
   it('Бакулево: тёмный сайдбар + светлый контент (СЦ-3.58.1)', () => {
@@ -33,13 +40,29 @@ describe('themes (3.58)', () => {
     expect(resolveTheme('almazovo')).toBe('almazovo')
   })
 
-  it('index.js: дефолт Алмазово и флаги по умолчанию', () => {
+  it('index.js: дефолт Алмазово и флаги по умолчанию (мок env)', async () => {
+    vi.stubEnv('VITE_THEME', 'almazovo')
+    vi.resetModules()
+    const { themeName, isBakulevo, FEATURES } = await import('./index.js')
     expect(themeName).toBe('almazovo')
     expect(isBakulevo).toBe(false)
     expect(FEATURES).toEqual({
       pharmacogenetics: true,
       patientListPanel: true,
       riskScale: false
+    })
+  })
+
+  it('index.js: Бакулево — флаги инвертируются (мок env)', async () => {
+    vi.stubEnv('VITE_THEME', 'bakulevo')
+    vi.resetModules()
+    const { themeName, isBakulevo, FEATURES } = await import('./index.js')
+    expect(themeName).toBe('bakulevo')
+    expect(isBakulevo).toBe(true)
+    expect(FEATURES).toEqual({
+      pharmacogenetics: false,
+      patientListPanel: false,
+      riskScale: true
     })
   })
 })

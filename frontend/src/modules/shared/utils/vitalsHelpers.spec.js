@@ -44,6 +44,17 @@ describe('buildIndicators', () => {
     expect(html).toContain('indicator-mno')
     expect(html).toContain('Hb')
   })
+
+  it('escapes HTML in values (XSS protection)', () => {
+    const html = buildIndicators(
+      { mno: '<img src=x onerror=alert(1)>' },
+      { hb: '<b>120</b>' }
+    )
+    expect(html).not.toContain('<img')
+    expect(html).not.toContain('<b>')
+    expect(html).toContain('&lt;img')
+    expect(html).toContain('&lt;b&gt;')
+  })
 })
 
 describe('buildIndicatorsFromRow', () => {
