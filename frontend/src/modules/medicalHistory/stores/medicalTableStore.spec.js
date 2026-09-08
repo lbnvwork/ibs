@@ -49,6 +49,24 @@ describe('medicalTableStore', () => {
     })
   })
 
+  it('propagates doze2 into currentDose2/prescribedDose2 for alternation', async () => {
+    mockResponses({
+      appointments: [{ appointmentDt: '2026-02-10T09:00:00', doze: 5, doze2: 2.75, comment: '' }],
+      history: [{ creationDt: '2026-02-10T12:00:00', mno: 2.4, doze: 4.5, doze2: 2.5, comment: '' }]
+    })
+
+    const store = useMedicalTableStore()
+    await store.fetchMedicalData('/api/treatments/1')
+
+    expect(store.events[0]).toMatchObject({
+      type: 'test',
+      currentDose: 4.5,
+      currentDose2: 2.5,
+      prescribedDose: 5,
+      prescribedDose2: 2.75
+    })
+  })
+
   it('uses a dash for the prescribed dose when no appointment matches that day', async () => {
     mockResponses({ history: [{ creationDt: '2026-02-10T12:00:00', mno: 2.4, doze: 4.5 }] })
 
