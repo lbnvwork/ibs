@@ -168,5 +168,33 @@ describe('AppointmentAdd.vue', () => {
 
       expect(apiClient.post).toHaveBeenCalledWith('/appointments', expect.objectContaining({ doze2: 1.75 }))
     })
+
+    it('sends nextTestDt when provided (СЦ-3.66.1)', async () => {
+      apiClient.post.mockResolvedValue({})
+      const wrapper = mountAppointmentAdd()
+      await flushPromises()
+      wrapper.vm.dose = 2.25
+      wrapper.vm.appointmentDt = '2026-08-10'
+      wrapper.vm.nextTestDt = '2026-08-20'
+
+      await wrapper.vm.save()
+
+      expect(apiClient.post).toHaveBeenCalledWith('/appointments', expect.objectContaining({
+        nextTestDt: '2026-08-20T00:00:00.000Z'
+      }))
+    })
+
+    it('rejects a next test date before the appointment date (СЦ-3.66.4)', async () => {
+      const wrapper = mountAppointmentAdd()
+      await flushPromises()
+      wrapper.vm.dose = 2.25
+      wrapper.vm.appointmentDt = '2026-08-10'
+      wrapper.vm.nextTestDt = '2026-08-09'
+
+      await wrapper.vm.save()
+
+      expect(wrapper.vm.saveError).toContain('следующей сдачи')
+      expect(apiClient.post).not.toHaveBeenCalled()
+    })
   })
 })
