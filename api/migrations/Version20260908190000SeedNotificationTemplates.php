@@ -6,6 +6,7 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Ibs\Context\Communication\NotificationTemplateCatalog;
 
 /**
  * Засев MAX-шаблонов в notification_templates (channel = 'max').
@@ -21,25 +22,7 @@ final class Version20260908190000SeedNotificationTemplates extends AbstractMigra
 
     public function up(Schema $schema): void
     {
-        $templates = [
-            [
-                'code' => 'appointment_dose',
-                'body' => 'Ваше МНО - %mno%. С %date% ВАМ НУЖНО ПРИНИМАТЬ %dose% %drug_genitive%. %comment%',
-                'description' => 'Назначение: обычная доза',
-            ],
-            [
-                'code' => 'appointment_alternate',
-                'body' => 'Ваше МНО - %mno%. С %date% ВАМ НУЖНО ЧЕРЕДОВАТЬ %dose% и %sdose% %drug_genitive%. %comment%',
-                'description' => 'Назначение: чередование доз',
-            ],
-            [
-                'code' => 'analysis_result',
-                'body' => 'Ваше МНО - %mno%. Дозировку %drug_genitive% оставьте прежней',
-                'description' => 'Анализ: доза прежняя',
-            ],
-        ];
-
-        foreach ($templates as $template) {
+        foreach (NotificationTemplateCatalog::TEMPLATES as $template) {
             $this->addSql(
                 'INSERT INTO notification_templates (code, channel, subject_template, body_template, description) '
                 . 'VALUES (:code, :channel, NULL, :body, :description) '
