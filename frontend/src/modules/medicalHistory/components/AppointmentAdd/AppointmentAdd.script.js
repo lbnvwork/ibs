@@ -20,7 +20,7 @@ export default {
             isLoading: false,
             error: null,
             saveError: null,
-            dose2: -1,
+            alternationDelta: null,
             enableAlternation: false,
             showDoseWarning: false,
             confirmOver50: false,
@@ -30,6 +30,12 @@ export default {
     computed: {
         canSave() {
             return this.dose !== null && this.dose > 0;
+        },
+        dose2() {
+            if (!this.enableAlternation || this.alternationDelta === null || this.alternationDelta === '') {
+                return null;
+            }
+            return this.dose !== null ? this.dose + Number(this.alternationDelta) : null;
         }
     },
     methods: {
@@ -77,13 +83,9 @@ export default {
 
         onAlternationToggle() {
             if (!this.enableAlternation) {
-                this.dose2 = -1;
-            } else {
-                this.dose2 = null;
+                this.alternationDelta = null;
             }
         },
-
-        onDose2Change() {},
 
         async loadLastAppointmentDose() {
             try {
@@ -127,11 +129,9 @@ export default {
             };
 
             if (this.enableAlternation) {
-                rules.doze2 = {
+                rules.alternationDelta = {
                     required: true,
-                    message: 'Введите вторую дозу.',
-                    validator: (val) => val !== null && val > 0 && val % 0.25 === 0,
-                    errorMsg: 'Вторая доза должна быть положительной и кратной 0.25.',
+                    message: 'Выберите отклонение чередования.',
                 };
             }
 
@@ -142,12 +142,12 @@ export default {
                 if (data.doze > 10) {
                     errors.doze = 'Максимальная доза 10 таблеток.';
                 }
-                if (this.enableAlternation && data.doze2 !== null && data.doze2 > 0) {
-                    if (data.doze2 % 0.25 !== 0) {
-                        errors.doze2 = 'Вторая доза должна быть кратна 0.25.';
+                if (this.enableAlternation && this.dose2 !== null) {
+                    if (this.dose2 <= 0) {
+                        errors.alternationDelta = 'Вторая доза должна быть положительной.';
                     }
-                    if (data.doze2 > 10) {
-                        errors.doze2 = 'Максимальная доза 10 таблеток.';
+                    if (this.dose2 > 10) {
+                        errors.alternationDelta = 'Максимальная доза 10 таблеток.';
                     }
                 }
             };
@@ -157,7 +157,7 @@ export default {
                 doze: this.dose,
             };
             if (this.enableAlternation) {
-                formData.doze2 = this.dose2;
+                formData.alternationDelta = this.alternationDelta;
             }
 
             const errors = validateForm(formData, rules, extraChecks);
@@ -190,7 +190,7 @@ export default {
                 treatment: this.treatment,
                 appointmentDt: isoDate,
                 doze: this.dose,
-                doze2: this.enableAlternation ? this.dose2 : -1,
+                doze2: this.enableAlternation && this.dose2 !== null ? this.dose2 : -1,
                 drug: `/api/drugs/${this.drugId}`,
                 comment: this.comment || null
             };

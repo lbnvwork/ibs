@@ -156,17 +156,55 @@ describe('AppointmentAdd.vue', () => {
       expect(wrapper.vm.saveError).toBe('Лечение не активно. Сохранение назначения невозможно.')
     })
 
-    it('sends the second dose only when alternation is enabled', async () => {
+    it('sends the second dose computed from the deviation when alternation is enabled (СЦ-3.65.1/2)', async () => {
       apiClient.post.mockResolvedValue({})
       const wrapper = mountAppointmentAdd()
       await flushPromises()
-      wrapper.vm.dose = 2.25
+      wrapper.vm.dose = 2.5
       wrapper.vm.enableAlternation = true
-      wrapper.vm.dose2 = 1.75
+      wrapper.vm.alternationDelta = '0.5'
 
       await wrapper.vm.save()
 
-      expect(apiClient.post).toHaveBeenCalledWith('/appointments', expect.objectContaining({ doze2: 1.75 }))
+      expect(apiClient.post).toHaveBeenCalledWith('/appointments', expect.objectContaining({ doze: 2.5, doze2: 3.0 }))
+    })
+
+    it('computes the second dose from the selected deviation (СЦ-3.65.1/2)', () => {
+      const wrapper = mountAppointmentAdd()
+      wrapper.vm.dose = 2.5
+      wrapper.vm.enableAlternation = true
+
+      wrapper.vm.alternationDelta = '0.25'
+      expect(wrapper.vm.dose2).toBe(2.75)
+
+      wrapper.vm.alternationDelta = '-0.5'
+      expect(wrapper.vm.dose2).toBe(2.0)
+    })
+
+    it('rejects saving when alternation is enabled but no deviation is selected', async () => {
+      const wrapper = mountAppointmentAdd()
+      await flushPromises()
+      wrapper.vm.dose = 2.5
+      wrapper.vm.enableAlternation = true
+      wrapper.vm.alternationDelta = null
+
+      await wrapper.vm.save()
+
+      expect(wrapper.vm.saveError).toContain('отклонение')
+      expect(apiClient.post).not.toHaveBeenCalled()
+    })
+
+    it('rejects a second dose above the 10 tablet maximum', async () => {
+      const wrapper = mountAppointmentAdd()
+      await flushPromises()
+      wrapper.vm.dose = 10
+      wrapper.vm.enableAlternation = true
+      wrapper.vm.alternationDelta = '0.5'
+
+      await wrapper.vm.save()
+
+      expect(wrapper.vm.saveError).toContain('Максимальная доза 10')
+      expect(apiClient.post).not.toHaveBeenCalled()
     })
   })
 })
