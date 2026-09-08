@@ -148,7 +148,7 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     demo.adminToken = await apiLogin(ADMIN_LOGIN, ADMIN_PASSWORD);
 
     // 1. Тестовая больница.
-    const hospital = await apiPost<{ id: number }>(demo.adminToken, '/api/hospitals', {
+    const hospital = await apiPost<{ id: number }>(demo.adminToken!, '/api/hospitals', {
       name: 'Демо-больница',
       region: 'Москва',
     });
@@ -158,7 +158,7 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     // 2. Находим заранее созданного врача (app:create-user) по логину.
     // GET /api/users (без Accept: ld+json) отдаёт плоский JSON-массив.
     const users = await apiGet<Array<{ id: number; login: string; medicalPersonnel?: unknown }>>(
-      demo.adminToken,
+      demo.adminToken!,
       '/api/users',
     );
     const doctor = users.find((u) => u.login === DOCTOR_LOGIN);
@@ -177,11 +177,11 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     // 3. Привязываем профиль врача к больнице.
     if (demo.doctorPersonnelIri) {
-      await apiPatch(demo.adminToken, demo.doctorPersonnelIri, { hospital: demo.hospitalIri });
+      await apiPatch(demo.adminToken!, demo.doctorPersonnelIri, { hospital: demo.hospitalIri });
     }
 
     // 4. Тестовый Supervisor, привязка к врачу.
-    const supervisor = await apiPost<{ id: number }>(demo.adminToken, '/api/supervisors', {
+    const supervisor = await apiPost<{ id: number }>(demo.adminToken!, '/api/supervisors', {
       user: demo.doctorUserIri,
     });
     demo.supervisorIri = `/api/supervisors/${supervisor.id}`;
@@ -312,7 +312,7 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
 
     // Проверка: 3 анализа сохранены.
     const histories = await apiGet<Array<{ id: number }>>(
-      demo.adminToken,
+      demo.adminToken!,
       `/api/test_histories?treatment=${demo.treatmentIri}`,
     );
     expect(histories.length, 'ожидается 3 анализа МНО').toBe(3);
@@ -548,8 +548,10 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
   });
 
   /**
-   * Шаг 9 — СЦ-7 Карточка: полная история + график МНО.
+   * Шаг 9 — СЦ-7 Карточка: полная история + график МНО (+ доза на выбросах, 3.64).
    * Таблица «Медицинские данные» (анализы + назначения) + график МНО (canvas).
+   * 3.64: на точке МНО вне целевого диапазона (ниже mnoFrom / выше mnoTo)
+   * в подписи графика дополнительно выводится последняя назначенная доза.
    */
   test('Шаг 9 — СЦ-7 Карточка: история + график МНО', async ({ page }) => {
     await loginAsDoctor(page);
@@ -565,7 +567,40 @@ test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
     // 3 анализа МНО в таблице.
     await expect(page.locator('.indicator-mno')).toHaveCount(3);
 
-    console.log('[шаг9] карточка: история + график МНО');
+    // === 3.64: доза на точке вне диапазона ===
+    // Выброс: МНО 3.5 выше целевого диапазона (2–3). Назначаем дозу на ту же дату.
+    const histories = await apiGet<Array<{ id: number; mno: number; creationDt: string }>>(
+      demo.adminToken!,
+      `/api/test_histories?treatment=${demo.treatmentIri}`,
+    );
+    const hist35 = histories.find((h) => h.mno === 3.5);
+    expect(hist35, 'анализ МНО 3.5 не найден').toBeTruthy();
+
+    // Назначение на дату выброса (полдень UTC того же дня), доза 7.25.
+    const apptDt = new Date(hist35!.creationDt);
+    apptDt.setUTCHours(12, 0, 0, 0);
+    await apiPost(demo.adminToken!, '/api/appointments', {
+      treatment: demo.treatmentIri,
+      appointmentDt: apptDt.toISOString(),
+      doze: 7.25,
+      drug: '/api/drugs/1',
+    });
+
+    // Перезагрузка карточки → история и график пересчитаны.
+    await page.goto(`/patient/${demo.patientId}`);
+    await expect(medicalData).toBeVisible();
+    await expect(page.locator('.indicator-mno')).toHaveCount(3);
+
+    // В строке анализа МНО 3.5 «Назначенная доза» = 7.25 — это данные для подписи
+    // дозы на графике (chartData.dose = prescribedDose). Сама подпись рисуется canvas-ом
+    // (ctx.fillText) и покрыта unit-тестами MnoChart.spec.js — в DOM не попадает.
+    const row35 = page.locator('.medical-data tbody tr').filter({
+      has: page.locator('.indicator-mno .indicator-value', { hasText: '3.5' }),
+    });
+    await expect(row35).toHaveCount(1);
+    await expect(row35.locator('td').nth(3)).toHaveText('7.25');
+
+    console.log('[шаг9] карточка: история + график МНО + доза на выбросах (3.64)');
   });
 
   /**

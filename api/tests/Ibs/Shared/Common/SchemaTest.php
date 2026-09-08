@@ -75,6 +75,15 @@ class SchemaTest extends KernelTestCase
         $this->assertFalse($latestColumns['creatinine']->getNotnull(), 'patient_vitals_latest.creatinine must be nullable');
     }
 
+    public function testDoze2IsDoublePrecision(): void
+    {
+        foreach (['appointments', 'test_history'] as $table) {
+            $columns = $this->listTableColumns($table);
+            $this->assertArrayHasKey('doze2', $columns, sprintf('%s.doze2 must exist', $table));
+            $this->assertSame('float', $columns['doze2']->getType()->getName(), sprintf('%s.doze2 must be double precision', $table));
+        }
+    }
+
     /**
      * @return array<string, \Doctrine\DBAL\Schema\Column>
      */
