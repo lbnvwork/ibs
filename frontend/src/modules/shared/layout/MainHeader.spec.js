@@ -4,6 +4,10 @@ import { createPinia, setActivePinia } from 'pinia'
 import MainHeader from './MainHeader.vue'
 import { useAuthStore } from '@/modules/shared/stores/authStore'
 
+// Базовый спек — тема Алмазово (в шапке остаётся кнопка «Выход»-дверь).
+// Поведение Бакулево (дверь скрыта) проверяется в MainHeader.bakulevo.spec.js.
+vi.mock('@/themes', () => ({ isBakulevo: false }))
+
 function mountMainHeader(user, { routeName = 'Home' } = {}) {
   setActivePinia(createPinia())
   const store = useAuthStore()

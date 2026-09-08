@@ -1,98 +1,119 @@
 <div class="patient-table patient-card">
-  <nav class="tabs" role="tablist" aria-label="Выбор препарата">
-    <button
-      v-for="tab in tabs"
-      :key="tab.id"
-      :class="{ active: activeTab === tab.id }"
-      @click="$emit('update:activeTab', tab.id)"
-      :style="tab.style"
-    >
-      {{ tab.name }}
-    </button>
-  </nav>
-
   <div class="table-content">
-    <div class="table-header">
-        <div class="table-title">
-            <slot name="title">
-                <h3>Пациенты</h3>
-            </slot>
-            <span class="patient-count">{{ patientCount }}</span>
-        </div>
-        <div v-if="showDiagnosisFilter" class="filter-controls">
-          <label for="diagnosis-select">Выборка пациентов по нозологиям*</label>
-          <MultiDiagnosisSelect v-model="selectedDiagnosisLocal" />
-        </div>
-    </div>
-
     <div class="table-container">
-      <table aria-label="Таблица пациентов">
-        <thead>
-          <slot name="thead">
-            <tr>
-              <th>#</th>
-              <th>Статус SMS</th>
-              <th>ФИО</th>
-              <th>Возраст</th>
-              <th>Диагноз</th>
-              <th>MHO / Hb / Дополнительно</th>
-              <th>Комментарий</th>
-              <th>Триаж</th>
-            </tr>
-          </slot>
-        </thead>
-        <tbody>
-          <tr v-if="loading" class="loading-row">
-            <td :colspan="colspan">
-              <div class="loading-spinner"></div>
-              <span>Загрузка данных...</span>
-            </td>
-          </tr>
-          <tr v-else-if="!patients.length && !error" class="empty-row">
-            <td :colspan="colspan">Нет пациентов для отображения</td>
-          </tr>
-          <tr v-else-if="error" class="error-row">
-            <td :colspan="colspan">{{ error }}</td>
-          </tr>
-          <slot name="tbody" :patients="patients" :error="error" :loading="loading" :triageBadge="triageBadge">
-            <tr
-              v-for="(patient, index) in patients"
-              :key="patient.id"
-              :class="{ 'highlight-red': patient.highlightRed, 'highlight-blue': patient.highlightBlue }"
+      <div class="list-head" aria-hidden="true">
+        <span class="col col-status">Статус</span>
+        <span class="col col-name">ФИО</span>
+        <span class="col col-birth">Дата рождения</span>
+        <span class="col col-gender">Пол</span>
+        <span class="col col-hospital">ЛПУ</span>
+        <span class="col col-indicators">Показатели</span>
+        <span class="col col-result">Результат</span>
+      </div>
+
+      <div v-if="loading" class="state-row loading-row">
+        <div class="loading-spinner"></div>
+        <span>Загрузка данных...</span>
+      </div>
+
+      <div v-else-if="!patients.length && !error" class="state-row empty-row">
+        Нет пациентов для отображения
+      </div>
+
+      <div v-else-if="error" class="state-row error-row">
+        {{ error }}
+      </div>
+
+      <template v-else>
+        <div
+          v-for="patient in patients"
+          :key="patient.id"
+          class="patient-row"
+          :class="`row--${triageBadge(patient).type}`"
+        >
+          <div class="col col-status">
+            <svg
+              class="status-icon"
+              :class="`status-icon--${triageBadge(patient).type}`"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
             >
-              <td>{{ index + 1 }}</td>
-              <td class="icon-cell">{{ patient.smsStatus }}</td>
-              <td><router-link :to="`/patient/${patient.id}`">{{ patient.name }}</router-link></td>
-              <td>{{ patient.age }}</td>
-              <td>{{ patient.diagnosis }}</td>
-              <td v-html="patient.indicators"></td>
-              <td class="comment">{{ patient.comment }}</td>
-              <td class="triage-cell">
-                <span class="triage-badge" :class="`triage-badge--${triageBadge(patient).type}`">{{ triageBadge(patient).label }}</span>
-              </td>
-            </tr>
-          </slot>
-        </tbody>
-      </table>
+              <path d="M12 3C12 3 6 9.5 6 14a6 6 0 0 0 12 0c0-4.5-6-11-6-11z" />
+            </svg>
+          </div>
+          <div class="col col-name">
+            <router-link :to="`/patient/${patient.id}`">{{ patient.name }}</router-link>
+          </div>
+          <div class="col col-birth">{{ patient.birthDate }}</div>
+          <div class="col col-gender">
+            <span class="gender-icon" :class="genderClass(patient.sex)">{{ genderIcon(patient.sex) }}</span>
+          </div>
+          <div class="col col-hospital">{{ patient.hospitalName }}</div>
+          <div class="col col-indicators" v-html="patient.indicators"></div>
+          <div class="col col-result">
+            <span class="triage-badge" :class="`triage-badge--${triageBadge(patient).type}`">
+              {{ triageBadge(patient).label }}
+            </span>
+          </div>
+        </div>
+      </template>
     </div>
 
-    <div class="pagination" v-if="totalPages > 1">
-      <button @click="$emit('firstPage')" :disabled="currentPage === 1"><<</button>
-      <button @click="$emit('prevPage')" :disabled="currentPage === 1"><</button>
-      <span>
-        <input
-          type="number"
-          :value="pageInput"
-          @input="$emit('update:pageInput', $event.target.value)"
-          @keyup.enter="$emit('goToPage', $event.target.value)"
-          :min="1"
-          :max="totalPages"
-          style="width: 60px; text-align: center;"
-        />
-        из {{ totalPages }}
+    <div class="table-footer">
+      <span class="pagination-total">Всего пациентов: {{ totalCount }}</span>
+      <div class="footer-controls">
+        <div v-if="totalPages > 1" class="pagination">
+          <button
+            class="page-btn"
+            @click="$emit('prevPage')"
+            :disabled="currentPage === 1"
+            aria-label="Предыдущая страница"
+          >‹</button>
+          <template v-for="(p, i) in pagesWindow" :key="`page-${p}-${i}`">
+            <button v-if="p === '…'" class="page-btn page-btn--dots" disabled>…</button>
+            <button
+              v-else
+              class="page-btn"
+              :class="{ active: p === currentPage }"
+              @click="$emit('goToPage', p)"
+            >{{ p }}</button>
+          </template>
+          <button
+            class="page-btn"
+            @click="$emit('nextPage')"
+            :disabled="currentPage === totalPages"
+            aria-label="Следующая страница"
+          >›</button>
+        </div>
+        <div class="page-size">
+          <label for="page-size">На странице:</label>
+          <select
+            id="page-size"
+            :value="itemsPerPage"
+            @change="$emit('setItemsPerPage', Number($event.target.value))"
+          >
+            <option :value="10">10</option>
+            <option :value="20">20</option>
+            <option :value="30">30</option>
+            <option :value="50">50</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-legend" aria-label="Статусы пациентов">
+      <span class="legend-title">Статусы пациентов</span>
+      <span v-for="def in statusDefinitions" :key="def.type" class="legend-item">
+        <svg
+          class="status-icon status-icon--sm"
+          :class="`status-icon--${def.type}`"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M12 3C12 3 6 9.5 6 14a6 6 0 0 0 12 0c0-4.5-6-11-6-11z" />
+        </svg>
+        {{ def.label }} — {{ statusCount(def.type) }}
       </span>
-      <button @click="$emit('nextPage')" :disabled="currentPage === totalPages">></button>
-      <button @click="$emit('lastPage')" :disabled="currentPage === totalPages">>></button>
     </div>
   </div>
 </div>

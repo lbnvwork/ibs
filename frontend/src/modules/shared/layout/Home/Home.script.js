@@ -12,7 +12,8 @@ export default {
   },
   data() {
     return {
-      activeFilter: 'monitoring',
+      activeFilter: isBakulevo ? 'patientList' : 'monitoring',
+      isBakulevo,
     };
   },
 };

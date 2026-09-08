@@ -189,3 +189,46 @@ html, body, #app {
   position: relative;
   min-height: 0;
 }
+/* ---------- Чипсы показателей (v-html от buildIndicators, общие для обеих тем) ---------- */
+.indicator-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.indicator-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.indicator-mno {
+  background: var(--color-accent-bg);
+  border: 1px solid var(--color-accent-bg);
+}
+
+.indicator-label {
+  color: var(--color-muted);
+  font-weight: 400;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.indicator-value {
+  font-weight: 700;
+  color: var(--color-dark);
+  font-size: 13px;
+}
+
+.indicator-mno .indicator-value {
+  color: var(--color-accent);
+}

@@ -1,5 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+
+// Базовый спек — тема Алмазово (вкладки «Мониторинг»/«Список»).
+// Поведение Бакулево (только список) проверяется в Home.bakulevo.spec.js.
+vi.mock('@/themes', () => ({ isBakulevo: false }))
+
 import Home from './Home.vue'
 
 function mountHome() {
