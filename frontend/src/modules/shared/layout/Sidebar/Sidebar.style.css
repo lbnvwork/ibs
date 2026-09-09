@@ -123,6 +123,6 @@
     margin-top: auto;
     padding: 8px 4px;
     font-size: 11px;
-    color: var(--color-muted, #9aa0a6);
+    color: var(--color-muted);
     text-align: center;
 }
