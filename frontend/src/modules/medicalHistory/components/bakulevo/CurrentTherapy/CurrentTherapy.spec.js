@@ -22,7 +22,8 @@ describe('CurrentTherapy.vue', () => {
     expect(wrapper.text()).toContain('варфарин')
     expect(wrapper.text()).toContain('Фибрилляция предсердий')
     expect(wrapper.text()).toContain('2.00–3.00')
-    expect(wrapper.text()).toContain('2.5 (01.01.2024)')
+    expect(wrapper.find('.therapy-dose').text()).toBe('2.5')
+    expect(wrapper.find('.therapy-dose__date').text()).toBe('01.01.2024')
   })
 
   it('shows a dash for the range when boundaries are missing', () => {
@@ -32,6 +33,7 @@ describe('CurrentTherapy.vue', () => {
 
   it('shows a dash for the dose when missing', () => {
     const wrapper = mountTherapy({ dose: null, doseDate: '' })
-    expect(wrapper.vm.doseText).toBe('—')
+    expect(wrapper.vm.doseDisplay).toBe('—')
+    expect(wrapper.find('.therapy-dose__date').exists()).toBe(false)
   })
 })

@@ -18,10 +18,10 @@ export default {
             }
             return '—';
         },
-        doseText() {
+        doseDisplay() {
             const d = this.dose;
             if (d === null || d === undefined || d === '' || d === '—') return '—';
-            return this.doseDate ? `${d} (${this.doseDate})` : `${d}`;
+            return d;
         }
     }
 };

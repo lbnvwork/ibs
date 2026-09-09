@@ -37,4 +37,10 @@ describe('ComplicationRisk.vue', () => {
     expect(wrapper.vm.level).toBe('neutral')
     expect(wrapper.vm.label).toBe('Диапазон не задан')
   })
+
+  it('shows the «Текущий анализ» title (СЦ-1)', () => {
+    const wrapper = mountRisk()
+    expect(wrapper.text()).toContain('Текущий анализ')
+    expect(wrapper.text()).not.toContain('Риск осложнений')
+  })
 })

@@ -7,6 +7,7 @@ export default {
   props: {
     patientId: { type: [String, Number], required: true },
     treatmentId: { type: [String, Number], default: null },
+    autoEdit: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -54,10 +55,13 @@ export default {
   watch: {
     patientId: {
       immediate: true,
-      handler(newId) {
+      async handler(newId) {
         if (newId) {
           this.resetEditing();
-          this.store.fetchLatest(newId);
+          await this.store.fetchLatest(newId);
+          if (this.autoEdit) {
+            this.startEditing();
+          }
         }
       },
     },
