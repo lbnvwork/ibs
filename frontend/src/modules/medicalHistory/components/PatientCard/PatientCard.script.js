@@ -1,10 +1,8 @@
 import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCardStore';
 import { formatPhone, formatPassport, formatSnils, formatDate } from '@/modules/shared/utils/formatters';
-import PatientMaxDeeplink from '@/modules/medicalHistory/components/PatientMaxDeeplink/PatientMaxDeeplink.vue';
 
 export default {
     name: 'PatientCard',
-    components: { PatientMaxDeeplink },
     emits: ['edit-start', 'edit-end'],
     setup() {
         const store = usePatientCardStore();

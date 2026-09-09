@@ -16,11 +16,12 @@ describe('PatientMaxDeeplink.vue', () => {
 
     afterEach(() => {
         vi.unstubAllGlobals()
+        vi.restoreAllMocks()
     })
 
-    it('renders the block', () => {
+    it('renders the block with "Получить ссылку" button', () => {
         const wrapper = mountDeeplink()
-        expect(wrapper.text()).toContain('Ссылка для мессенджера MAX')
+        expect(wrapper.text()).toContain('Получить ссылку')
     })
 
     it('fetches deeplink on click and shows url + bound status', async () => {
@@ -32,7 +33,7 @@ describe('PatientMaxDeeplink.vue', () => {
         expect(apiClient.get).toHaveBeenCalledWith('/patients/7/max-deeplink')
         expect(wrapper.vm.url).toBe('https://max.ru/bot?start=abc')
         expect(wrapper.vm.bound).toBe(true)
-        expect(wrapper.text()).toContain('чат привязан')
+        expect(wrapper.text()).toContain('Чат привязан')
     })
 
     it('copies link to clipboard', async () => {
