@@ -37,6 +37,16 @@ describe('MedicalTable.vue', () => {
     expect(row.findAll('td')[1].text()).toBe('—')
   })
 
+  it('renders alternation as "доза / вторая доза через день" (СЦ-3.65.1/6)', () => {
+    const { wrapper } = mountMedicalTable([
+      { displayDate: '01.01.2024', currentDose: 2.5, currentDose2: 2.75, prescribedDose: 3, prescribedDose2: -1, recommendations: '', comment: '', type: 'test', mno: 2.5 },
+    ])
+    const cells = wrapper.findAll('tbody tr td')
+    // columns: [Дата, Показатели, Принимаемая доза, Назначенная доза, Рекомендации, Комментарий]
+    expect(cells[2].text()).toBe('2.5 / 2.75 через день')
+    expect(cells[3].text()).toBe('3')
+  })
+
   it('builds chartData from events that have a non-null mno, including dose (СЦ-3.64.1/2)', () => {
     const { wrapper } = mountMedicalTable([
       { displayDate: '01.01.2024', date: '2024-01-01', mno: 2.5, prescribedDose: 5, type: 'test' },
@@ -58,6 +68,18 @@ describe('MedicalTable.vue', () => {
 
     const { wrapper: withoutData } = mountMedicalTable([{ displayDate: '01.01.2024', date: '2024-01-01', mno: null }])
     expect(withoutData.findComponent({ name: 'MnoChart' }).exists()).toBe(false)
+  })
+
+  it('renders the next MNO test date column (СЦ-3.66.2)', () => {
+    const { wrapper } = mountMedicalTable([
+      { displayDate: '02.01.2024', currentDose: 2.25, prescribedDose: 2.25, recommendations: '', comment: '', type: 'appointment', mno: null, nextTestDt: '20.01.2024' },
+    ])
+
+    const headers = wrapper.findAll('th').map(th => th.text())
+    expect(headers).toContain('Следующая сдача МНО')
+
+    const cells = wrapper.findAll('tbody td').map(td => td.text())
+    expect(cells).toContain('20.01.2024')
   })
 
   it('emits open-test-modal and open-appointment-modal', async () => {

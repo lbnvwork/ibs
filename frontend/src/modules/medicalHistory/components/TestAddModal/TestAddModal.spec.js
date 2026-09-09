@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import TestAddModal from './TestAddModal.vue'
 import apiClient from '@/modules/shared/api/client'
 
-vi.mock('@/modules/shared/api/client', () => ({ default: { post: vi.fn() } }))
+vi.mock('@/modules/shared/api/client', () => ({ default: { post: vi.fn(), get: vi.fn() } }))
 
-function mountTestAddModal(overrides = {}) {
+// opts может быть массивом (последние назначения, 3.65) или объектом (переопределения props, 3.68).
+function mountTestAddModal(opts = {}) {
+  const lastAppointments = Array.isArray(opts) ? opts : []
+  const overrides = Array.isArray(opts) ? {} : opts
+  apiClient.get.mockResolvedValueOnce({ data: { member: lastAppointments } })
   return mount(TestAddModal, {
     props: { treatment: '/api/treatments/10', drugId: 1, ...overrides }
   })
@@ -151,5 +155,50 @@ describe('TestAddModal.vue', () => {
     const wrapper = mountTestAddModal()
     expect(wrapper.text()).toContain('Сообщение пациенту')
     expect(wrapper.text()).not.toContain('Комментарий')
+  })
+
+  describe('alternation and autofill', () => {
+    it('prefills the dose and alternation from the last appointment (СЦ-3.65.8)', async () => {
+      const wrapper = mountTestAddModal([{ doze: 2.5, doze2: 2.75 }])
+      await flushPromises()
+
+      expect(wrapper.vm.doze).toBe(2.5)
+      expect(wrapper.vm.enableAlternation).toBe(true)
+      expect(wrapper.vm.dose2).toBe(2.75)
+    })
+
+    it('leaves the dose empty when there is no appointment (СЦ-3.65.9)', async () => {
+      const wrapper = mountTestAddModal([])
+      await flushPromises()
+
+      expect(wrapper.vm.doze).toBeNull()
+      expect(wrapper.vm.enableAlternation).toBe(false)
+    })
+
+    it('sends doze2 with the test history when alternation is enabled', async () => {
+      apiClient.post.mockResolvedValue({})
+      const wrapper = mountTestAddModal([])
+      await flushPromises()
+      wrapper.vm.mno = 2.5
+      wrapper.vm.doze = 2.5
+      wrapper.vm.enableAlternation = true
+      wrapper.vm.alternationDelta = '0.25'
+
+      await wrapper.vm.save()
+
+      expect(apiClient.post).toHaveBeenCalledWith('/test_histories', expect.objectContaining({ doze: 2.5, doze2: 2.75 }))
+    })
+
+    it('rejects when alternation is enabled but no deviation is selected', async () => {
+      const wrapper = mountTestAddModal([])
+      await flushPromises()
+      wrapper.vm.mno = 2.5
+      wrapper.vm.doze = 2.5
+      wrapper.vm.enableAlternation = true
+      wrapper.vm.alternationDelta = null
+
+      expect(wrapper.vm.validateForm()).toBe(true)
+      expect(wrapper.vm.fieldErrors.alternationDelta).toContain('отклонение')
+    })
   })
 })
