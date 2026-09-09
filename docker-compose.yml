@@ -17,6 +17,7 @@ services:
       MAX_WEBHOOK_SECRET: ${MAX_WEBHOOK_SECRET:-}
       MAX_BOT_NICKNAME: ${MAX_BOT_NICKNAME:-}
       COMPOSER_ALLOW_SUPERUSER: 1
+      APP_VERSION: ${APP_VERSION:-dev}
     depends_on:
       db:
         condition: service_healthy
@@ -113,6 +114,7 @@ services:
       - "${FRONTEND_PORT:-5174}:5173"
     environment:
       VITE_API_URL: "http://localhost:${APP_PORT}/api"
+      VITE_APP_VERSION: "${VITE_APP_VERSION:-dev}"
     command: sh -c "npm ci --no-audit --no-fund && npm run build"
     networks:
       - default

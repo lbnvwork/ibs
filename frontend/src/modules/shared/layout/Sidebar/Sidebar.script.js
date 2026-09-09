@@ -100,6 +100,9 @@ export default {
         },
         backButtonTitle() {
             return 'Вернуться к списку пациентов';
+        },
+        appVersion() {
+            return import.meta.env.VITE_APP_VERSION || 'dev';
         }
     },
     methods: {

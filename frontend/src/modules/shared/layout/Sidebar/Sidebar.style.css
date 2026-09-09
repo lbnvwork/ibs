@@ -101,3 +101,11 @@
         height: 20px;
     }
 }
+
+.sidebar__version {
+    margin-top: auto;
+    padding: 8px 4px;
+    font-size: 11px;
+    color: var(--color-muted, #9aa0a6);
+    text-align: center;
+}
