@@ -9,6 +9,11 @@ export default {
         return { store, formatPhone, formatPassport, formatSnils, formatDate };
     },
     methods: {
+        sexLabel(sex) {
+            if (sex === 1) return 'Мужской';
+            if (sex === 0) return 'Женский';
+            return '—';
+        },
         startEditingPatient() {
             this.$emit('edit-start');
             this.store.startEditingPatient();

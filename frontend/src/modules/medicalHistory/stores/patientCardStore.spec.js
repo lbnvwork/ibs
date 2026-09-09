@@ -20,7 +20,8 @@ const rawPatient = {
   snils: '12345678995',
   comment: 'комментарий',
   hospital: '/api/hospitals/1',
-  birthday: '1980-01-01'
+  birthday: '1980-01-01',
+  sex: 1
 }
 
 describe('patientCardStore', () => {
@@ -40,6 +41,7 @@ describe('patientCardStore', () => {
       expect(apiClient.get).toHaveBeenCalledWith('/hospitals/1')
       expect(store.patient.name).toBe('Иванов Пётр Сергеевич')
       expect(store.patient.hospital).toBe('ЦРБ')
+      expect(store.patient.sex).toBe(1)
       expect(store.isPatientLoaded).toBe(true)
     })
 
@@ -75,6 +77,7 @@ describe('patientCardStore', () => {
       expect(store.editingPatient).toBe(true)
       expect(store.editingPatientData.phone).toBe('8(900)123-45-67')
       expect(store.editingPatientData.snils).toBe('123-456-789 95')
+      expect(store.editingPatientData.sex).toBe(1)
     })
 
     it('seeds empty strings (not the "—" placeholder) for missing fields', async () => {
@@ -201,6 +204,21 @@ describe('patientCardStore', () => {
       expect(patientApi.update).toHaveBeenCalled()
       expect(store.patient.phone).toBe('8(900)999-99-99')
       expect(store.editingPatient).toBe(false)
+    })
+
+    it('sends the sex in the PATCH body and updates the snapshot', async () => {
+      patientApi.getOne.mockResolvedValue(rawPatient)
+      patientApi.update.mockResolvedValue({})
+      const store = usePatientCardStore()
+      await store.fetchPatient(1)
+      store.startEditingPatient()
+      store.editingPatientData.sex = 0
+
+      const result = await store.savePatient(1)
+
+      expect(result).toBe(true)
+      expect(patientApi.update).toHaveBeenCalledWith(1, expect.objectContaining({ sex: 0 }))
+      expect(store.patient.sex).toBe(0)
     })
 
     it('parses violation messages from a 422 response', async () => {
