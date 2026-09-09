@@ -1,4 +1,5 @@
 import { test, expect, request, type Page } from '@playwright/test';
+import { openHistoryTabIfBakulevo } from './support/theme';
 
 // E2E-регрессия 3.66 «Дата следующей сдачи МНО при назначении».
 // Покрывает: ввод даты следующей сдачи в форме назначения, сохранение nextTestDt,
@@ -140,6 +141,7 @@ test.describe.serial('3.66 Дата следующей сдачи МНО', () =>
     await expect(modal).toBeHidden();
 
     // СЦ-3.66.2: в «Медицинские данные» колонка «Следующая сдача МНО» не пустая.
+    await openHistoryTabIfBakulevo(page);
     const row = page.locator('.medical-data tr.appointment-row').first();
     await expect(row.locator('td').nth(4)).not.toHaveText('—');
 

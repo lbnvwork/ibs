@@ -1,4 +1,5 @@
 import { test, expect, request, type Page } from '@playwright/test';
+import { IS_BAKULEVO } from './support/theme';
 
 // E2E-регрессия 3.70 «Отображение референтной ссылки MAX (диплинк) в карточке пациента».
 // Покрывает: блок «Ссылка для мессенджера MAX», получение ссылки, статус привязки,
@@ -117,8 +118,10 @@ test.describe.serial('3.70 Ссылка MAX (диплинк) в карточке
     await loginAsDoctor(page);
     await page.goto(`/patient/${demo.patientId}`);
 
-    // Раскрыть секцию «Ссылка для мессенджера MAX».
-    await page.locator('.section-title', { hasText: 'Ссылка для мессенджера MAX' }).click();
+    // Раскрыть секцию «Ссылка для мессенджера MAX» (в Бакулево блок виден в дашборде сразу).
+    if (!IS_BAKULEVO) {
+      await page.locator('.section-title', { hasText: 'Ссылка для мессенджера MAX' }).click();
+    }
     const block = page.locator('.max-deeplink');
     await expect(block).toBeVisible();
     await expect(block.getByText(/Ссылка для привязки чата MAX/)).toBeVisible();
@@ -165,7 +168,9 @@ test.describe.serial('3.70 Ссылка MAX (диплинк) в карточке
     await loginAsDoctor(page);
     await page.goto(`/patient/${demo.patientId}`);
 
-    await page.locator('.section-title', { hasText: 'Ссылка для мессенджера MAX' }).click();
+    if (!IS_BAKULEVO) {
+      await page.locator('.section-title', { hasText: 'Ссылка для мессенджера MAX' }).click();
+    }
     const block = page.locator('.max-deeplink');
     await block.getByRole('button', { name: 'Получить ссылку' }).click();
     await expect(block.locator('a.max-deeplink-url')).toBeVisible();

@@ -1,4 +1,5 @@
 import { test, expect, request, type Page } from '@playwright/test';
+import { IS_BAKULEVO } from './support/theme';
 
 // ===== Конфиг демо-прогона (env) =====
 // E2E_BASE_URL — базовый URL (локально http://nginx, демо https://test.bloodcontrol.ru).
@@ -138,6 +139,7 @@ async function loginAsDoctor(page: Page): Promise<void> {
 }
 
 test.describe.serial('3.35 Демо-сценарий (куратор)', () => {
+  test.skip(IS_BAKULEVO, '3.35 демо-сценарий — almazovo-only (Бакулево покрыт theme-bakulevo.spec.ts + гайдом)');
   /**
    * Шаг 0 — Setup через API: тестовый Hospital и Supervisor.
    * Врач (User + MedicalPersonnel) создаётся ЗАРАНЕЕ командой:

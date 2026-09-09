@@ -1,4 +1,5 @@
 import { test, expect, request, type Page } from '@playwright/test';
+import { openHistoryTabIfBakulevo } from './support/theme';
 
 // E2E-регрессия 3.65 «Чередование МНО в назначении (0,5 / через день)».
 // Покрывает: ввод чередования в назначении (±0.25/±0.5), сохранение doze2,
@@ -132,6 +133,7 @@ test.describe.serial('3.65 Чередование дозы (через день)
     await expect(modal).toBeHidden();
 
     // СЦ-3.65.6: в «Медицинские данные» — «2.5 / 2.75 через день».
+    await openHistoryTabIfBakulevo(page);
     const medicalData = page.locator('.medical-data');
     await expect(medicalData.getByText('2.5 / 2.75 через день').first()).toBeVisible();
 
