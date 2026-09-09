@@ -107,7 +107,13 @@ class AppointmentSaveProcessor implements ProcessorInterface
                 Priority::ROUTINE,
             );
         } catch (\Throwable $exception) {
-            // Сбой доставки не должен блокировать сохранение назначения.
+            // Сбой доставки не должен блокировать сохранение назначения, но ошибку логируем.
+            error_log(sprintf(
+                'Не удалось отправить MAX-уведомление (treatment_id=%s, patient_id=%s): %s',
+                (string) ($treatment->getId() ?? 'null'),
+                (string) ($patient->getId() ?? 'null'),
+                $exception->getMessage(),
+            ));
         }
     }
 }
