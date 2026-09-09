@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      major:
+        description: 'MAJOR (итерация)'
+        required: true
+        default: '0'
+      minor:
+        description: 'MINOR (спринт)'
+        required: true
+        default: '3'
+
+jobs:
+  release:
+    name: Create tag + GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine next version
+        id: version
+        run: |
+          MAJOR="${{ github.event.inputs.major }}"
+          MINOR="${{ github.event.inputs.minor }}"
+          LAST="$(git tag -l "v${MAJOR}.${MINOR}.*" | sort -V | tail -1)"
+          if [ -z "$LAST" ]; then PATCH=1; else PATCH=$(( ${LAST##*.} + 1 )); fi
+          VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Next version: ${VERSION}"
+
+      - name: Create tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Тег ${VERSION} уже существует."; exit 0
+          fi
+          git tag -a "$VERSION" -m "release ${VERSION}"
+          git push origin "$VERSION"
+          gh release create "$VERSION" \
+            --title "$VERSION" \
+            --notes "SemVer-релиз. Подробнее — CHANGELOG.md."
