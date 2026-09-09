@@ -27,18 +27,6 @@
         </div>
     </div>
 
-    <!-- Пол -->
-    <div class="info-row">
-        <div class="info-group">
-            <label>Пол:</label>
-            <span v-if="!store.editingPatient">{{ sexLabel(store.patient.sex) }}</span>
-            <select v-else v-model="store.editingPatientData.sex" class="edit-input">
-                <option :value="0">Женский</option>
-                <option :value="1">Мужской</option>
-            </select>
-        </div>
-    </div>
-
     <!-- Адрес -->
     <div class="info-row">
         <div class="info-group">

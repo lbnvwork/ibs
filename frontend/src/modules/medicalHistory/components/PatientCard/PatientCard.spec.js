@@ -26,7 +26,6 @@ const patient = {
   insurance: 'ОМС',
   snils: '123-456-789 95',
   hospital: 'ЦРБ',
-  sex: 1,
   comment: '',
 }
 
@@ -45,20 +44,6 @@ describe('PatientCard.vue', () => {
     expect(wrapper.text()).toContain('Иванов Пётр')
     expect(wrapper.text()).toContain('ул. Ленина, 1')
     expect(wrapper.text()).toContain('ЦРБ')
-  })
-
-  it('displays the sex label', () => {
-    const { wrapper } = mountPatientCard({ ...patient, sex: 0 })
-    expect(wrapper.text()).toContain('Женский')
-  })
-
-  it('shows the sex select in edit mode', async () => {
-    const { wrapper, store } = mountPatientCard({ ...patient, sex: 1 })
-    store.editingPatient = true
-    store.editingPatientData = { sex: 1 }
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.find('select').exists()).toBe(true)
   })
 
   it('entering edit mode emits edit-start and calls the store', async () => {

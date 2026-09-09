@@ -53,8 +53,7 @@ export const usePatientCardStore = defineStore('patientCard', {
                     comment: data.comment || '',
                     hospital: this.hospitalName || '—',
                     birthday: data.birthday,
-                    age: calculateAge(data.birthday) ? formatAge(calculateAge(data.birthday)) : '—',
-                    sex: data.sex
+                    age: calculateAge(data.birthday) ? formatAge(calculateAge(data.birthday)) : '—'
                 };
             } catch (err) {
                 this.error = 'Не удалось загрузить данные пациента.';
@@ -73,8 +72,7 @@ export const usePatientCardStore = defineStore('patientCard', {
                 insurance: this.patient.insurance || '',
                 snils: formatSnils(this.patient.snils) || this.patient.snils || '',
                 comment: this.patient.comment || '',
-                email: this.patient.email || '',
-                sex: this.patient.sex ?? 0
+                email: this.patient.email || ''
             };
             this.originalPatientJson = JSON.stringify(this.editingPatientData);
             this.editingPatient = true;
@@ -134,8 +132,7 @@ export const usePatientCardStore = defineStore('patientCard', {
                 healthInsurance: this.editingPatientData.insurance.trim(),
                 snils: formatSnils(this.editingPatientData.snils),
                 comment: this.editingPatientData.comment.trim() || null,
-                email: this.editingPatientData.email.trim() || null,
-                sex: Number(this.editingPatientData.sex ?? 0)
+                email: this.editingPatientData.email.trim() || null
             };
 
             try {
@@ -147,7 +144,6 @@ export const usePatientCardStore = defineStore('patientCard', {
                 this.patient.snils = body.snils;
                 this.patient.comment = body.comment;
                 this.patient.email = body.email;
-                this.patient.sex = body.sex;
                 this.editingPatient = false;
                 return true;
             } catch (err) {
