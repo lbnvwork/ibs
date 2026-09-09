@@ -154,11 +154,9 @@ test.describe('guide: Бакулево (десктоп) — скриншоты �
     await page.locator('.modal-panel .modal-close').click();
 
     // 9. Редактирование витальных показателей (VitalsCard)
+    // 3.79: «Изменить» сразу открывает форму редактирования (autoEdit), без плиток + ✎.
     await page.getByRole('button', { name: 'Изменить' }).click();
     await expect(page.locator('.modal-panel')).toBeVisible();
-    // Дождаться плиток последних витальных, затем войти в редактирование.
-    await expect(page.locator('.modal-panel .vital-tile').first()).toBeVisible();
-    await page.locator('.modal-panel .btn-icon-edit').click();
     await expect(page.locator('.modal-panel .vitals-form')).toBeVisible();
     await page.locator('.modal-panel').screenshot({ path: `${OUT}/edit-vitals.png` });
     await page.locator('.modal-panel .modal-close').click();

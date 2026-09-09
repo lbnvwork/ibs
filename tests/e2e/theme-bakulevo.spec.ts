@@ -123,7 +123,8 @@ test.describe('3.58 Тема Бакулево (дизайн-токены + layou
     await expect(page.locator('.metric-card').first()).toBeVisible();
     await expect(page.getByText('МНО (INR)')).toBeVisible();
 
-    await expect(page.getByText('Риск осложнений')).toBeVisible();
+    // 3.79: риск-блок переименован в «Текущий анализ» (ComplicationRisk).
+    await expect(page.getByText('Текущий анализ')).toBeVisible();
   });
 
   test('СЦ-3.58.20: «Анализ» открывает форму добавления анализа', async ({ page }) => {

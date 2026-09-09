@@ -1,4 +1,5 @@
 import { test, expect, request, type Page } from '@playwright/test';
+import { IS_BAKULEVO } from './support/theme';
 
 // E2E-регрессия 3.81 «Справочник диагнозов: поиск МКБ-10 в редактировании лечения».
 // Покрывает: поиск по коду → подстановка диагноза + кода → сохранение diagnosisCode.
@@ -59,6 +60,9 @@ async function loginAsDoctor(page: Page): Promise<void> {
 }
 
 test.describe.serial('3.81 Поиск МКБ-10 в редактировании лечения', () => {
+  // В теме Бакулево лечение редактируется в модалке (секции «Лечение» .section-title нет).
+  test.skip(IS_BAKULEVO, 'almazovo-сборка: секция «Лечение» (.section-title) отсутствует в модальной теме Бакулево');
+
   test('setup: больница + пациент + лечение (I48)', async () => {
     demo.adminToken = await apiLogin(ADMIN_LOGIN, ADMIN_PASSWORD);
     const token = demo.adminToken;
