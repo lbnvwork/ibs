@@ -1,11 +1,14 @@
 import apiClient from '@/modules/shared/api/client';
 import { validateForm } from '@/modules/shared/utils/validationHelper';
 
+const AUTOFILL_DEBOUNCE_MS = 300;
+
 export default {
     name: 'TestAddModal',
     props: {
         treatment: { type: String, required: true },
-        drugId: { type: Number, required: true }
+        drugId: { type: Number, required: true },
+        drugGenitive: { type: String, default: '' }
     },
     emits: ['close', 'saved'],
     data() {
@@ -18,7 +21,14 @@ export default {
             alternationDelta: null,
             fieldErrors: {},
             saveError: null,
+            isCommentDirty: false,
+            autofillTimer: null,
         };
+    },
+    watch: {
+        mno() {
+            this.scheduleAutofill();
+        },
     },
     computed: {
         dose2() {
@@ -27,6 +37,14 @@ export default {
             }
             return this.doze !== null ? this.doze + Number(this.alternationDelta) : null;
         }
+    },
+    beforeUnmount() {
+        if (this.autofillTimer) {
+            clearTimeout(this.autofillTimer);
+        }
+    },
+    created() {
+        this.loadLastAppointment();
     },
     methods: {
         validateForm() {
@@ -75,6 +93,38 @@ export default {
             const errors = validateForm(formData, rules, extraChecks);
             this.fieldErrors = errors;
             return Object.keys(errors).length > 0;
+        },
+
+        scheduleAutofill() {
+            if (this.autofillTimer) {
+                clearTimeout(this.autofillTimer);
+            }
+            this.autofillTimer = setTimeout(() => this.autofillComment(), AUTOFILL_DEBOUNCE_MS);
+        },
+
+        async autofillComment() {
+            if (this.isCommentDirty) {
+                return;
+            }
+            if (this.mno === null || this.mno === undefined || this.mno === '') {
+                return;
+            }
+            try {
+                const response = await apiClient.post('/notification_templates/resolve', {
+                    code: 'analysis_result',
+                    data: {
+                        mno: this.mno,
+                        drug_genitive: this.drugGenitive || null,
+                    },
+                });
+                this.comment = response.data?.body ?? '';
+            } catch (err) {
+                console.error('Не удалось получить превью сообщения:', err);
+            }
+        },
+
+        markCommentDirty() {
+            this.isCommentDirty = true;
         },
 
         onAlternationToggle() {
@@ -134,8 +184,5 @@ export default {
                 this.saveError = 'Не удалось сохранить анализ.';
             }
         },
-    },
-    created() {
-        this.loadLastAppointment();
     },
 };

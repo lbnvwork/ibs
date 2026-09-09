@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Ibs\Context\TreatmentTherapy\State\TestHistoryLatestProvider;
+use Ibs\Context\TreatmentTherapy\State\TestHistorySaveProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
@@ -29,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new GetCollection(),
         new Get(),
-        new Post(),
+        new Post(processor: TestHistorySaveProcessor::class),
         new Patch(),
         new Delete(),
     ],
