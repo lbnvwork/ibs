@@ -24,6 +24,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 final class NotificationTemplateResolveController
 {
+    /**
+     * Разрешённые ключи `data` — плейсхолдеры шаблонов MAX.
+     * `comment` намеренно исключён: в превью `%comment%` не участвует
+     * (не передаётся в `data` и сбрасывается из ответа).
+     *
+     * @var list<string>
+     */
+    private const ALLOWED_DATA_KEYS = ['mno', 'date', 'dose', 'sdose', 'drug_genitive'];
+
     public function __construct(
         private readonly TemplateResolver $templateResolver,
     ) {
@@ -61,6 +70,9 @@ final class NotificationTemplateResolveController
     }
 
     /**
+     * Оставляет только известные плейсхолдеры (whitelist) со скалярными значениями —
+     * строгий контракт `data` (неизвестные ключи отбрасываются).
+     *
      * @return array<string, scalar|null>
      */
     private function sanitizeData(mixed $raw): array
@@ -68,7 +80,11 @@ final class NotificationTemplateResolveController
         $data = [];
         if (\is_array($raw)) {
             foreach ($raw as $key => $value) {
-                if (\is_string($key) && (\is_scalar($value) || null === $value)) {
+                if (
+                    \is_string($key)
+                    && \in_array($key, self::ALLOWED_DATA_KEYS, true)
+                    && (\is_scalar($value) || null === $value)
+                ) {
                     $data[$key] = $value;
                 }
             }

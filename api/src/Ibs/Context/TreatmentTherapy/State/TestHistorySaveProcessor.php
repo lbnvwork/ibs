@@ -67,11 +67,15 @@ class TestHistorySaveProcessor implements ProcessorInterface
                 Priority::ROUTINE,
             );
         } catch (\Throwable $exception) {
+            // Логируем класс и трейс, чтобы не маскировать программные ошибки
+            // (Error/TypeError) под «сбой доставки» — они видны в логе целиком.
             error_log(sprintf(
-                'Не удалось отправить MAX-уведомление о результате анализа (treatment %d): %s',
+                'Не удалось отправить MAX-уведомление о результате анализа (treatment %d): [%s] %s',
                 $treatment->getId() ?? 0,
+                $exception::class,
                 $exception->getMessage(),
             ));
+            error_log($exception->getTraceAsString());
         }
     }
 }

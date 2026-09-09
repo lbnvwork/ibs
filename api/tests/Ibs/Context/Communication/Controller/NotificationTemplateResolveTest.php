@@ -106,6 +106,38 @@ class NotificationTemplateResolveTest extends WebTestCase
         $this->assertStringContainsString('ВАМ НУЖНО ПРИНИМАТЬ 5 варфарина', $data['body']);
     }
 
+    public function testResolveWhitelistDropsUnknownDataKeys(): void
+    {
+        $token = $this->createAuthenticatedClient($this->client, $this->entityManager, login: 'doctor.resolve');
+
+        $this->client->request(
+            'POST',
+            '/api/notification_templates/resolve',
+            server: array_merge($this->authHeader($token), ['CONTENT_TYPE' => 'application/json']),
+            content: json_encode([
+                'code' => 'appointment_dose',
+                'data' => [
+                    'mno' => 2.3,
+                    'date' => '01.01.2026',
+                    'dose' => 5,
+                    'drug_genitive' => 'варфарина',
+                    'comment' => '<b>внедряемый текст</b>',
+                    'patient_name' => 'Иван',
+                ],
+            ], JSON_THROW_ON_ERROR)
+        );
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+
+        /** @var array{body: string} $data */
+        $data = json_decode((string) $this->client->getResponse()->getContent(), true);
+        // `comment` отброшен whitelist'ом → `%comment%` остаётся литералом и сбрасывается из ответа;
+        // произвольный `patient_name` тоже отброшен (не плейсхолдер шаблона).
+        $this->assertStringNotContainsString('%comment%', $data['body']);
+        $this->assertStringNotContainsString('внедряемый текст', $data['body']);
+        $this->assertStringContainsString('ВАМ НУЖНО ПРИНИМАТЬ 5 варфарина', $data['body']);
+    }
+
     public function testResolveRequiresAuth(): void
     {
         $this->client->request(
