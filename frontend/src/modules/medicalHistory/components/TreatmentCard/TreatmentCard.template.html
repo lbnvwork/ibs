@@ -28,7 +28,7 @@
             <div class="info-group">
                 <label>Код диагноза (МКБ-10):</label>
                 <span v-if="!store.editingTreatment">{{ store.treatment.diagnosisCode || '—' }}</span>
-                <input v-else type="text" v-model="store.editingTreatmentData.diagnosisCode" class="edit-input" />
+                <MultiDiagnosisSelect v-else :model-value="diagnosisCodes" @update:model-value="onDiagnosisSelect" />
             </div>
         </div>
 

@@ -95,20 +95,20 @@
     min-height: 60px;
 }
 
-.range-edit {
+.info-group .range-edit {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    width: auto;
     flex: 0 0 auto;
+    width: auto;
 }
 
-.range-edit input[type="number"] {
+.info-group .range-edit input[type="number"] {
     width: 60px;
     flex: none;
 }
 
-.range-edit span {
+.info-group .range-edit span {
     flex: none;
 }
 
