@@ -147,7 +147,7 @@
             <div class="modal-panel__head">
                 <button class="modal-close" @click="closePatientEdit">×</button>
             </div>
-            <PatientCard :key="id" />
+            <PatientCard :key="id" @edit-end="onPatientSaved" />
         </div>
     </div>
 

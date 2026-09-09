@@ -251,6 +251,18 @@ describe('MedicalHistory.vue', () => {
       expect(wrapper.vm.showPatientModal).toBe(false)
     })
 
+    it('onPatientSaved closes the modal and re-fetches the sex', async () => {
+      const { wrapper } = mountMedicalHistory('7')
+      await flushPromises()
+      const spy = vi.spyOn(wrapper.vm, 'loadPatientSex').mockResolvedValue()
+
+      wrapper.vm.showPatientModal = true
+      wrapper.vm.onPatientSaved()
+
+      expect(wrapper.vm.showPatientModal).toBe(false)
+      expect(spy).toHaveBeenCalledWith('7')
+    })
+
     it('openTreatmentEdit/closeTreatmentEdit toggle the treatment modal', async () => {
       const { wrapper } = mountMedicalHistory('7')
       await flushPromises()

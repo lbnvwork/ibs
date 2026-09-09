@@ -266,6 +266,12 @@ export default {
         closePatientEdit() {
             this.showPatientModal = false;
         },
+        onPatientSaved() {
+            this.showPatientModal = false;
+            if (this.id) {
+                this.loadPatientSex(this.id);
+            }
+        },
         openTreatmentEdit() {
             this.showTreatmentModal = true;
         },
