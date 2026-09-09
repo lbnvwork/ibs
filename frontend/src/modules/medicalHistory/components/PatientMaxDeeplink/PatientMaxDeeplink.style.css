@@ -1,0 +1,101 @@
+.max-deeplink {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.max-deeplink-description {
+    margin: 0;
+    font-size: 13px;
+    color: #5a6b7b;
+    line-height: 1.45;
+}
+
+.max-deeplink-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.max-deeplink-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+}
+.max-deeplink-dot.is-bound {
+    background: #27ae60;
+}
+.max-deeplink-dot.is-unbound {
+    background: #e67e22;
+}
+
+.max-deeplink-status-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.max-deeplink-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.max-deeplink-url {
+    flex: 1 1 100%;
+    word-break: break-all;
+    font-size: 13px;
+    color: #3498db;
+    text-decoration: none;
+    background: #f8f9fa;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #e3e8ee;
+}
+.max-deeplink-url:hover {
+    text-decoration: underline;
+}
+
+.max-deeplink-btn {
+    padding: 7px 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    background: #e0e0e0;
+    color: #333;
+}
+.max-deeplink-btn:hover {
+    background: #bdbdbd;
+}
+
+.max-deeplink-btn-primary {
+    align-self: flex-start;
+    background: #27ae60;
+    color: white;
+}
+.max-deeplink-btn-primary:hover {
+    background: #219a52;
+}
+
+.max-deeplink-hint {
+    font-size: 13px;
+    color: #27ae60;
+}
+
+.max-deeplink-loading {
+    font-size: 14px;
+    color: #5a6b7b;
+}
+
+.max-deeplink-error {
+    color: #e74c3c;
+    font-size: 13px;
+    padding: 6px 10px;
+    background: #fdf0f0;
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+}

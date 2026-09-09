@@ -54,6 +54,13 @@
             >
                 <TreatmentCard :key="id" @edit-start="startTreatmentEdit" @edit-end="endTreatmentEdit" />
             </CollapsibleSection>
+            <CollapsibleSection title="Ссылка для мессенджера MAX">
+                <PatientMaxDeeplink
+                    v-if="id"
+                    :key="id"
+                    :patient-id="id"
+                />
+            </CollapsibleSection>
             <RiskScale v-if="false" />
         </div>
     </div>

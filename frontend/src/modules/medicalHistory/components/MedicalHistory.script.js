@@ -3,6 +3,7 @@ import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointm
 import AppointmentAdd from '@/modules/medicalHistory/components/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/modules/medicalHistory/components/TestAddModal/TestAddModal.vue';
 import PatientCard from '@/modules/medicalHistory/components/PatientCard/PatientCard.vue';
+import PatientMaxDeeplink from '@/modules/medicalHistory/components/PatientMaxDeeplink/PatientMaxDeeplink.vue';
 import TreatmentCard from '@/modules/medicalHistory/components/TreatmentCard/TreatmentCard.vue';
 import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCardStore';
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore';
@@ -23,6 +24,7 @@ export default {
         AppointmentAdd, 
         TestAddModal, 
         PatientCard, 
+        PatientMaxDeeplink,
         TreatmentCard, 
         MedicalTable, 
         Pharmacogenetics,
