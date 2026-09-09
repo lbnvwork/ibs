@@ -51,7 +51,7 @@ final class LoadReferenceFixturesCommandIntegrationTest extends WebTestCase
         self::assertSame(11, $this->fetchInt('SELECT count(*) FROM drugs'));
         self::assertSame(4, $this->fetchInt('SELECT count(*) FROM drug_groups'));
         self::assertSame(6, $this->fetchInt('SELECT count(*) FROM genetic_markers'));
-        self::assertSame(15038, $this->fetchInt('SELECT count(*) FROM mkb10'));
+        self::assertSame(15040, $this->fetchInt('SELECT count(*) FROM mkb10'));
 
         // setval в конце артефакта реально исполнился: последовательность = max(id).
         self::assertSame(11, $this->fetchInt('SELECT last_value FROM drugs_id_seq'));
@@ -64,7 +64,7 @@ final class LoadReferenceFixturesCommandIntegrationTest extends WebTestCase
 
         self::assertSame(ConsoleCommand::SUCCESS, $this->commandTester->execute(['--mode' => 'upsert']));
         self::assertSame(11, $this->fetchInt('SELECT count(*) FROM drugs'));
-        self::assertSame(15038, $this->fetchInt('SELECT count(*) FROM mkb10'));
+        self::assertSame(15040, $this->fetchInt('SELECT count(*) FROM mkb10'));
     }
 
     private function fetchInt(string $sql): int

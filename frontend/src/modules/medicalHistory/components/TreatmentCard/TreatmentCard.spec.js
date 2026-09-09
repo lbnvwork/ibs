@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import TreatmentCard from './TreatmentCard.vue'
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore'
+import { mkb10Api } from '@/modules/shared/api/mkb10'
+
+vi.mock('@/modules/shared/api/mkb10', () => ({ mkb10Api: { getByCode: vi.fn(), search: vi.fn(), getPopular: vi.fn().mockResolvedValue([]) } }))
 
 function mountTreatmentCard(treatment) {
   const pinia = createPinia()
@@ -84,6 +87,29 @@ describe('TreatmentCard.vue', () => {
 
     expect(store.saveTreatment).toHaveBeenCalledWith('7')
     expect(wrapper.emitted('edit-end')).toBeTruthy()
+  })
+
+  it('renders MultiDiagnosisSelect instead of a plain input when editing', async () => {
+    const { wrapper, store } = mountTreatmentCard(treatment)
+    store.editingTreatment = true
+    store.editingTreatmentData = { diagnosis: 'x', diagnosisCode: 'I80', comorbiditiesRaw: '' }
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.findComponent({ name: 'MultiDiagnosisSelect' }).exists()).toBe(true)
+  })
+
+  it('selecting a code fills diagnosis and diagnosisCode', async () => {
+    mkb10Api.getByCode.mockResolvedValue({ member: [{ mkbCode: 'I82.4', mkbName: 'Острый тромбоз глубоких вен нижних конечностей' }] })
+    const { wrapper, store } = mountTreatmentCard(treatment)
+    store.editingTreatment = true
+    store.editingTreatmentData = { diagnosis: '', diagnosisCode: '', comorbiditiesRaw: '' }
+    await wrapper.vm.$nextTick()
+
+    wrapper.vm.selectedDiagnosisCode = 'I82.4'
+    await flushPromises()
+
+    expect(store.editingTreatmentData.diagnosisCode).toBe('I82.4')
+    expect(store.editingTreatmentData.diagnosis).toBe('Острый тромбоз глубоких вен нижних конечностей')
   })
 
   it('shows the real end date row only when the treatment is finished', async () => {

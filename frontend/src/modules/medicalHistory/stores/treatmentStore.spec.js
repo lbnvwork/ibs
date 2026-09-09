@@ -167,6 +167,21 @@ describe('treatmentStore', () => {
       expect(store.treatment.diagnosis).toBe('Новый диагноз')
     })
 
+    it('saves diagnosisCode with the treatment', async () => {
+      treatmentApi.getAll.mockResolvedValue({ member: [rawTreatment] })
+      treatmentApi.update.mockResolvedValue({})
+      const store = useTreatmentStore()
+      await store.fetchTreatment(1)
+      store.startEditingTreatment()
+      store.editingTreatmentData.diagnosisCode = 'I82.4'
+
+      const result = await store.saveTreatment()
+
+      expect(result).toBe(true)
+      expect(treatmentApi.update).toHaveBeenCalledWith(10, expect.objectContaining({ diagnosisCode: 'I82.4' }))
+      expect(store.treatment.diagnosisCode).toBe('I82.4')
+    })
+
     it('parses violation messages from a 422 response', async () => {
       treatmentApi.getAll.mockResolvedValue({ member: [rawTreatment] })
       treatmentApi.update.mockRejectedValue({
