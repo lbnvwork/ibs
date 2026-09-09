@@ -8,7 +8,8 @@ import almazovoLogo from './assets/logos/almazovo.png';
 import { useAuthStore } from '@/modules/shared/stores/authStore';
 
 // build-time выбор темы через VITE_THEME (СЦ-3.58.6: неизвестное значение → fallback almazovo).
-// Статическая проверка (не runtime-флаг), чтобы Vite бандлил только выбранную тему.
+// import.meta.env.VITE_THEME — константа времени сборки, условие резолвится на сборке;
+// CSS подключается динамическим import() (на каждую тему свой chunk, грузится только нужный).
 const isBakulevo = import.meta.env.VITE_THEME === 'bakulevo';
 
 if (isBakulevo) {

@@ -41,7 +41,7 @@ export function transformForMonitoring(patient) {
         age: age ? formatAge(age) : '',
         smsStatus: patient.smsStatus || '📱✓', // временно, будет из связанных данных
         diagnosis: patient.diagnosis || 'Диагноз не указан', // тоже временно
-        indicators: patient.indicators || '<span>MHO - 2.5</span>', // заглушка
+        indicators: patient.indicators || '—',
         comment: patient.comment || '—',
         highlightRed: patient.highlightRed || false,
         highlightBlue: patient.highlightBlue || false

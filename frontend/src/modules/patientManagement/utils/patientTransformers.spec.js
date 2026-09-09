@@ -53,4 +53,9 @@ describe('transformForMonitoring', () => {
     expect(result.highlightBlue).toBe(false)
     expect(result.diagnosis).toBe('Диагноз не указан')
   })
+
+  it('uses «—» for indicators when absent (no fake МНО)', () => {
+    const result = transformForMonitoring({ id: 3, lastname: 'Сидоров' })
+    expect(result.indicators).toBe('—')
+  })
 })
