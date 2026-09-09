@@ -147,18 +147,35 @@ describe('patientCardStore', () => {
       expect(store.patientFormError).toBe('')
     })
 
-    it('does not format-validate empty passport/email (partial edit)', () => {
+    it('returns false when only optional fields are empty (partial edit)', () => {
       const store = usePatientCardStore()
       store.editingPatientData = {
-        address: '',
+        address: 'ул. Ленина, 1',
+        phone: '8(900)123-45-67',
+        passport: '1234 567890',
+        snils: '123-456-789 95',
+        insurance: '',
+        email: '',
+        comment: ''
+      }
+
+      expect(store.validatePatientForm()).toBe(false)
+      expect(store.patientFormError).toBe('')
+    })
+
+    it('returns a required error (not a format error) for an empty passport', () => {
+      const store = usePatientCardStore()
+      store.editingPatientData = {
+        address: 'ул. Ленина, 1',
         phone: '8(900)123-45-67',
         passport: '',
         snils: '123-456-789 95',
         email: ''
       }
 
-      expect(store.validatePatientForm()).toBe(false)
-      expect(store.patientFormError).toBe('')
+      expect(store.validatePatientForm()).toBe(true)
+      expect(store.patientFormError).toContain('Паспорт обязателен')
+      expect(store.patientFormError).not.toContain('Формат: XXXX XXXXXX')
     })
   })
 
@@ -189,8 +206,8 @@ describe('patientCardStore', () => {
       expect(store.editingPatient).toBe(false)
     })
 
-    it('saves a partial edit (only phone changed) with empty address/passport/email', async () => {
-      patientApi.getOne.mockResolvedValue({ ...rawPatient, address: null, passport: null, email: null })
+    it('saves a partial edit (only phone changed) when required fields are filled and optional are empty', async () => {
+      patientApi.getOne.mockResolvedValue({ ...rawPatient, email: null })
       patientApi.update.mockResolvedValue({})
       const store = usePatientCardStore()
       await store.fetchPatient(1)

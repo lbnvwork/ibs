@@ -99,6 +99,7 @@ export const usePatientCardStore = defineStore('patientCard', {
 
         validatePatientForm() {
             const rules = {
+                address: { required: true, message: 'Адрес обязателен' },
                 phone: {
                     required: true,
                     message: 'Телефон обязателен',
@@ -106,6 +107,8 @@ export const usePatientCardStore = defineStore('patientCard', {
                     errorMsg: 'Формат: 8(XXX)XXX-XX-XX'
                 },
                 passport: {
+                    required: true,
+                    message: 'Паспорт обязателен',
                     validator: (value) => isEmptyField(value) || isValidPassport(value),
                     errorMsg: 'Формат: XXXX XXXXXX'
                 },
@@ -137,7 +140,7 @@ export const usePatientCardStore = defineStore('patientCard', {
                 address: this.editingPatientData.address.trim(),
                 smsPhone: formatPhone(this.editingPatientData.phone),
                 passport: formatPassport(this.editingPatientData.passport),
-                healthInsurance: this.editingPatientData.insurance.trim(),
+                healthInsurance: this.editingPatientData.insurance.trim() || null,
                 snils: formatSnils(this.editingPatientData.snils),
                 comment: this.editingPatientData.comment.trim() || null,
                 email: this.editingPatientData.email.trim() || null,
