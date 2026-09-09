@@ -8,7 +8,7 @@ export default {
     emits: ['edit-start', 'edit-end'],
     data() {
         return {
-            selectedDiagnosisCodes: [],
+            selectedDiagnosisCode: null,
         };
     },
     setup() {
@@ -19,18 +19,25 @@ export default {
         };
         return { store, formatDate };
     },
+    computed: {
+        diagnosisCodes() {
+            return this.selectedDiagnosisCode ? [this.selectedDiagnosisCode] : [];
+        },
+    },
     watch: {
-        selectedDiagnosisCodes: {
-            async handler(codes) {
-                const list = Array.isArray(codes) ? codes : [];
-                if (list.length === 0) {
-                    this.store.editingTreatmentData.diagnosis = '';
-                    this.store.editingTreatmentData.diagnosisCode = '';
-                    return;
-                }
-                const code = list[list.length - 1];
-                try {
-                    const data = await mkb10Api.getByCode(code);
+        selectedDiagnosisCode(code) {
+            this.applyDiagnosisCode(code);
+        },
+    },
+    methods: {
+        applyDiagnosisCode(code) {
+            if (!code) {
+                this.store.editingTreatmentData.diagnosis = '';
+                this.store.editingTreatmentData.diagnosisCode = '';
+                return;
+            }
+            mkb10Api.getByCode(code)
+                .then((data) => {
                     const member = data.member || data;
                     if (member.length) {
                         this.store.editingTreatmentData.diagnosis = member[0].mkbName;
@@ -39,22 +46,21 @@ export default {
                         this.store.editingTreatmentData.diagnosis = '';
                         this.store.editingTreatmentData.diagnosisCode = code;
                     }
-                } catch (err) {
+                })
+                .catch((err) => {
                     console.error('Ошибка загрузки диагноза', err);
                     this.store.editingTreatmentData.diagnosis = '';
                     this.store.editingTreatmentData.diagnosisCode = code;
-                }
-            },
-            deep: true,
+                });
         },
-    },
-    methods: {
+        onDiagnosisSelect(codes) {
+            const list = Array.isArray(codes) ? codes : [];
+            this.selectedDiagnosisCode = list.length ? list[list.length - 1] : null;
+        },
         startEditingTreatment() {
             this.$emit('edit-start');
             this.store.startEditingTreatment();
-            this.selectedDiagnosisCodes = this.store.editingTreatmentData.diagnosisCode
-                ? [this.store.editingTreatmentData.diagnosisCode]
-                : [];
+            this.selectedDiagnosisCode = this.store.editingTreatmentData.diagnosisCode || null;
         },
         cancelEditingTreatment() {
             this.$emit('edit-end');

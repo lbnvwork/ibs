@@ -105,7 +105,7 @@ describe('TreatmentCard.vue', () => {
     store.editingTreatmentData = { diagnosis: '', diagnosisCode: '', comorbiditiesRaw: '' }
     await wrapper.vm.$nextTick()
 
-    wrapper.vm.selectedDiagnosisCodes = ['I82.4']
+    wrapper.vm.selectedDiagnosisCode = 'I82.4'
     await flushPromises()
 
     expect(store.editingTreatmentData.diagnosisCode).toBe('I82.4')
