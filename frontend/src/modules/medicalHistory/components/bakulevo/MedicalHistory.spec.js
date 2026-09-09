@@ -20,6 +20,7 @@ const childStubs = {
   MnoChart: true,
   MedicalTable: true,
   PatientCard: true,
+  PatientMaxDeeplink: true,
   TreatmentCard: true,
   VitalsCard: true,
   AppointmentAdd: true,
@@ -332,6 +333,41 @@ describe('MedicalHistory.vue', () => {
       expect(wrapper.findComponent({ name: 'RiskScale' }).exists()).toBe(false)
       expect(wrapper.findComponent({ name: 'Pharmacogenetics' }).exists()).toBe(false)
       expect(wrapper.text()).not.toContain('Фармакогенетика')
+    })
+
+    it('renders the MAX deeplink section in the Обзор tab', async () => {
+      const { wrapper, patientCardStore, treatmentStore } = mountMedicalHistory('7')
+      patientCardStore.patient = { id: '7', name: 'Иванов Пётр', age: '45 лет', sex: 1, phone: '8(900)123-45-67' }
+      treatmentStore.treatment = { '@id': '/api/treatments/1', realEndDt: null, drug: '/api/drugs/1' }
+      await flushPromises()
+
+      expect(wrapper.findComponent({ name: 'PatientMaxDeeplink' }).exists()).toBe(true)
+      expect(wrapper.text()).toContain('Ссылка для мессенджера MAX')
+    })
+
+    it('computes testDrugGenitive from the treatment drug', async () => {
+      const { wrapper, patientCardStore, treatmentStore } = mountMedicalHistory('7')
+      patientCardStore.patient = { id: '7', name: 'Иванов Пётр', age: '45 лет', sex: 1, phone: '8(900)123-45-67' }
+      treatmentStore.treatment = { '@id': '/api/treatments/1', realEndDt: null, drug: '/api/drugs/1' }
+      treatmentStore.allDrugs = [{ '@id': '/api/drugs/1', genitive: 'варфарина' }]
+      await flushPromises()
+
+      expect(wrapper.vm.testDrugGenitive).toBe('варфарина')
+    })
+
+    it('passes drug-genitive to TestAddModal', async () => {
+      const { wrapper, patientCardStore, treatmentStore } = mountMedicalHistory('7')
+      patientCardStore.patient = { id: '7', name: 'Иванов Пётр', age: '45 лет', sex: 1, phone: '8(900)123-45-67' }
+      treatmentStore.treatment = { '@id': '/api/treatments/1', realEndDt: null, drug: '/api/drugs/1' }
+      treatmentStore.allDrugs = [{ '@id': '/api/drugs/1', genitive: 'варфарина' }]
+      await flushPromises()
+
+      wrapper.vm.openTestModal()
+      await flushPromises()
+
+      const modal = wrapper.findComponent({ name: 'TestAddModal' })
+      expect(modal.exists()).toBe(true)
+      expect(modal.props('drugGenitive')).toBe('варфарина')
     })
   })
 })

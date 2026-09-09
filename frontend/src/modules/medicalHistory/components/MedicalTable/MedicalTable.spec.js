@@ -99,7 +99,7 @@ describe('MedicalTable.vue', () => {
     const headers = wrapper.findAll('th').map(th => th.text())
     expect(headers).not.toContain('Рекомендации')
     expect(headers).not.toContain('Комментарий')
-    expect(headers).toEqual(['Дата', 'Показатели', 'Принимаемая доза', 'Назначенная доза'])
+    expect(headers).toEqual(['Дата', 'Показатели', 'Принимаемая доза', 'Назначенная доза', 'Следующая сдача МНО'])
   })
 
   it('keeps «Рекомендации» and «Комментарий» columns by default', () => {
