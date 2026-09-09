@@ -6,6 +6,10 @@ namespace Ibs\Context\TreatmentTherapy\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use Ibs\Context\Communication\Model\NotificationMessage;
+use Ibs\Context\Communication\Model\Priority;
+use Ibs\Context\Communication\Model\Recipient;
+use Ibs\Context\Communication\Service\NotificationService;
 use Ibs\Context\TreatmentTherapy\Entity\Appointment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -22,6 +26,7 @@ class AppointmentSaveProcessor implements ProcessorInterface
         #[Autowire('@api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor,
         private Security $security,
+        private NotificationService $notificationService,
         EntityManagerInterface $entityManager
     ) {
         $this->entityManager = $entityManager;
@@ -72,6 +77,37 @@ class AppointmentSaveProcessor implements ProcessorInterface
             $data->setDoctorName($user->getUserIdentifier());
         }
 
-        return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+        $result = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+
+        $this->sendPatientMessage($data);
+
+        return $result;
+    }
+
+    /**
+     * Отправляет итоговый текст «Сообщение пациенту» (comment) в MAX после успешного
+     * сохранения назначения. Сбой доставки или отсутствие лечения/пациента/текста
+     * не блокирует сохранение.
+     */
+    private function sendPatientMessage(Appointment $appointment): void
+    {
+        $treatment = $appointment->getTreatment();
+        $patient = $treatment?->getPatient();
+        $comment = $appointment->getComment();
+
+        if ($treatment === null || $patient === null || $comment === null || trim($comment) === '') {
+            return;
+        }
+
+        try {
+            $this->notificationService->send(
+                new Recipient(patientId: $patient->getId(), treatmentId: $treatment->getId()),
+                new NotificationMessage(body: $comment),
+                ['max'],
+                Priority::ROUTINE,
+            );
+        } catch (\Throwable $exception) {
+            // Сбой доставки не должен блокировать сохранение назначения.
+        }
     }
 }
