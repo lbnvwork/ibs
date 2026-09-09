@@ -179,8 +179,19 @@ describe('MedicalHistory.vue', () => {
       await flushPromises()
 
       expect(wrapper.vm.doctorName).toBe('Петров А. В.')
-      expect(wrapper.vm.latestDose).toBe(2.5)
+      expect(wrapper.vm.latestDose).toBe('2.5')
       expect(wrapper.vm.latestDoseDate).toBe('02.01.2024')
+    })
+
+    it('latestDose shows alternation when doze2 is set', async () => {
+      const { wrapper, medicalTableStore } = mountMedicalHistory('7')
+      await flushPromises()
+      medicalTableStore.events = [
+        { prescribedDose: 2.5, prescribedDose2: 2.75, displayDate: '02.01.2024', mno: 2.5 },
+      ]
+      await flushPromises()
+
+      expect(wrapper.vm.latestDose).toBe('2.5 / 2.75 через день')
     })
 
     it('drugName resolves the drug name from the loaded drugs list', async () => {
@@ -207,6 +218,18 @@ describe('MedicalHistory.vue', () => {
       expect(items[0].title).toBe('Анализ МНО 3.4')
       expect(items[0].tone).toBe('danger')
       expect(items[1].title).toBe('Назначена доза 5')
+    })
+
+    it('recentEvents shows alternation for the appointment dose', async () => {
+      const { wrapper, treatmentStore, medicalTableStore } = mountMedicalHistory('7')
+      await flushPromises()
+      treatmentStore.treatment = { '@id': '/api/treatments/1', mnoFrom: 2, mnoTo: 3 }
+      medicalTableStore.events = [
+        { type: 'appointment', prescribedDose: 2.5, prescribedDose2: 2.75, displayDate: '02.01.2024', mno: null },
+      ]
+      await flushPromises()
+
+      expect(wrapper.vm.recentEvents[0].title).toBe('Назначена доза 2.5 / 2.75 через день')
     })
   })
 

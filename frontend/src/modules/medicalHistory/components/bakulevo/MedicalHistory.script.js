@@ -18,7 +18,7 @@ import ComplicationRisk from './ComplicationRisk/ComplicationRisk.vue';
 import CurrentTherapy from './CurrentTherapy/CurrentTherapy.vue';
 import RecentEvents from './RecentEvents/RecentEvents.vue';
 import { patientApi } from '@/modules/shared/api/patients';
-import { formatMno } from '@/modules/shared/utils/formatters';
+import { formatMno, formatDoseWithAlternation } from '@/modules/shared/utils/formatters';
 
 export default {
     name: 'MedicalHistory',
@@ -122,13 +122,15 @@ export default {
         },
         latestDose() {
             for (const e of this.events) {
-                if (typeof e.prescribedDose === 'number' && e.prescribedDose > 0) return e.prescribedDose;
+                if (e.prescribedDose != null && e.prescribedDose !== '—' && Number(e.prescribedDose) > 0) {
+                    return formatDoseWithAlternation(e.prescribedDose, e.prescribedDose2);
+                }
             }
             return null;
         },
         latestDoseDate() {
             for (const e of this.events) {
-                if (typeof e.prescribedDose === 'number' && e.prescribedDose > 0) return e.displayDate;
+                if (e.prescribedDose != null && e.prescribedDose !== '—' && Number(e.prescribedDose) > 0) return e.displayDate;
             }
             return '';
         },
@@ -158,7 +160,7 @@ export default {
                 let title;
                 let tone = 'neutral';
                 if (e.type === 'appointment') {
-                    title = `Назначена доза ${e.prescribedDose}`;
+                    title = `Назначена доза ${formatDoseWithAlternation(e.prescribedDose, e.prescribedDose2)}`;
                     tone = 'info';
                 } else if (e.mno != null) {
                     title = `Анализ МНО ${e.mno}`;
