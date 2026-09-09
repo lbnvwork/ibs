@@ -7,6 +7,12 @@ import { formatPhone, formatPassport, formatSnils, calculateAge, formatAge } fro
 import { isValidPhone, isValidSnils, isValidPassport, isValidEmail } from '@/modules/shared/utils/validators';
 import { parseApiError } from '@/modules/shared/utils/apiErrorHandler';
 
+// '—' — плейсхолдер «нет данных» (только для отображения). В форме редактирования
+// пустые поля должны быть пустыми строками, чтобы не попадать под форматную валидацию.
+function isEmptyField(value) {
+    return value === null || value === undefined || value === '' || value === '—';
+}
+
 export const usePatientCardStore = defineStore('patientCard', {
     state: () => ({
         patient: null,
@@ -65,14 +71,17 @@ export const usePatientCardStore = defineStore('patientCard', {
 
         startEditingPatient() {
             this.patientFormError = '';
+            const phone = isEmptyField(this.patient.phone) ? '' : this.patient.phone;
+            const passport = isEmptyField(this.patient.passport) ? '' : this.patient.passport;
+            const snils = isEmptyField(this.patient.snils) ? '' : this.patient.snils;
             this.editingPatientData = {
-                address: this.patient.address || '',
-                phone: formatPhone(this.patient.phone) || this.patient.phone || '',
-                passport: formatPassport(this.patient.passport) || this.patient.passport || '',
-                insurance: this.patient.insurance || '',
-                snils: formatSnils(this.patient.snils) || this.patient.snils || '',
+                address: isEmptyField(this.patient.address) ? '' : this.patient.address,
+                phone: phone ? formatPhone(phone) : '',
+                passport: passport ? formatPassport(passport) : '',
+                insurance: isEmptyField(this.patient.insurance) ? '' : this.patient.insurance,
+                snils: snils ? formatSnils(snils) : '',
                 comment: this.patient.comment || '',
-                email: this.patient.email || ''
+                email: isEmptyField(this.patient.email) ? '' : this.patient.email
             };
             this.originalPatientJson = JSON.stringify(this.editingPatientData);
             this.editingPatient = true;
@@ -88,7 +97,6 @@ export const usePatientCardStore = defineStore('patientCard', {
 
         validatePatientForm() {
             const rules = {
-                address: { required: true, message: 'Адрес обязателен' },
                 phone: {
                     required: true,
                     message: 'Телефон обязателен',
@@ -96,9 +104,7 @@ export const usePatientCardStore = defineStore('patientCard', {
                     errorMsg: 'Формат: 8(XXX)XXX-XX-XX'
                 },
                 passport: {
-                    required: true,
-                    message: 'Паспорт обязателен',
-                    validator: isValidPassport,
+                    validator: (value) => isEmptyField(value) || isValidPassport(value),
                     errorMsg: 'Формат: XXXX XXXXXX'
                 },
                 snils: {
@@ -108,7 +114,7 @@ export const usePatientCardStore = defineStore('patientCard', {
                     errorMsg: 'Формат: XXX-XXX-XXX XX'
                 },
                 email: {
-                    validator: isValidEmail,
+                    validator: (value) => isEmptyField(value) || isValidEmail(value),
                     errorMsg: 'Неверный формат email'
                 }
             };

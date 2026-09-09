@@ -77,6 +77,24 @@ describe('patientCardStore', () => {
       expect(store.editingPatientData.snils).toBe('123-456-789 95')
     })
 
+    it('seeds empty strings (not the "—" placeholder) for missing fields', async () => {
+      patientApi.getOne.mockResolvedValue({ ...rawPatient, address: null, passport: null, email: null })
+      const store = usePatientCardStore()
+      await store.fetchPatient(1)
+
+      // view keeps '—'
+      expect(store.patient.address).toBe('—')
+      expect(store.patient.passport).toBe('—')
+      expect(store.patient.email).toBe('—')
+
+      store.startEditingPatient()
+
+      // edit form uses empty strings
+      expect(store.editingPatientData.address).toBe('')
+      expect(store.editingPatientData.passport).toBe('')
+      expect(store.editingPatientData.email).toBe('')
+    })
+
     it('cancelEditingPatient restores the original snapshot', async () => {
       patientApi.getOne.mockResolvedValue(rawPatient)
       const store = usePatientCardStore()
@@ -125,6 +143,20 @@ describe('patientCardStore', () => {
       expect(store.validatePatientForm()).toBe(false)
       expect(store.patientFormError).toBe('')
     })
+
+    it('does not format-validate empty passport/email (partial edit)', () => {
+      const store = usePatientCardStore()
+      store.editingPatientData = {
+        address: '',
+        phone: '8(900)123-45-67',
+        passport: '',
+        snils: '123-456-789 95',
+        email: ''
+      }
+
+      expect(store.validatePatientForm()).toBe(false)
+      expect(store.patientFormError).toBe('')
+    })
   })
 
   describe('savePatient', () => {
@@ -151,6 +183,23 @@ describe('patientCardStore', () => {
       expect(result).toBe(true)
       expect(patientApi.update).toHaveBeenCalledWith(1, expect.objectContaining({ address: 'Новый адрес' }))
       expect(store.patient.address).toBe('Новый адрес')
+      expect(store.editingPatient).toBe(false)
+    })
+
+    it('saves a partial edit (only phone changed) with empty address/passport/email', async () => {
+      patientApi.getOne.mockResolvedValue({ ...rawPatient, address: null, passport: null, email: null })
+      patientApi.update.mockResolvedValue({})
+      const store = usePatientCardStore()
+      await store.fetchPatient(1)
+      store.startEditingPatient()
+
+      store.editingPatientData.phone = '8(900)999-99-99'
+
+      const result = await store.savePatient(1)
+
+      expect(result).toBe(true)
+      expect(patientApi.update).toHaveBeenCalled()
+      expect(store.patient.phone).toBe('8(900)999-99-99')
       expect(store.editingPatient).toBe(false)
     })
 
