@@ -114,7 +114,7 @@ services:
     environment:
       VITE_API_URL: "http://localhost:${APP_PORT}/api"
       VITE_THEME: "${VITE_THEME:-almazovo}"
-    command: sh -c "npm ci && npm run build"
+    command: sh -c "npm ci --no-audit --no-fund && npm run build"
     networks:
       - default
     restart: "no"

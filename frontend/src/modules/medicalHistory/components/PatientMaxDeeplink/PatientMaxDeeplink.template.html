@@ -1,0 +1,29 @@
+<div class="max-deeplink">
+    <p class="max-deeplink-description">
+        Ссылка для привязки чата MAX. Передайте её пациенту — после открытия бота чат привяжется к карточке.
+    </p>
+
+    <div v-if="bound !== null" class="max-deeplink-status">
+        <span class="max-deeplink-dot" :class="bound ? 'is-bound' : 'is-unbound'"></span>
+        <span class="max-deeplink-status-text">{{ bound ? 'Чат привязан' : 'Чат не привязан' }}</span>
+    </div>
+
+    <div v-if="url" class="max-deeplink-link">
+        <a class="max-deeplink-url" :href="url" target="_blank" rel="noopener noreferrer">{{ url }}</a>
+        <button type="button" class="max-deeplink-btn" @click="copyLink">Копировать</button>
+        <span v-if="copyFeedback === 'copied'" class="max-deeplink-hint">Скопировано</span>
+        <span v-else-if="copyFeedback === 'fallback'" class="max-deeplink-hint">Скопируйте вручную</span>
+    </div>
+
+    <div v-if="loading" class="max-deeplink-loading">Загрузка…</div>
+    <div v-if="error" class="max-deeplink-error">{{ error }}</div>
+
+    <button
+        v-if="!url && !loading"
+        type="button"
+        class="max-deeplink-btn max-deeplink-btn-primary"
+        @click="fetchDeeplink"
+    >
+        Получить ссылку
+    </button>
+</div>

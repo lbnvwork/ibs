@@ -1,6 +1,7 @@
 import { useMedicalTableStore } from '@/modules/medicalHistory/stores/medicalTableStore';
 import MnoChart from '@/modules/medicalHistory/components/MnoChart/MnoChart.vue';
 import { buildIndicatorsFromRow } from '@/modules/shared/utils/vitalsHelpers';
+import { formatDoseWithAlternation } from '@/modules/shared/utils/formatters';
 import { computed } from 'vue';
 
 export default {
@@ -23,6 +24,6 @@ export default {
                 .map(e => ({ date: e.date, inr: e.mno, dose: e.prescribedDose }));
         });
 
-        return { store, chartData, buildIndicatorsFromRow };
+        return { store, chartData, buildIndicatorsFromRow, formatDoseWithAlternation };
     }
 };

@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Ibs\Context\TreatmentTherapy\State\TestHistoryLatestProvider;
+use Ibs\Context\TreatmentTherapy\State\TestHistorySaveProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
@@ -29,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new GetCollection(),
         new Get(),
-        new Post(),
+        new Post(processor: TestHistorySaveProcessor::class),
         new Patch(),
         new Delete(),
     ],
@@ -100,6 +101,33 @@ class TestHistory
     public function setUpdatedAtValue(): void
     {
         $this->modDt = new \DateTime();
+    }
+
+    #[Assert\Callback]
+    public function validate(\Symfony\Component\Validator\Context\ExecutionContextInterface $context): void
+    {
+        if ($this->doze2 <= 0) {
+            return;
+        }
+        if ($this->doze2 > 10) {
+            $context->buildViolation('Вторая доза не может превышать 10 таблеток.')
+                ->atPath('doze2')
+                ->addViolation();
+        }
+        $scaled = $this->doze2 * 4;
+        if (abs($scaled - round($scaled)) > 1e-9) {
+            $context->buildViolation('Вторая доза должна быть кратна 0.25.')
+                ->atPath('doze2')
+                ->addViolation();
+        }
+        if ($this->doze > 0) {
+            $diff = abs($this->doze2 - $this->doze);
+            if (abs($diff - 0.25) > 1e-9 && abs($diff - 0.5) > 1e-9) {
+                $context->buildViolation('Отклонение второй дозы должно быть 0.25 или 0.5.')
+                    ->atPath('doze2')
+                    ->addViolation();
+            }
+        }
     }
 
     public function getId(): ?int

@@ -24,6 +24,7 @@ function mountMedicalHistory(id = '7') {
   const medicalTableStore = useMedicalTableStore()
   patientCardStore.fetchPatient = vi.fn().mockResolvedValue()
   treatmentStore.fetchTreatment = vi.fn().mockResolvedValue()
+  treatmentStore.loadDrugsIfNeeded = vi.fn().mockResolvedValue()
   medicalTableStore.fetchMedicalData = vi.fn().mockResolvedValue()
 
   const wrapper = mount(MedicalHistory, {

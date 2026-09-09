@@ -3,6 +3,7 @@ import { useAppointmentAddStore } from '@/modules/medicalHistory/stores/appointm
 import AppointmentAdd from '@/modules/medicalHistory/components/AppointmentAdd/AppointmentAdd.vue';
 import TestAddModal from '@/modules/medicalHistory/components/TestAddModal/TestAddModal.vue';
 import PatientCard from '@/modules/medicalHistory/components/PatientCard/PatientCard.vue';
+import PatientMaxDeeplink from '@/modules/medicalHistory/components/PatientMaxDeeplink/PatientMaxDeeplink.vue';
 import TreatmentCard from '@/modules/medicalHistory/components/TreatmentCard/TreatmentCard.vue';
 import { usePatientCardStore } from '@/modules/medicalHistory/stores/patientCardStore';
 import { useTreatmentStore } from '@/modules/medicalHistory/stores/treatmentStore';
@@ -24,6 +25,7 @@ export default {
         AppointmentAdd, 
         TestAddModal, 
         PatientCard, 
+        PatientMaxDeeplink,
         TreatmentCard, 
         MedicalTable, 
         Pharmacogenetics,
@@ -73,6 +75,13 @@ export default {
             if (t.realEndDt) preview += ' (Завершено)';
             return preview;
         },
+        testDrugGenitive() {
+            const treatment = this.treatmentStore.treatment;
+            if (!treatment || !treatment.drug) return '';
+            const drugId = this.extractIdFromIri(treatment.drug);
+            const drug = this.treatmentStore.allDrugs.find(d => this.extractIdFromIri(d['@id']) === drugId);
+            return drug?.genitive || '';
+        },
         pharmacogeneticsPreview() {
             const store = usePharmacogeneticsStore();
             const markers = store.markers || [];
@@ -104,7 +113,8 @@ export default {
                     const treatmentStore = useTreatmentStore();
                     await Promise.all([
                         patientCardStore.fetchPatient(newId),
-                        treatmentStore.fetchTreatment(newId)
+                        treatmentStore.fetchTreatment(newId),
+                        treatmentStore.loadDrugsIfNeeded()
                     ]);
                     this.loadPatientData();
                 }
