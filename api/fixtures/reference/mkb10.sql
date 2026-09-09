@@ -15059,6 +15059,8 @@ INSERT INTO public.mkb10 (id, rec_code, mkb_code, mkb_name, id_parent, addl_code
 INSERT INTO public.mkb10 (id, rec_code, mkb_code, mkb_name, id_parent, addl_code, actual, date) VALUES (15049, '2202U848', 'U84.8', 'Устойчивость к другому уточненному противомикробному средству', 15043, NULL, 1, '07.10.2020');
 INSERT INTO public.mkb10 (id, rec_code, mkb_code, mkb_name, id_parent, addl_code, actual, date) VALUES (15050, '2202U849', 'U84.9', 'Устойчивость к неуточненным противомикробным средствам', 15043, NULL, 1, '07.10.2020');
 INSERT INTO public.mkb10 (id, rec_code, mkb_code, mkb_name, id_parent, addl_code, actual, date) VALUES (15051, '2202U85', 'U85', 'Устойчивость к противоопухолевым средствам', 15029, NULL, 1, '07.10.2020');
+INSERT INTO public.mkb10 (id, rec_code, mkb_code, mkb_name, id_parent, addl_code, actual, date) VALUES (16056, '0909I824', 'I82.4', 'Острый тромбоз глубоких вен нижних конечностей', 4170, NULL, 1, '');
+INSERT INTO public.mkb10 (id, rec_code, mkb_code, mkb_name, id_parent, addl_code, actual, date) VALUES (16057, '1920T8286', 'T82.86', 'Тромбоз сердечных протезов, имплантатов и трансплантатов', 10217, NULL, 1, '');
 
 
 --
