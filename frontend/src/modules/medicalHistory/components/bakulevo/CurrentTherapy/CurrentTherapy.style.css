@@ -46,10 +46,12 @@
 .therapy-item__label--accent {
     color: var(--color-dark);
     font-weight: 600;
+    font-size: 14px;
 }
 
 .therapy-dose {
     font-weight: 700;
+    font-size: 16px;
     color: var(--color-accent);
 }
 
