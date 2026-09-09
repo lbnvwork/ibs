@@ -64,6 +64,21 @@ describe('VitalsCard.vue', () => {
       expect(wrapper.vm.form.comment).toBe('')
     })
 
+    it('autoEdit=true opens the edit form immediately (СЦ-4)', async () => {
+      const wrapper = mountVitalsCard({ autoEdit: true }, [{ hb: 140 }])
+      await flushPromises()
+
+      expect(wrapper.vm.editing).toBe(true)
+      expect(wrapper.vm.form.hb).toBe(140)
+    })
+
+    it('autoEdit defaults to false (view mode with pencil)', async () => {
+      const wrapper = mountVitalsCard({}, [{ hb: 140 }])
+      await flushPromises()
+
+      expect(wrapper.vm.editing).toBe(false)
+    })
+
     it('restores the original snapshot when cancelling', async () => {
       const wrapper = mountVitalsCard({}, [{ hb: 140 }])
       await flushPromises()

@@ -165,7 +165,7 @@
             <div class="modal-panel__head">
                 <button class="modal-close" @click="closeVitalsEdit">×</button>
             </div>
-            <VitalsCard v-if="id" :key="id" :patient-id="id" :treatment-id="activeTreatmentId" />
+            <VitalsCard v-if="id" :key="id" :patient-id="id" :treatment-id="activeTreatmentId" :auto-edit="true" />
         </div>
     </div>
 </div>
