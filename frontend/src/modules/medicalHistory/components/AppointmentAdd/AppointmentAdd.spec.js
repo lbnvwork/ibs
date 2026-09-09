@@ -2,13 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import AppointmentAdd from './AppointmentAdd.vue'
 import apiClient from '@/modules/shared/api/client'
+import { testHistoryApi } from '@/modules/shared/api/testHistory'
 
 vi.mock('@/modules/shared/api/client', () => ({ default: { get: vi.fn(), post: vi.fn() } }))
+vi.mock('@/modules/shared/api/testHistory', () => ({ testHistoryApi: { getLatestByTreatments: vi.fn() } }))
 
-function mountAppointmentAdd(lastAppointments = []) {
+function mountAppointmentAdd(lastAppointments = [], props = {}) {
   apiClient.get.mockResolvedValueOnce({ data: { member: lastAppointments } })
+  testHistoryApi.getLatestByTreatments.mockResolvedValue([])
   return mount(AppointmentAdd, {
-    props: { treatment: '/api/treatments/10', drugId: 1, treatmentId: 10 }
+    props: { treatment: '/api/treatments/10', drugId: 1, treatmentId: 10, drugGenitive: '', ...props }
   })
 }
 
@@ -191,7 +194,7 @@ describe('AppointmentAdd.vue', () => {
       await wrapper.vm.save()
 
       expect(wrapper.vm.saveError).toContain('отклонение')
-      expect(apiClient.post).not.toHaveBeenCalled()
+      expect(apiClient.post).not.toHaveBeenCalledWith('/appointments', expect.anything())
     })
 
     it('rejects a second dose above the 10 tablet maximum', async () => {
@@ -204,7 +207,7 @@ describe('AppointmentAdd.vue', () => {
       await wrapper.vm.save()
 
       expect(wrapper.vm.saveError).toContain('Максимальная доза 10')
-      expect(apiClient.post).not.toHaveBeenCalled()
+      expect(apiClient.post).not.toHaveBeenCalledWith('/appointments', expect.anything())
     })
 
     it('sends nextTestDt when provided (СЦ-3.66.1)', async () => {
@@ -232,7 +235,81 @@ describe('AppointmentAdd.vue', () => {
       await wrapper.vm.save()
 
       expect(wrapper.vm.saveError).toContain('следующей сдачи')
-      expect(apiClient.post).not.toHaveBeenCalled()
+      expect(apiClient.post).not.toHaveBeenCalledWith('/appointments', expect.anything())
+    })
+  })
+
+  describe('patient message autofill', () => {
+    it('autofills the message for an ordinary dose (СЦ-3.69.1)', async () => {
+      apiClient.post.mockResolvedValue({ data: { body: 'Ваше МНО - 2.3. С 01.08.2026 ВАМ НУЖНО ПРИНИМАТЬ 2.5 варфарина.' } })
+      const wrapper = mountAppointmentAdd([], { drugGenitive: 'варфарина' })
+      await flushPromises()
+      wrapper.vm.dose = 2.5
+      wrapper.vm.mno = 2.3
+      wrapper.vm.appointmentDt = '2026-08-01'
+
+      await wrapper.vm.autofillComment()
+
+      expect(apiClient.post).toHaveBeenCalledWith('/notification_templates/resolve', expect.objectContaining({
+        code: 'appointment_dose',
+        data: expect.objectContaining({ dose: 2.5, mno: 2.3, drug_genitive: 'варфарина', date: '01.08.2026' })
+      }))
+      expect(wrapper.vm.comment).toBe('Ваше МНО - 2.3. С 01.08.2026 ВАМ НУЖНО ПРИНИМАТЬ 2.5 варфарина.')
+    })
+
+    it('autofills the message for alternation (СЦ-3.69.2)', async () => {
+      apiClient.post.mockResolvedValue({ data: { body: 'Ваше МНО - 2.3. С 01.08.2026 ВАМ НУЖНО ЧЕРЕДОВАТЬ 2.5 и 2.75 варфарина.' } })
+      const wrapper = mountAppointmentAdd([], { drugGenitive: 'варфарина' })
+      await flushPromises()
+      wrapper.vm.dose = 2.5
+      wrapper.vm.mno = 2.3
+      wrapper.vm.enableAlternation = true
+      wrapper.vm.alternationDelta = '0.25'
+
+      await wrapper.vm.autofillComment()
+
+      expect(apiClient.post).toHaveBeenCalledWith('/notification_templates/resolve', expect.objectContaining({
+        code: 'appointment_alternate',
+        data: expect.objectContaining({ dose: 2.5, sdose: 2.75, drug_genitive: 'варфарина' })
+      }))
+      expect(wrapper.vm.comment).toBe('Ваше МНО - 2.3. С 01.08.2026 ВАМ НУЖНО ЧЕРЕДОВАТЬ 2.5 и 2.75 варфарина.')
+    })
+
+    it('does not overwrite the message after a manual edit (СЦ-3.69.3)', async () => {
+      apiClient.post.mockResolvedValue({ data: { body: 'Автозаполненный текст' } })
+      const wrapper = mountAppointmentAdd([], { drugGenitive: 'варфарина' })
+      await flushPromises()
+      wrapper.vm.dose = 2.5
+      wrapper.vm.mno = 2.3
+
+      await wrapper.vm.autofillComment()
+      expect(wrapper.vm.comment).toBe('Автозаполненный текст')
+
+      wrapper.vm.comment = 'Отредактированный врачом текст'
+      wrapper.vm.markCommentDirty()
+      wrapper.vm.dose = 3.0
+
+      await wrapper.vm.autofillComment()
+
+      expect(wrapper.vm.comment).toBe('Отредактированный врачом текст')
+    })
+
+    it('sends the final comment as payload on save', async () => {
+      apiClient.post.mockResolvedValue({})
+      const wrapper = mountAppointmentAdd()
+      await flushPromises()
+      wrapper.vm.dose = 2.5
+      wrapper.vm.comment = 'Итоговое сообщение пациенту'
+
+      await wrapper.vm.save()
+
+      expect(apiClient.post).toHaveBeenCalledWith('/appointments', expect.objectContaining({ comment: 'Итоговое сообщение пациенту' }))
+    })
+
+    it('labels the field «Сообщение пациенту»', () => {
+      const wrapper = mountAppointmentAdd()
+      const labels = wrapper.findAll('label').map(l => l.text())
+      expect(labels.some(t => t.includes('Сообщение пациенту'))).toBe(true)
     })
   })
 })

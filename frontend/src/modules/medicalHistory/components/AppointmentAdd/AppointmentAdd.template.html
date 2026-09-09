@@ -89,6 +89,10 @@
         <div v-if="showDoseWarning" class="warning-message">
             Доза изменена более чем на 50% по сравнению с предыдущим назначением. Нажмите «Сохранить» ещё раз для подтверждения.
         </div>
+        <div class="form-group">
+            <label>Сообщение пациенту:</label>
+            <textarea v-model="comment" rows="3" class="form-control" @input="markCommentDirty"></textarea>
+        </div>
         <div v-if="saveError" class="save-error">{{ saveError }}</div>
         <div class="modal-actions">
             <button class="btn-save" @click="save" :disabled="!canSave">Сохранить</button>

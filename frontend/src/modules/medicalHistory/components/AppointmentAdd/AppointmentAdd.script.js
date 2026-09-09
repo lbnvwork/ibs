@@ -1,12 +1,16 @@
 import apiClient from '@/modules/shared/api/client';
+import { testHistoryApi } from '@/modules/shared/api/testHistory';
 import { validateForm } from '@/modules/shared/utils/validationHelper';
+
+const AUTOFILL_DEBOUNCE_MS = 300;
 
 export default {
     name: 'AppointmentAdd',
     props: {
         treatment: { type: String, required: true },
         drugId: { type: Number, required: true },
-        treatmentId: { type: Number, required: true }
+        treatmentId: { type: Number, required: true },
+        drugGenitive: { type: String, default: '' }
     },
     emits: ['close', 'saved'],
     data() {
@@ -26,6 +30,9 @@ export default {
             showDoseWarning: false,
             confirmOver50: false,
             lastAppointmentDose: null,
+            mno: null,
+            isCommentDirty: false,
+            autofillTimer: null,
         };
     },
     computed: {
@@ -37,6 +44,25 @@ export default {
                 return null;
             }
             return this.dose !== null ? this.dose + Number(this.alternationDelta) : null;
+        }
+    },
+    watch: {
+        dose() {
+            this.scheduleAutofill();
+        },
+        dose2() {
+            this.scheduleAutofill();
+        },
+        appointmentDt() {
+            this.scheduleAutofill();
+        },
+        mno() {
+            this.scheduleAutofill();
+        }
+    },
+    beforeUnmount() {
+        if (this.autofillTimer) {
+            clearTimeout(this.autofillTimer);
         }
     },
     methods: {
@@ -85,6 +111,63 @@ export default {
         onAlternationToggle() {
             if (!this.enableAlternation) {
                 this.alternationDelta = null;
+            }
+            this.scheduleAutofill();
+        },
+
+        scheduleAutofill() {
+            if (this.autofillTimer) {
+                clearTimeout(this.autofillTimer);
+            }
+            this.autofillTimer = setTimeout(() => this.autofillComment(), AUTOFILL_DEBOUNCE_MS);
+        },
+
+        async autofillComment() {
+            if (this.isCommentDirty) {
+                return;
+            }
+            if (this.dose === null || this.dose === undefined) {
+                return;
+            }
+            const sdose = this.enableAlternation && this.dose2 !== null ? this.dose2 : null;
+            const code = sdose !== null ? 'appointment_alternate' : 'appointment_dose';
+            try {
+                const response = await apiClient.post('/notification_templates/resolve', {
+                    code,
+                    data: {
+                        mno: this.mno,
+                        date: this.formatAppointmentDate(this.appointmentDt),
+                        dose: this.dose,
+                        sdose,
+                        drug_genitive: this.drugGenitive || null,
+                    },
+                });
+                this.comment = response.data?.body ?? '';
+            } catch (err) {
+                console.error('Не удалось получить превью сообщения:', err);
+            }
+        },
+
+        markCommentDirty() {
+            this.isCommentDirty = true;
+        },
+
+        formatAppointmentDate(dateStr) {
+            if (!dateStr) {
+                return '';
+            }
+            const [year, month, day] = dateStr.split('-');
+            return `${day}.${month}.${year}`;
+        },
+
+        async loadLastMno() {
+            try {
+                const items = await testHistoryApi.getLatestByTreatments([this.treatmentId]);
+                if (items && items.length > 0) {
+                    this.mno = items[0].mno ?? null;
+                }
+            } catch (err) {
+                console.warn('Не удалось загрузить последний МНО для автозаполнения:', err);
             }
         },
 
@@ -214,5 +297,6 @@ export default {
     },
     created() {
         this.loadLastAppointmentDose();
+        this.loadLastMno();
     }
 };

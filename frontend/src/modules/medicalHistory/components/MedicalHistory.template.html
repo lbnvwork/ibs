@@ -90,6 +90,7 @@
         :treatment="treatmentStore.treatment['@id']"
         :drug-id="extractIdFromIri(treatmentStore.treatment.drug)"
         :treatment-id="extractIdFromIri(treatmentStore.treatment['@id'])"
+        :drug-genitive="testDrugGenitive"
         @close="showAppointmentInlineModal = false"
         @saved="onAppointmentSaved(); showAppointmentInlineModal = false"
     />
@@ -98,6 +99,7 @@
         :treatment="treatmentStore.treatment['@id']"
         :drug-id="extractIdFromIri(treatmentStore.treatment.drug)"
         :treatment-id="extractIdFromIri(treatmentStore.treatment['@id'])"
+        :drug-genitive="testDrugGenitive"
         @close="closeAppointmentModal"
         @saved="onAppointmentSaved"
     />
