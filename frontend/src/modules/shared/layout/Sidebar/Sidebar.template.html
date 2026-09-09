@@ -20,4 +20,5 @@
         </button>
         <div v-else-if="item.type === 'divider'" class="divider"></div>
     </template>
+    <div class="sidebar__version" v-if="appVersion">v{{ appVersion }}</div>
 </div>
