@@ -146,6 +146,7 @@ export const useTreatmentStore = defineStore('treatment', {
 
             const body = {
                 diagnosis: this.editingTreatmentData.diagnosis.trim(),
+                diagnosisCode: (this.editingTreatmentData.diagnosisCode || '').trim() || null,
                 comorbidities: this.editingTreatmentData.comorbiditiesRaw.trim(),
                 mnoFrom: Number(this.editingTreatmentData.mnoFrom),
                 mnoTo: Number(this.editingTreatmentData.mnoTo),
@@ -160,6 +161,7 @@ export const useTreatmentStore = defineStore('treatment', {
                 await treatmentApi.update(treatmentId, body);
 
                 this.treatment.diagnosis = body.diagnosis;
+                this.treatment.diagnosisCode = body.diagnosisCode;
                 this.treatment.comorbidities = body.comorbidities;
                 this.treatment.mnoFrom = body.mnoFrom;
                 this.treatment.mnoTo = body.mnoTo;
