@@ -1,0 +1,66 @@
+<div class="patient-work-list">
+  <div class="list-header">
+    <h2 class="list-title">Пациенты</h2>
+    <button class="refresh-btn" title="Обновить" @click="onRefresh">
+      <svg class="refresh-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span>Обновить</span>
+    </button>
+  </div>
+
+  <div class="list-filters" aria-label="Фильтры списка пациентов">
+    <div class="select-filter">
+      <label for="drug-filter">Препарат</label>
+      <select id="drug-filter" :value="activeTab ?? ''" @change="onDrugChange">
+        <option :value="''" disabled>Выберите препарат</option>
+        <option v-for="tab in tabs" :key="tab.id" :value="tab.id">{{ tab.name }}</option>
+      </select>
+    </div>
+    <div class="select-filter">
+      <label for="hospital-filter">ЛПУ</label>
+      <select id="hospital-filter" :value="hospitalId ?? ''" @change="onHospitalChange">
+        <option v-for="opt in hospitalOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+    <div class="select-filter">
+      <label for="category-filter">Категории</label>
+      <select id="category-filter" :value="drugGroupId ?? ''" @change="onDrugGroupChange">
+        <option v-for="opt in drugGroupOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+    <div class="select-filter select-filter--diagnoses">
+      <label>Нозологии</label>
+      <MultiDiagnosisSelect v-model="selectedDiagnosisCodes" />
+    </div>
+    <div class="search-filter">
+      <input
+        type="search"
+        v-model="searchQuery"
+        placeholder="Поиск пациентов..."
+        aria-label="Поиск пациентов"
+      />
+    </div>
+  </div>
+
+  <PatientTable
+    :patients="patients"
+    :loading="loading"
+    :error="error"
+    :total-pages="totalPages"
+    :current-page="currentPage"
+    :total-count="totalItems"
+    :items-per-page="itemsPerPage"
+    @goToPage="goToPage"
+    @nextPage="nextPage"
+    @prevPage="prevPage"
+    @setItemsPerPage="setItemsPerPage"
+  />
+</div>

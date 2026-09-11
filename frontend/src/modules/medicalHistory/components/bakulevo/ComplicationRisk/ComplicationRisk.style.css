@@ -1,0 +1,83 @@
+.risk-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 16px;
+}
+
+.risk-card__title {
+    margin: 0 0 12px;
+    font-size: 16px;
+    color: var(--color-dark);
+}
+
+.risk-card__body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.risk-gauge {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 6px solid var(--color-border);
+    background: var(--color-surface-alt);
+    flex-shrink: 0;
+}
+
+.risk-gauge__value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-dark);
+    line-height: 1;
+}
+
+.risk-gauge__unit {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--color-muted);
+    margin-top: 2px;
+}
+
+.risk-gauge--success { border-color: var(--color-triage-success); }
+.risk-gauge--info { border-color: var(--color-triage-info); }
+.risk-gauge--danger { border-color: var(--color-triage-danger); }
+.risk-gauge--warning { border-color: var(--color-triage-warning); }
+.risk-gauge--none,
+.risk-gauge--neutral { border-color: var(--color-border); }
+
+.risk-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.risk-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-dark);
+}
+
+.risk-label--success { color: var(--color-triage-success); }
+.risk-label--info { color: var(--color-triage-info); }
+.risk-label--danger { color: var(--color-triage-danger); }
+.risk-label--warning { color: var(--color-triage-warning); }
+.risk-label--none,
+.risk-label--neutral { color: var(--color-muted); }
+
+.risk-hint {
+    font-size: 13px;
+    color: var(--color-dark);
+}
+
+.risk-caption {
+    font-size: 12px;
+    color: var(--color-muted);
+}

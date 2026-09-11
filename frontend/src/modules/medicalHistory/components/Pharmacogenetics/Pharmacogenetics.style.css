@@ -15,7 +15,7 @@
 
 .section-header h3 {
     margin: 0;
-    color: #10345c;
+    color: var(--color-dark);
     font-size: 16px;
     font-weight: 600;
     padding-bottom: 8px;
@@ -31,8 +31,8 @@
 }
 .btn-icon-edit {
     background: transparent;
-    border: 1px solid #3498db;
-    color: #3498db;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
     font-size: 18px;
     width: 32px;
     height: 32px;
@@ -44,11 +44,11 @@
     padding: 0;
 }
 .btn-icon-edit:hover {
-    background: #3498db;
+    background: var(--color-accent);
     color: white;
 }
 .btn-save {
-    background: #27ae60;
+    background: var(--color-success);
     color: white;
     border: none;
     padding: 6px 16px;
@@ -58,11 +58,11 @@
     font-weight: 500;
 }
 .btn-save:hover {
-    background: #219a52;
+    background: var(--color-success);
 }
 .btn-cancel {
-    background: #e0e0e0;
-    color: #333;
+    background: var(--color-border);
+    color: var(--color-text);
     border: none;
     padding: 6px 16px;
     border-radius: 4px;
@@ -71,15 +71,15 @@
     font-weight: 500;
 }
 .btn-cancel:hover {
-    background: #bdbdbd;
+    background: var(--color-border);
 }
 
 /* === Список маркеров === */
 .marker-item {
     padding: 8px 12px;
-    background-color: #f8f9fa;
+    background-color: var(--color-surface-alt);
     border-radius: 4px;
-    border-left: 3px solid #3498db;   /* синяя полоса как в старом дизайне */
+    border-left: 3px solid var(--color-accent);   /* синяя полоса как в старом дизайне */
     font-size: 14px;
     line-height: 1.4;
     margin-bottom: 8px;               /* отступ между карточками */
@@ -94,14 +94,14 @@
     margin-bottom: 4px;
 }
 .marker-header strong {
-    color: #2c3e50;
+    color: var(--color-dark);
 }
 .marker-fullname {
-    color: #666;
+    color: var(--color-muted);
     font-size: 12px;
 }
 .rs-id {
-    color: #3498db;
+    color: var(--color-accent);
     font-size: 12px;
     margin-left: 8px;
 }
@@ -109,19 +109,19 @@
 /* Значения */
 .genotype {
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--color-dark);
 }
 .not-tested {
-    color: #999;
+    color: var(--color-muted);
     font-style: italic;
 }
 .test-date {
     font-size: 12px;
-    color: #666;
+    color: var(--color-muted);
     margin-left: 10px;
 }
 .marker-description {
-    color: #555;
+    color: var(--color-text);
     font-size: 13px;
     margin-top: 4px;
 }
@@ -136,18 +136,18 @@
 .form-control {
     width: 100%;
     padding: 6px 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     font-size: 14px;
 }
 
 /* Сообщение об ошибке */
 .save-error {
-    color: #e74c3c;
+    color: var(--color-danger);
     margin-bottom: 8px;
     padding: 6px 10px;
-    background: #fdf0f0;
-    border-left: 3px solid #e74c3c;
+    background: var(--color-danger-bg);
+    border-left: 3px solid var(--color-danger);
     border-radius: 4px;
     font-size: 13px;
 }
@@ -162,7 +162,7 @@
 
 .comment-icon {
     font-size: 16px;
-    color: #6c757d;
+    color: var(--color-muted);
     vertical-align: middle;
     line-height: 1;
 }
@@ -170,8 +170,8 @@
 .comment-tooltip-text {
     visibility: hidden;
     width: 220px;
-    background-color: #555;
-    color: #fff;
+    background-color: var(--color-text);
+    color: var(--color-surface);
     text-align: left;
     border-radius: 6px;
     padding: 6px 10px;
@@ -195,7 +195,7 @@
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: #555 transparent transparent transparent;
+    border-color: var(--color-text) transparent transparent transparent;
 }
 
 .comment-tooltip-wrapper:hover .comment-tooltip-text {

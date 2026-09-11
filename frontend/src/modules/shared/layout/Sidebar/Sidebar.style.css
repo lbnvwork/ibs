@@ -1,6 +1,6 @@
 .sidebar {
     width: 60px;
-    background: #5291e9;
+    background: var(--color-sidebar-bg);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -86,6 +86,23 @@
     visibility: hidden !important;
 }
 
+/* Логотип (иконочный режим Алмазово) */
+.sidebar__logo {
+    width: 40px;
+    height: 40px;
+    margin: 8px 0;
+    flex-shrink: 0;
+}
+
+.sidebar__logo .logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    object-fit: contain;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 50px;
@@ -106,6 +123,6 @@
     margin-top: auto;
     padding: 8px 4px;
     font-size: 11px;
-    color: var(--color-muted, #9aa0a6);
+    color: var(--color-muted);
     text-align: center;
 }

@@ -9,7 +9,10 @@ export default {
     components: { MnoChart },
     props: {
         mnoFrom: { type: Number, default: null },
-        mnoTo: { type: Number, default: null }
+        mnoTo: { type: Number, default: null },
+        hideChart: { type: Boolean, default: false },
+        hideRecommendations: { type: Boolean, default: false },
+        hideComment: { type: Boolean, default: false }
     },
     emits: ['open-test-modal', 'open-appointment-modal'],
     setup() {

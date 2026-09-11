@@ -1,5 +1,5 @@
 <div class="home">
-  <div class="filter-tabs">
+  <div class="filter-tabs" v-if="!isBakulevo">
     <button
       :class="{ active: activeFilter === 'monitoring' }"
       @click="activeFilter = 'monitoring'"
@@ -14,6 +14,6 @@
     </button>
   </div>
 
-  <PatientMonitoring v-if="activeFilter === 'monitoring'" />
-  <PatientWorkList v-else-if="activeFilter === 'patientList'" />
+  <PatientMonitoring v-if="!isBakulevo && activeFilter === 'monitoring'" />
+  <PatientWorkList v-if="isBakulevo || activeFilter === 'patientList'" />
 </div>

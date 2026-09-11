@@ -1,8 +1,8 @@
 .left-panel {
   width: 260px;
   min-width: 260px;
-  background: #d7e1f4;
-  border-right: 2px solid #5291e9;
+  background: var(--color-accent-bg);
+  border-right: 2px solid var(--color-sidebar-bg);
   display: flex;
   flex-direction: column;
 }
@@ -12,7 +12,7 @@
   padding: 6px;
   font-size: 14px;
   width: calc(100% - 20px);
-  border: 1px solid #aaa;
+  border: 1px solid var(--color-muted);
   border-radius: 4px;
   background-color: white;
 }
@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   margin: 0 10px;
-  border: 1px solid #aaa;
+  border: 1px solid var(--color-muted);
   background: white;
   overflow: hidden;
   border-radius: 5px;
@@ -39,24 +39,24 @@
   align-items: center;
   padding: 10px 15px;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
   transition: background-color 0.2s;
   font-size: 14px;
 }
 
 .patient-item:hover {
-  background-color: #f0f5ff;
+  background-color: var(--color-accent-bg);
 }
 
 .patient-item.active {
-  background-color: #e0e9ff;
+  background-color: var(--color-accent-bg);
   font-weight: 600;
 }
 
 .patient-icon {
   margin-right: 10px;
   font-size: 16px;
-  color: #5291e9;
+  color: var(--color-sidebar-bg);
   flex-shrink: 0;
 }
 
@@ -75,18 +75,18 @@
   border-radius: 50%;
   margin-left: 8px;
   flex-shrink: 0;
-  background-color: #999; /* нейтральный, на случай если статус не определён */
+  background-color: var(--color-muted); /* нейтральный, на случай если статус не определён */
   box-shadow: 0 0 4px rgba(0,0,0,0.2);
   transition: transform 0.1s ease;
 }
 
 .patient-status.status-active {
-  background-color: #4caf50;
+  background-color: var(--color-success);
   box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
 }
 
 .patient-status.status-inactive {
-  background-color: #f44336;
+  background-color: var(--color-danger);
   box-shadow: 0 0 4px rgba(244, 67, 54, 0.5);
 }
 
@@ -95,9 +95,9 @@
 }
 
 .left-panel .info-panel {
-  border-top: 1px solid #aaa;
+  border-top: 1px solid var(--color-muted);
   padding: 10px;
-  background: #f0f5ff;
+  background: var(--color-accent-bg);
   min-height: 120px;
 }
 
@@ -109,7 +109,7 @@
   width: 100%;
   padding: 8px 12px;
   font-size: 14px;
-  border: 1px solid #aaa;
+  border: 1px solid var(--color-muted);
   border-radius: 5px;
 }
 
@@ -120,7 +120,7 @@
 
 .indicator {
   height: 20px;
-  background: linear-gradient(to right, #ff6b6b 0%, #4ecdc4 100%);
+  background: linear-gradient(to right, var(--color-danger) 0%, var(--color-success) 100%);
   border-radius: 10px;
   position: relative;
   overflow: hidden;
@@ -130,7 +130,7 @@
 .indicator-progress {
   height: 100%;
   width: 65%;
-  background: linear-gradient(to right, #ff9f43 0%, #2ecc71 100%);
+  background: linear-gradient(to right, var(--color-warning) 0%, var(--color-success) 100%);
   border-radius: 10px;
   transition: width 0.5s ease;
 }
@@ -140,7 +140,7 @@
   justify-content: space-between;
   margin-top: 5px;
   font-size: 12px;
-  color: #555;
+  color: var(--color-text);
 }
 
 .indicator-text {
@@ -148,7 +148,7 @@
   margin-top: 5px;
   font-size: 12px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--color-dark);
 }
 
 .trigger {
@@ -161,12 +161,12 @@
   align-items: center;
   justify-content: center;
   padding: 10px;
-  color: #666;
+  color: var(--color-muted);
 }
 
 .loading-spinner-small {
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #3498db;
+  border: 2px solid var(--color-surface-alt);
+  border-top: 2px solid var(--color-accent);
   border-radius: 50%;
   width: 20px;
   height: 20px;
@@ -177,7 +177,7 @@
 .end-message {
   text-align: center;
   padding: 10px;
-  color: #999;
+  color: var(--color-muted);
   font-style: italic;
 }
 
@@ -196,7 +196,7 @@ input[type="search"]::-webkit-search-cancel-button {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #999;
+  color: var(--color-muted);
   cursor: pointer;
   font-size: 18px;
   width: 24px;
@@ -210,14 +210,14 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .clear-search:hover {
   background: rgba(0,0,0,0.05);
-  color: #333;
+  color: var(--color-text);
 }
 
 .no-patients {
   text-align: center;
   padding: 50px;
   font-size: 17px;
-  color: #666;
+  color: var(--color-muted);
 }
 
 /* Адаптивность для мобильных устройств */

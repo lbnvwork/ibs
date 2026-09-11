@@ -1,0 +1,128 @@
+.vitals-card.section {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.section-header h3 {
+  margin: 0;
+  color: var(--color-dark);
+  font-size: 16px;
+}
+.section-actions {
+  display: flex;
+  gap: 4px;
+}
+.btn-icon-edit {
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-icon-edit:hover {
+  background: var(--color-accent);
+  color: white;
+}
+.btn-save, .btn-cancel {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-save {
+  background: var(--color-success);
+  color: white;
+}
+.btn-save:hover {
+  background: var(--color-success);
+}
+.btn-cancel {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+.btn-cancel:hover {
+  background: var(--color-border);
+}
+.vitals-row {
+  display: flex;
+  margin-bottom: 6px;
+}
+.vital-label {
+  font-weight: 600;
+  width: 80px;
+  color: var(--color-dark);
+}
+.vital-value {
+  flex: 1;
+}
+.vitals-last-updated {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.save-error {
+  color: var(--color-danger);
+  margin-bottom: 8px;
+}
+.form-row {
+  margin-bottom: 8px;
+}
+.form-row label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.form-control {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Плитки показателей (CardioMonitor, Бакулево) */
+.vitals-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.vital-tile {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vital-tile-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--color-muted);
+}
+
+.vital-tile-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-dark);
+}

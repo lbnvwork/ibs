@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { IS_BAKULEVO } from './support/theme';
 
 const E2E_LOGIN = process.env.E2E_LOGIN ?? '';
 const E2E_PASSWORD = process.env.E2E_PASSWORD ?? '';
@@ -41,7 +42,14 @@ test('создание пациента: позитивный путь + про�
   // Пациент создан → редирект на добавление лечения
   await page.waitForURL(/\/patient\/\d+\/treatment\/add/);
 
-  // Проверяем появление в списке (левая панель PatientListPanel)
+  // Проверяем появление в списке.
+  if (IS_BAKULEVO) {
+    // Бакулево: рабочий список фильтруется по препарату — пациент без лечения в него
+    // не попадает; создание проверено редиректом на добавление лечения (выше).
+    return;
+  }
+
+  // Алмазово — левая панель PatientListPanel.
   await page.goto('/');
   await page.getByPlaceholder('Поиск пациентов...').fill(lastname);
 

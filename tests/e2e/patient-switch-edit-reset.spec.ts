@@ -1,4 +1,5 @@
 import { test, expect, request, type Page } from '@playwright/test';
+import { IS_BAKULEVO } from './support/theme';
 
 // Регрессионный тест на баг BUG-3.35-01 (фикс — задача 3.60):
 // форма редактирования карточки (витальные/персональные/лечение) должна сбрасываться
@@ -90,6 +91,7 @@ async function seedTwoPatients(): Promise<{ aId: number; bId: number; lastNameB:
 }
 
 test('BUG-3.35-01: форма редактирования сбрасывается при переключении пациента', async ({ page }) => {
+  test.skip(IS_BAKULEVO, 'almazovo-only: inline-редактирование (в Бакулево — модальное)');
   const { aId, bId, lastNameB } = await seedTwoPatients();
 
   await loginAsDoctor(page);

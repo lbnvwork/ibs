@@ -63,6 +63,15 @@ export function formatSnils(value) {
     return `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6,9)} ${digits.slice(9,11)}`;
 }
 
+// МНО (и границы диапазона) — всегда 2 знака после запятой,
+// чтобы убрать артефакты плавающей точки (напр. 2.4000000000000004 → 2.40).
+export function formatMno(value) {
+    if (value === null || value === undefined || value === '') return '—';
+    const num = Number(value);
+    if (Number.isNaN(num)) return '—';
+    return num.toFixed(2);
+}
+
 /**
  * Форматирует дозу с учётом чередования.
  * При `doze2 > 0` — «2.5 / 2.75 через день», иначе — только основная доза.

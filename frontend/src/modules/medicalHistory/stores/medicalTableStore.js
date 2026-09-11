@@ -77,6 +77,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                         recommendations: matchingAppt ? (matchingAppt.comment || '') : '',
                         nextTestDt: matchingAppt && matchingAppt.nextTestDt ? formatDate(matchingAppt.nextTestDt) : '—',
                         comment: item.comment || '',
+                        doctorName: matchingAppt ? (matchingAppt.doctorName || '') : '',
                         ...latestVitals
                     });
                     coveredDays.add(dayKey);
@@ -106,6 +107,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                                 recommendations: matchingAppt ? (matchingAppt.comment || '') : '',
                                 nextTestDt: '—',
                                 comment: '',
+                                doctorName: matchingAppt ? (matchingAppt.doctorName || '') : '',
                                 ...latestVitals
                             });
                             coveredDays.add(dayKey);
@@ -126,6 +128,7 @@ export const useMedicalTableStore = defineStore('medicalTable', {
                         recommendations: a.comment || '',
                         nextTestDt: a.nextTestDt ? formatDate(a.nextTestDt) : '—',
                         comment: '',
+                        doctorName: a.doctorName || '',
                         hb: null, heartRate: null,
                         systolicPressure: null, diastolicPressure: null,
                         saturation: null, weight: null

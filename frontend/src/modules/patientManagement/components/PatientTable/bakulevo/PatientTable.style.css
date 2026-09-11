@@ -1,0 +1,318 @@
+.patient-table {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.patient-table .table-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Прокручиваемая область: шапка «уползает» вместе со строками */
+.patient-table .table-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0 16px 8px;
+}
+
+/* Общая сетка для заголовка и строк: все колонки равны, ФИО — шире (2 колонки) */
+.patient-table .list-head,
+.patient-table .patient-row {
+  display: grid;
+  grid-template-columns: 64px 2fr 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  column-gap: 0;
+}
+
+/* Заголовок: прозрачный, не фиксированный, не в «сетке» (без рамок) */
+.patient-table .list-head {
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 10px 16px;
+  margin-bottom: 4px;
+}
+
+.patient-table .list-head .col {
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Строки-«стеклянные карточки»: тень, лёгкое скругление, крупнее */
+.patient-table .patient-row {
+  padding: 16px;
+  margin-bottom: 6px;                 /* чуть меньше расстояние между строками */
+  border-radius: 8px;                 /* слегка округлено */
+  border: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-surface-alt));
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  font-size: 15px;                    /* крупнее */
+  transition: box-shadow 0.2s ease;
+}
+
+.patient-table .patient-row:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* В норме — серые, почти прозрачные (не зелёные) */
+.patient-table .patient-row.row--success {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-muted) 3%, var(--color-surface)), color-mix(in srgb, var(--color-muted) 7%, var(--color-surface)));
+  border-color: color-mix(in srgb, var(--color-muted) 16%, var(--color-border));
+}
+
+/* Триаж-строки: мягкая цветная тонировка (color-mix от токенов) */
+.patient-table .patient-row.row--danger {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-triage-danger) 7%, var(--color-surface)), color-mix(in srgb, var(--color-triage-danger) 2%, var(--color-surface-alt)));
+  border-color: color-mix(in srgb, var(--color-triage-danger) 30%, var(--color-border));
+}
+.patient-table .patient-row.row--info {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-triage-info) 7%, var(--color-surface)), color-mix(in srgb, var(--color-triage-info) 2%, var(--color-surface-alt)));
+  border-color: color-mix(in srgb, var(--color-triage-info) 30%, var(--color-border));
+}
+.patient-table .patient-row.row--warning {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-triage-warning) 7%, var(--color-surface)), color-mix(in srgb, var(--color-triage-warning) 2%, var(--color-surface-alt)));
+  border-color: color-mix(in srgb, var(--color-triage-warning) 30%, var(--color-border));
+}
+
+/* Колонки */
+.patient-table .col {
+  min-width: 0;
+}
+.patient-table .col-status {
+  text-align: center;
+}
+.patient-table .col-name {
+  padding-right: 8px;
+}
+.patient-table .col-name a {
+  color: var(--color-dark);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  word-break: break-word;
+}
+.patient-table .col-name a:hover {
+  text-decoration: underline;
+}
+.patient-table .col-birth {
+  white-space: nowrap;
+}
+.patient-table .col-gender {
+  text-align: center;
+}
+.patient-table .col-hospital {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Капля-«лампочка»: крупная, с glow-свечением */
+.patient-table .status-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+  margin: 0 auto;
+}
+.patient-table .status-icon path {
+  fill: var(--color-muted);
+}
+.patient-table .status-icon--danger path { fill: var(--color-triage-danger); }
+.patient-table .status-icon--info path { fill: var(--color-triage-info); }
+.patient-table .status-icon--warning path { fill: var(--color-triage-warning); }
+.patient-table .status-icon--success path { fill: var(--color-muted); }
+
+.patient-table .status-icon--danger { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-triage-danger) 80%, transparent)); }
+.patient-table .status-icon--info { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-triage-info) 80%, transparent)); }
+.patient-table .status-icon--warning { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-triage-warning) 80%, transparent)); }
+.patient-table .status-icon--success { filter: drop-shadow(0 0 3px color-mix(in srgb, var(--color-muted) 50%, transparent)); }
+
+/* Значки пола */
+.patient-table .gender-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.patient-table .gender--male { color: var(--color-accent); text-shadow: 0 0 6px color-mix(in srgb, var(--color-accent) 55%, transparent); }
+.patient-table .gender--female { color: var(--color-info); text-shadow: 0 0 6px color-mix(in srgb, var(--color-info) 55%, transparent); }
+
+/* Бейдж результата: контур + тонировка, одинаковой ширины, не «пилюля» */
+.patient-table .triage-badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: transparent;
+  border: 1px solid transparent;
+}
+.patient-table .triage-badge--danger {
+  color: var(--color-triage-danger);
+  background: color-mix(in srgb, var(--color-triage-danger) 10%, transparent);
+  border-color: var(--color-triage-danger);
+}
+.patient-table .triage-badge--warning {
+  color: var(--color-triage-warning);
+  background: color-mix(in srgb, var(--color-triage-warning) 12%, transparent);
+  border-color: var(--color-triage-warning);
+}
+.patient-table .triage-badge--success {
+  color: var(--color-muted);
+  background: color-mix(in srgb, var(--color-muted) 8%, transparent);
+  border-color: color-mix(in srgb, var(--color-muted) 60%, var(--color-border));
+}
+.patient-table .triage-badge--info {
+  color: var(--color-triage-info);
+  background: color-mix(in srgb, var(--color-triage-info) 10%, transparent);
+  border-color: var(--color-triage-info);
+}
+
+/* Состояния загрузки/пустоты/ошибки */
+.patient-table .state-row {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.patient-table .loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ---------- Пагинация (смещена вправо, ближе к «На странице») ---------- */
+.patient-table .table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.patient-table .footer-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.patient-table .pagination-total {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.patient-table .pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.patient-table .page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text);
+  font-size: 14px;
+}
+.patient-table .page-btn.active {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border-color: var(--color-accent);
+}
+.patient-table .page-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.patient-table .page-btn--dots {
+  border: none;
+  background: none;
+  cursor: default;
+}
+
+.patient-table .page-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+.patient-table .page-size select {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* ---------- Легенда статусов ---------- */
+.patient-table .status-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--color-border);
+  font-size: 14px;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.patient-table .legend-title {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-right: 4px;
+}
+
+.patient-table .legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* Малая капля в легенде: без glow, симметричная */
+.patient-table .status-icon--sm {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  margin: 0;
+  filter: none;
+}
+
+/* Чипсы показателей (v-html от buildIndicators) вынесены в глобальный assets/style.css,
+   т.к. v-html-контент не получает scope-атрибут и не таргетируется scoped-селекторами. */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

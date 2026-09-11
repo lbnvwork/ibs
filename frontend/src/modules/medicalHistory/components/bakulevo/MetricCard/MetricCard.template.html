@@ -1,0 +1,5 @@
+<div class="metric-card" :class="`metric-card--${tone}`">
+    <span class="metric-label">{{ label }}</span>
+    <span class="metric-value">{{ value }}</span>
+    <span v-if="hint" class="metric-hint">{{ hint }}</span>
+</div>

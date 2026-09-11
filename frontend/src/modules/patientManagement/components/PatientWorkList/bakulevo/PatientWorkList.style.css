@@ -1,0 +1,121 @@
+.patient-work-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.patient-work-list .patient-table {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- Шапка списка: заголовок + «Обновить» ---------- */
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+
+.list-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-dark);
+  letter-spacing: -0.3px;
+}
+
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.refresh-btn:hover {
+  background: var(--color-surface-alt);
+  border-color: var(--color-accent);
+}
+
+.refresh-btn .refresh-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Фильтры в одну строку ---------- */
+.list-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 12px 16px;
+  flex-shrink: 0;
+}
+
+.select-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 170px;
+}
+
+.select-filter label {
+  font-size: 12px;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.select-filter select {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.select-filter--diagnoses {
+  min-width: 220px;
+}
+
+/* Поиск уходит вправо, в хвост строки фильтров */
+.search-filter {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-filter input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.search-filter input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}

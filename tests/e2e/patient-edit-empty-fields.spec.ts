@@ -1,4 +1,5 @@
 import { test, expect, request, type Page } from '@playwright/test';
+import { IS_BAKULEVO } from './support/theme';
 
 // E2E-регрессия 3.78 «Фикс BUG-3.58-01: редактирование персональных данных (пустые поля)».
 // Покрывает: частичное редактирование (только телефон) при пустом необязательном поле
@@ -59,6 +60,9 @@ async function loginAsDoctor(page: Page): Promise<void> {
 }
 
 test.describe.serial('3.78 Фикс пустых полей в редактировании персональных данных', () => {
+  // В теме Бакулево персональные данные редактируются в модалке (секции «Персональные данные» нет).
+  test.skip(IS_BAKULEVO, 'almazovo-сборка: секция «Персональные данные» (.section-title) отсутствует в модальной теме Бакулево');
+
   test('setup: больница + пациент (обязательные заполнены, email пуст) + лечение', async () => {
     demo.adminToken = await apiLogin(ADMIN_LOGIN, ADMIN_PASSWORD);
     const token = demo.adminToken;

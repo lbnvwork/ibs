@@ -1,0 +1,71 @@
+<div class="sidebar sidebar--text" :class="{ 'sidebar--collapsed': collapsed }" aria-label="Navigation sidebar">
+    <div class="sidebar__logo" aria-hidden="true">
+        <img class="logo-img" :src="bakulevoLogo" alt="Логотип Бакулево" />
+        <span class="logo-text">Coag Analyzer</span>
+    </div>
+
+    <button
+        class="sidebar__collapse"
+        type="button"
+        :title="collapsed ? 'Развернуть меню' : 'Свернуть меню'"
+        @click="toggleSidebar"
+    >
+        <svg class="icon" viewBox="0 0 24 24">
+            <path :d="collapsed ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="label">{{ collapsed ? 'Развернуть' : 'Свернуть' }}</span>
+    </button>
+
+    <button
+        :title="backButtonTitle"
+        :class="{ 'disabled-button': !isBackButtonActive }"
+        @click="handleBackButton"
+    >
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+        <span class="label">Назад</span>
+    </button>
+
+    <template v-for="group in sidebarGroups" :key="group.id">
+        <div class="sidebar-group">
+            <button
+                class="sidebar-group__header"
+                :title="group.title"
+                :aria-expanded="group.expanded ? 'true' : 'false'"
+                @click="toggleGroup(group)"
+            >
+                <svg class="icon" viewBox="0 0 24 24" v-html="group.icon"></svg>
+                <span class="label">{{ group.title }}</span>
+                <svg class="chevron" :class="{ 'chevron--open': group.expanded }" viewBox="0 0 24 24">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </button>
+            <div v-if="group.expanded && !collapsed" class="sidebar-group__items">
+                <button
+                    v-for="item in group.items"
+                    :key="item.name"
+                    :title="item.title"
+                    :class="{ 'disabled-button': isItemDisabled(item) }"
+                    @click="handleItemClick(item)"
+                    class="sidebar-group__item"
+                >
+                    <svg class="icon" viewBox="0 0 24 24" v-html="item.icon"></svg>
+                    <span class="label">{{ item.label }}</span>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <button class="sidebar__logout" :title="'Выйти'" @click="handleLogout">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+        <span class="label">Выход</span>
+    </button>
+
+    <div class="sidebar__support">
+        <span class="support-title">Служба поддержки</span>
+        <span class="support-phone">+7 (999) 999-99-99</span>
+    </div>
+</div>

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { isBakulevo } from '@/themes';
 import Home from '@/modules/shared/layout/Home/Home.vue';
 import MedicalHistory from '@/modules/medicalHistory/components/MedicalHistory.vue';
+import MedicalHistoryBakulevo from '@/modules/medicalHistory/components/bakulevo/MedicalHistory.vue';
 import Login from '@/modules/shared/components/Login/Login.vue';
 import { useAuthStore } from '@/modules/shared/stores/authStore';
 import PatientAdd from '@/modules/patientManagement/components/PatientAdd/PatientAdd.vue';
@@ -29,7 +31,7 @@ const routes = [
   { 
     path: PATIENT_HISTORY_TEMPLATE,
     name: 'MedicalHistory', 
-    component: MedicalHistory,
+    component: isBakulevo ? MedicalHistoryBakulevo : MedicalHistory,
     props: (route) => ({ id: route.params.patientId }),
     meta: { requiresAuth: true, backTarget: HOME_PATH }
   },

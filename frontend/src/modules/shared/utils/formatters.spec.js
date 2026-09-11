@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calculateAge, formatPhone, formatDate, formatAge, formatPassport, formatSnils } from './formatters'
+import { calculateAge, formatPhone, formatDate, formatAge, formatPassport, formatSnils, formatMno } from './formatters'
 
 describe('calculateAge', () => {
   it('returns null for falsy input', () => {
@@ -95,5 +95,25 @@ describe('formatSnils', () => {
     expect(formatSnils('123456')).toBe('123-456')
     expect(formatSnils('123456789')).toBe('123-456-789')
     expect(formatSnils('12345678995')).toBe('123-456-789 95')
+  })
+})
+
+describe('formatMno', () => {
+  it('returns an em dash for null/undefined/empty/non-numeric', () => {
+    expect(formatMno(null)).toBe('—')
+    expect(formatMno(undefined)).toBe('—')
+    expect(formatMno('')).toBe('—')
+    expect(formatMno('abc')).toBe('—')
+  })
+
+  it('formats to two decimal places', () => {
+    expect(formatMno(2)).toBe('2.00')
+    expect(formatMno(3)).toBe('3.00')
+    expect(formatMno(2.5)).toBe('2.50')
+  })
+
+  it('collapses floating-point artifacts', () => {
+    expect(formatMno(2.4000000000000004)).toBe('2.40')
+    expect(formatMno(3.5000000000000004)).toBe('3.50')
   })
 })

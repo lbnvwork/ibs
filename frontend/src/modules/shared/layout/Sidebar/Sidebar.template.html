@@ -1,4 +1,8 @@
 <div class="sidebar" aria-label="Navigation sidebar">
+    <div class="sidebar__logo" aria-hidden="true">
+        <img class="logo-img" :src="almazovoLogo" alt="Логотип Алмазово" />
+    </div>
+
     <button
         :title="backButtonTitle"
         :class="{ 'disabled-button': !isBackButtonActive }"

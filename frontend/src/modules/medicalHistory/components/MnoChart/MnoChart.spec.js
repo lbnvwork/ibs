@@ -45,8 +45,8 @@ describe('MnoChart.vue', () => {
       mnoTo: 3,
     })
     const labels = wrapper.vm.chartData.datasets.map(d => d.label)
-    expect(labels).toContain('Нижняя граница (2)')
-    expect(labels).toContain('Верхняя граница (3)')
+    expect(labels).toContain('Нижняя граница (2.00)')
+    expect(labels).toContain('Верхняя граница (3.00)')
   })
 
   it('does not add threshold datasets when mnoFrom/mnoTo are null', () => {

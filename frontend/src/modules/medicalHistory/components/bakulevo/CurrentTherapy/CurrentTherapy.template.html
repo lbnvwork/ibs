@@ -1,0 +1,24 @@
+<div class="therapy-card">
+    <h3 class="therapy-card__title">Текущая терапия</h3>
+    <ul class="therapy-list">
+        <li class="therapy-item">
+            <span class="therapy-item__label">Препарат</span>
+            <span class="therapy-item__value">{{ drugName }}</span>
+        </li>
+        <li class="therapy-item">
+            <span class="therapy-item__label">Диагноз</span>
+            <span class="therapy-item__value">{{ diagnosis }}</span>
+        </li>
+        <li class="therapy-item">
+            <span class="therapy-item__label">Целевой МНО</span>
+            <span class="therapy-item__value">{{ rangeText }}</span>
+        </li>
+        <li class="therapy-item">
+            <span class="therapy-item__label therapy-item__label--accent">Последняя доза</span>
+            <span class="therapy-item__value">
+                <span class="therapy-dose">{{ doseDisplay }}</span>
+                <span v-if="doseDate" class="therapy-dose__date">{{ doseDate }}</span>
+            </span>
+        </li>
+    </ul>
+</div>

@@ -53,6 +53,7 @@ docs/09-Служебное/Доступы/
 tests/e2e/node_modules/
 tests/e2e/test-results/
 tests/e2e/playwright-report/
+tests/e2e/screenshots/
 
 # Postman (локальное окружение с кредами — в git не идут; коллекция коммитится)
 api/postman/*.postman_environment.json

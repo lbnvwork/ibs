@@ -1,0 +1,14 @@
+<div class="risk-card">
+    <h3 class="risk-card__title">Текущий анализ</h3>
+    <div class="risk-card__body">
+        <div class="risk-gauge" :class="`risk-gauge--${level}`">
+            <span class="risk-gauge__value">{{ hasData ? mno : '—' }}</span>
+            <span class="risk-gauge__unit">МНО</span>
+        </div>
+        <div class="risk-info">
+            <span class="risk-label" :class="`risk-label--${level}`">{{ label }}</span>
+            <span v-if="hasRange" class="risk-hint">Целевой диапазон {{ rangeText }}</span>
+            <span class="risk-caption">по последнему анализу МНО</span>
+        </div>
+    </div>
+</div>
